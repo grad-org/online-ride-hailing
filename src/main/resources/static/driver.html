@@ -1,0 +1,36 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=92iwifKNuNj9C9oW1UAyRH3aa1ZC2wMN"></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+    <title>车主端</title>
+</head>
+<body>
+    <div id="allmap"></div>
+    <div>
+        <button id="connect" type="submit">点击出车</button>
+        <button id="disconnect" type="submit" disabled="disabled">收车</button>
+        <form>
+            <label for="location">你的当前位置:</label>
+            <input type="text" id="location">
+            <button id="send" type="submit">手动发送位置</button>
+        </form>
+        <div>
+            <table id="conversation">
+                <thead>
+                <tr>
+                    <th>用户列表</th>
+                </tr>
+                </thead>
+                <tbody id="users">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
