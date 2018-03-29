@@ -4,22 +4,21 @@ function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
-        $("#conversation").show();
+        $("#orderList").show();
     }
     else {
-        $("#conversation").hide();
+        $("#orderList").hide();
     }
-    $("#users").html("");
+    $("#orders").html("");
 }
 
 function connect() {
-    var socket = new SockJS('/stomp');
+    var socket = new SockJS('/orh');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
-        var driverId = 1;
-        stompClient.subscribe('/user/'+ driverId +'/listen', function (user) {
-            showUser(JSON.parse(user.body));
+        stompClient.subscribe('/topic/orderBroadcast', function (order) {
+            showOrder(JSON.parse(order.body));
         });
     });
 }
@@ -35,15 +34,20 @@ function disconnect() {
 function sendLocation() {
     // 获取位置
     var a = $("#location").val().split(',');
-    var point = {lng: a[0], lat: a[1]};
+    var location = {lng: a[0], lat: a[1]};
 
-    //
+    // LBS储存车主实时位置
+    // ...
 
-    stompClient.send("/app/send", {}, JSON.stringify(point));
+    // 将消息发送到后端，由后端处理数据后再推送到订阅/topic/carBroadcast的前端
+    stompClient.send("/app/carBroadcast", {}, JSON.stringify(location));
+
+    // 直接将消息发送给订阅/topic/carBroadcast的前端，不通过后端处理
+    // stompClient.send("/topic/broadcast",{}, JSON.stringify(location));
 }
 
-function showUser(user) {
-    $("#users").append("<tr><td>" + user + "</td></tr>");
+function showOrder(order) {
+    $("#orders").append("<tr><td>" + order + "</td></tr>");
 }
 
 $(function () {
@@ -58,7 +62,6 @@ $(function () {
             var mk = new BMap.Marker(r.point);
             map.addOverlay(mk);
             map.panTo(r.point);
-
             $('#location').val(r.point.lng+','+r.point.lat);
 
             $("form").on('submit', function (e) {
