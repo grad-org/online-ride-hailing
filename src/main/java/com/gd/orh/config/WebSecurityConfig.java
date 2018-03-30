@@ -6,11 +6,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
@@ -18,23 +14,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("admin").password("{noop}admin").roles("ADMIN").and()
-                .withUser("d1").password("{noop}d1").roles("DRIVER").and()
-                .withUser("d2").password("{noop}d2").roles("DRIVER").and()
-                .withUser("p1").password("{noop}p1").roles("PASSENGER").and()
-                .withUser("p2").password("{noop}p2").roles("PASSENGER");
+        auth.userDetailsService(customUserService()).passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .anyRequest().authenticated()
+        http.authorizeRequests().antMatchers("/").permitAll()
+                .antMatchers("/console/**").permitAll()
                 .antMatchers("/driver.html").access("hasRole('DRIVER')")
-                .antMatchers("/passenger.html").permitAll()
-                .and().httpBasic();
+                .and().httpBasic()
+                .and().headers().frameOptions().disable()
+                .and().csrf().disable();
+
 //        http
 //            .authorizeRequests()
 //                .antMatchers("/", "/home").permitAll()
@@ -48,16 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .permitAll();
     }
 
-//    @Bean
-//    @Override
-//    protected UserDetailsService userDetailsService() {
-//        UserDetails user =
-//                User.withDefaultPasswordEncoder()
-//                        .username("root")
-//                        .password("root")
-//                        .roles("USER")
-//                        .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
+    @Bean
+    protected CustomUserService customUserService() {
+        return new CustomUserService();
+    }
 }

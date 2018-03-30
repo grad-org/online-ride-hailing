@@ -1,4 +1,4 @@
-package com.gd.orh.domain;
+package com.gd.orh.entity;
 
 public class CarLocation {
     private String carId;
