@@ -7,6 +7,8 @@ import com.gd.orh.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -22,8 +24,8 @@ public class LocationController {
     public CarLocation broadcast(Location location, Principal principal) throws Exception {
         CarLocation carLocation = new CarLocation();
 
-        String username = principal.getName();
-        User user = userService.findByUsername(username);
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        User user = (User) token.getPrincipal();
 
         carLocation.setCarId(user.getNickname());
         carLocation.setLocation(location);
