@@ -1,4 +1,4 @@
-package com.gd.orh.config;
+package com.gd.orh.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

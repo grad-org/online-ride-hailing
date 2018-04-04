@@ -14,17 +14,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
     @Autowired
     private UserRepository repository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(method = RequestMethod.GET)
     public List<User> getUsers() {
         return repository.findAll();
     }
 
-    @PostAuthorize("returnObject.username == principal.username or hasRole('ROLE_ADMIN')")
+    @PostAuthorize("returnObject.username == principal.username or hasRole('ADMIN')")
     @RequestMapping(value = "/",method = RequestMethod.GET)
     public User getUserByUsername(@RequestParam(value="username") String username) {
         return repository.findByUsername(username);

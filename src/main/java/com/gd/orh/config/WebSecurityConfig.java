@@ -1,6 +1,11 @@
 package com.gd.orh.config;
 
+import com.gd.orh.security.JwtAuthenticationEntryPoint;
+import com.gd.orh.security.JwtAuthorizationTokenFilter;
+import com.gd.orh.security.JwtTokenUtil;
+import com.gd.orh.security.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,11 +13,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -21,16 +27,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Autowired
-    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+    private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private JwtUserDetailsService jwtUserDetailsService;
+
+    @Value("${jwt.header}")
+    private String tokenHeader;
+
+    @Bean
+    public PasswordEncoder passwordEncoderBean() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Autowired
-    private JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+            .userDetailsService(jwtUserDetailsService)
+            .passwordEncoder(passwordEncoderBean());
+    }
 
     @Override
     @Bean
@@ -39,23 +57,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
-    }
-
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                // we don't need CSRF because our token is invulnerable
                 .csrf().disable()
-                // 使h2控制台在spring security下显示
-                .headers().frameOptions().disable().and()
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler).and()
-                // 基于token，所以不需要session
+
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+
+                // don't create session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+
                 .authorizeRequests()
-                // 允许对于网站静态资源的无授权访问
+
+                // Un-secure H2 Database
+                .antMatchers("/console/**").permitAll()
+
                 .antMatchers(
                         HttpMethod.GET,
                         "/",
@@ -67,14 +83,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 ).permitAll()
                 // 对于获取token的rest api要允许匿名访问
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/driver.html").access("hasRole('DRIVER')")
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated();
 
-        // 禁用缓存
-        http.headers().cacheControl();
+        // Custom JWT based security filter
+        JwtAuthorizationTokenFilter authenticationTokenFilter = new JwtAuthorizationTokenFilter(userDetailsService(), jwtTokenUtil, tokenHeader);
+        http
+            .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        // 禁用缓存
+        // http.headers().cacheControl();
+
+        // 使h2控制台在spring security下显示
+        // http.headers().frameOptions().disable();
+
+        // disable page caching
+        http
+            .headers()
+            .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
+            .cacheControl();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+
     }
 }

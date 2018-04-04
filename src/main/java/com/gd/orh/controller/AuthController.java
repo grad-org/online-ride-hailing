@@ -1,7 +1,7 @@
 package com.gd.orh.controller;
 
-import com.gd.orh.config.JwtAuthenticationRequest;
-import com.gd.orh.config.JwtAuthenticationResponse;
+import com.gd.orh.security.JwtAuthenticationRequest;
+import com.gd.orh.security.JwtAuthenticationResponse;
 import com.gd.orh.entity.User;
 import com.gd.orh.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;

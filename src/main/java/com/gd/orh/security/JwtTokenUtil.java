@@ -1,4 +1,4 @@
-package com.gd.orh.config;
+package com.gd.orh.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

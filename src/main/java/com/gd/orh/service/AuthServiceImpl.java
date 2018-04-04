@@ -1,7 +1,7 @@
 package com.gd.orh.service;
 
-import com.gd.orh.config.JwtTokenUtil;
-import com.gd.orh.config.JwtUser;
+import com.gd.orh.security.JwtTokenUtil;
+import com.gd.orh.security.JwtUser;
 import com.gd.orh.entity.User;
 import com.gd.orh.repository.RoleRepository;
 import com.gd.orh.repository.UserRepository;

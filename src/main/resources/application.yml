@@ -1,0 +1,47 @@
+# Spring configuration
+spring:
+  # datasource
+#    url: jdbc:mysql://localhost:3306/online_ride_hailing_db?useUnicode=true&characterEncoding=UTF-8
+#    type: com.alibaba.druid.pool.DruidDataSource
+#    username: root
+#    password: root
+#    test-while-idle: true
+#    validation-query: true
+  # H2
+  h2:
+    console:
+      enabled: true
+      path: /console
+  # JPA-Hibernate
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    properties:
+      hibernate:
+        dialect:
+          org.hibernate.dialect.MySQL5Dialect
+  # Spring Data Rest
+#  data:
+#    rest:
+#      base-path: /api
+
+# JWT
+jwt:
+  header: Authorization
+  secret: mySecret
+  expiration: 604800
+  tokenHead: "Bearer "
+  route.authentication.path: /auth
+  route.authentication.refresh: /refresh
+
+# Logging configuration
+logging:
+  level:
+    org:
+      springframework:
+        data: DEBUG
+        security: DEBUG
+

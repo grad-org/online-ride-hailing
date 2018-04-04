@@ -1,4 +1,4 @@
-package com.gd.orh.config;
+package com.gd.orh.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

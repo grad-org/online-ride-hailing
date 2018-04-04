@@ -1,15 +1,13 @@
-package com.gd.orh.config;
+package com.gd.orh.security;
 
 import com.gd.orh.entity.User;
 import com.gd.orh.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Primary
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 

@@ -1,4 +1,4 @@
-package com.gd.orh.config;
+package com.gd.orh.security;
 
 import com.gd.orh.entity.Role;
 import com.gd.orh.entity.User;
