@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.rest.webmvc.BasePathAwareController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Objects;
 
-@RestController
+@BasePathAwareController
 public class AuthenticationRestController {
 
     @Value("${jwt.header}")
@@ -47,7 +48,7 @@ public class AuthenticationRestController {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-    @RequestMapping(value = "${jwt.route.authentication.login}", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -60,7 +61,7 @@ public class AuthenticationRestController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }
 
-    @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
+    @RequestMapping(value = "auth/refresh", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String authToken = request.getHeader(tokenHeader);
         final String token = authToken.substring(7);
@@ -75,8 +76,8 @@ public class AuthenticationRestController {
         }
     }
 
-    @RequestMapping(value = "${jwt.route.authentication.register}", method = RequestMethod.POST)
-    public User register(@RequestBody User newUser) {
+    @RequestMapping(value = "/auth/register", method = RequestMethod.POST)
+    public ResponseEntity<?> register(@RequestBody User newUser) {
         newUser.setEnabled(true);
         newUser.setLastPasswordResetDate(new Date());
 
@@ -88,7 +89,7 @@ public class AuthenticationRestController {
         String rawPassword = newUser.getPassword();
         newUser.setPassword(encoder.encode(rawPassword));
         newUser.setAuthorities(Lists.newArrayList(authorityRepository.findByName(AuthorityName.ROLE_PASSENGER)));
-        return userRepository.save(newUser);
+        return ResponseEntity.ok(userRepository.save(newUser));
     }
 
     @ExceptionHandler({AuthenticationException.class})
