@@ -7,6 +7,13 @@ spring:
 #    password: root
 #    test-while-idle: true
 #    validation-query: true
+  # Jackson
+  jackson:
+      serialization:
+        INDENT_OUTPUT: true
+        FAIL_ON_EMPTY_BEANS: false
+      time-zone: GMT+8
+      date-format: yyyy-MM-dd HH:mm:ss
   # H2
   h2:
     console:
@@ -24,24 +31,24 @@ spring:
         dialect:
           org.hibernate.dialect.MySQL5Dialect
   # Spring Data Rest
-#  data:
-#    rest:
-#      base-path: /api
+  data:
+    rest:
+      base-path: /api
 
 # JWT
 jwt:
   header: Authorization
   secret: mySecret
   expiration: 604800
-  tokenHead: "Bearer "
-  route.authentication.path: /auth
-  route.authentication.refresh: /refresh
+  route:
+    authentication:
+        login: auth/login
+        register: auth/register
+        refresh: auth/refresh
 
 # Logging configuration
 logging:
   level:
-    org:
-      springframework:
+    org.springframework:
         data: DEBUG
         security: DEBUG
-

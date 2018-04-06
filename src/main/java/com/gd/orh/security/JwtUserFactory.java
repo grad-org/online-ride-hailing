@@ -1,46 +1,33 @@
 package com.gd.orh.security;
 
-import com.gd.orh.entity.Role;
+import com.gd.orh.entity.Authority;
 import com.gd.orh.entity.User;
-import com.google.common.base.Converter;
-import com.google.common.collect.Lists;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JwtUserFactory {
-    public static final UserConverter converter = new UserConverter();
 
     private JwtUserFactory() {
     }
 
     public static JwtUser create(User user) {
-        return converter.doForward(user);
+        return new JwtUser(
+                user.getId(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getNickname(),
+                mapToGrantedAuthorities(user.getAuthorities()),
+                user.getEnabled(),
+                user.getLastPasswordResetDate()
+        );
     }
 
-    private static class UserConverter extends Converter<User, JwtUser> {
-
-        @Override
-        protected JwtUser doForward(User user) {
-            JwtUser jwtUser = new JwtUser();
-            BeanUtils.copyProperties(user, jwtUser);
-            jwtUser.setAuthorities(mapToGrantedAuthorities(user.getRoles()));
-            return jwtUser;
-        }
-
-        @Override
-        protected User doBackward(JwtUser jwtUser) {
-            return null;
-        }
-    }
-
-    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Role> roles) {
-        List<GrantedAuthority> authorities = Lists.newArrayList();
-        for (Role role: roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
-        return authorities;
+    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Authority> authorities) {
+        return authorities.stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getName().name()))
+                .collect(Collectors.toList());
     }
 }

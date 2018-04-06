@@ -3,7 +3,7 @@ package com.gd.orh.config;
 import com.gd.orh.security.JwtAuthenticationEntryPoint;
 import com.gd.orh.security.JwtAuthorizationTokenFilter;
 import com.gd.orh.security.JwtTokenUtil;
-import com.gd.orh.security.JwtUserDetailsService;
+import com.gd.orh.security.service.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +38,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${jwt.header}")
     private String tokenHeader;
 
+    @Value("${jwt.route.authentication.login}")
+    private String loginPath;
+
     @Bean
     public PasswordEncoder passwordEncoderBean() {
         return new BCryptPasswordEncoder();
@@ -59,33 +62,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                // we don't need CSRF because our token is invulnerable
-                .csrf().disable()
+            // we don't need CSRF because our token is invulnerable
+            .csrf().disable()
 
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 
-                // don't create session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+            // don't create session
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
-                .authorizeRequests()
+            .authorizeRequests()
 
-                // Un-secure H2 Database
-                .antMatchers("/console/**").permitAll()
+            // Un-secure H2 Database
+            .antMatchers("/console/**/**").permitAll()
 
-                .antMatchers(
-                        HttpMethod.GET,
-                        "/",
-                        "/*.html",
-                        "/favicon.ico",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js"
-                ).permitAll()
-                // 对于获取token的rest api要允许匿名访问
-                .antMatchers("/auth/**").permitAll()
-                .antMatchers("/driver.html").access("hasRole('DRIVER')")
-                // 除上面外的所有请求全部需要鉴权认证
-                .anyRequest().authenticated();
+            .antMatchers("/").permitAll()
+            .antMatchers("/api/**/**").permitAll()
+            .antMatchers("/auth/**").permitAll()
+            .anyRequest().authenticated();
 
         // Custom JWT based security filter
         JwtAuthorizationTokenFilter authenticationTokenFilter = new JwtAuthorizationTokenFilter(userDetailsService(), jwtTokenUtil, tokenHeader);
@@ -107,6 +100,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
+        // AuthenticationTokenFilter will ignore the below paths
+        web
+            .ignoring()
+            .antMatchers(
+                    HttpMethod.POST,
+                    loginPath
+            )
 
+            // allow anonymous resource requests
+            .and()
+            .ignoring()
+            .antMatchers(
+                    HttpMethod.GET,
+                    "/",
+                    "/api/**/**",
+                    "/*.html",
+                    "/favicon.ico",
+                    "/**/*.html",
+                    "/**/*.css",
+                    "/**/*.js"
+            )
+
+            // Un-secure H2 Database (for testing purposes, H2 console shouldn't be unprotected in production)
+            .and()
+            .ignoring()
+            .antMatchers("/console/**/**");
     }
 }
