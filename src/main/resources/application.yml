@@ -19,6 +19,8 @@ spring:
     console:
       enabled: true
       path: /console
+      settings:
+        web-allow-others: true
   # JPA-Hibernate
   jpa:
     show-sql: true
@@ -52,3 +54,4 @@ logging:
     org.springframework:
         data: DEBUG
         security: DEBUG
+
