@@ -61,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.cors().and()
             // we don't need CSRF because our token is invulnerable
             .csrf().disable()
 
@@ -73,10 +73,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
 
             // Un-secure H2 Database
-            .antMatchers("/console/**/**").permitAll()
+            .antMatchers("/console/**").permitAll()
 
             .antMatchers("/").permitAll()
-            .antMatchers("/api/**/**").permitAll()
+            .antMatchers("/api/**").permitAll()
             .anyRequest().authenticated();
 
         // Custom JWT based security filter
@@ -123,6 +123,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // Un-secure H2 Database (for testing purposes, H2 console shouldn't be unprotected in production)
             .and()
             .ignoring()
-            .antMatchers("/console/**/**");
+            .antMatchers("/console/**");
     }
 }
