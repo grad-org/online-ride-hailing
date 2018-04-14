@@ -41,6 +41,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${jwt.route.authentication.login}")
     private String loginPath;
 
+    @Value("${jwt.route.authentication.register}")
+    private String registerPath;
+
     @Bean
     public PasswordEncoder passwordEncoderBean() {
         return new BCryptPasswordEncoder();
@@ -83,12 +86,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // 禁用缓存
-        // http.headers().cacheControl();
-
-        // 使h2控制台在spring security下显示
-        // http.headers().frameOptions().disable();
-
         // disable page caching
         http
             .headers()
@@ -103,7 +100,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .ignoring()
             .antMatchers(
                     HttpMethod.POST,
-                    loginPath
+                    loginPath,
+                    registerPath
             )
 
             // allow anonymous resource requests

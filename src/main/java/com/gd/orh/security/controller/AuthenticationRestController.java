@@ -6,11 +6,11 @@ import com.gd.orh.security.JwtTokenUtil;
 import com.gd.orh.security.JwtUser;
 import com.gd.orh.security.repository.AuthorityRepository;
 import com.gd.orh.security.repository.UserRepository;
+import com.gd.orh.utils.RestResultFactory;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.rest.webmvc.BasePathAwareController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,13 +20,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.Objects;
 
-@BasePathAwareController
+@RestController
+@RequestMapping("/api/auth")
 public class AuthenticationRestController {
 
     @Value("${jwt.header}")
@@ -48,7 +51,7 @@ public class AuthenticationRestController {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-    @RequestMapping(value = "/auth/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -61,7 +64,7 @@ public class AuthenticationRestController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }
 
-    @RequestMapping(value = "auth/refresh", method = RequestMethod.GET)
+    @RequestMapping(value = "/refresh", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String authToken = request.getHeader(tokenHeader);
         final String token = authToken.substring(7);
@@ -72,18 +75,31 @@ public class AuthenticationRestController {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
             return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
         } else {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("The token could not be refresh!"));
         }
     }
 
-    @RequestMapping(value = "/auth/register", method = RequestMethod.POST)
-    public ResponseEntity<?> register(@RequestBody User newUser) {
+    @RequestMapping(value = "/verify", method = RequestMethod.GET)
+    public ResponseEntity<?> verify(@RequestParam String username) {
+        if (userRepository.findByUsername(username) != null) {
+            return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("User is existed!"));
+        } else {
+            return ResponseEntity.ok().body(RestResultFactory.getSuccessResult());
+        }
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ResponseEntity<?> register(@RequestBody @Valid User newUser, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("The username or password could not be empty!"));
+        }
+
         newUser.setEnabled(true);
         newUser.setLastPasswordResetDate(new Date());
 
         String username = newUser.getUsername();
         if (userRepository.findByUsername(username) != null) {
-            return null;
+            return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("User is existed!"));
         }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String rawPassword = newUser.getPassword();
@@ -93,8 +109,8 @@ public class AuthenticationRestController {
     }
 
     @ExceptionHandler({AuthenticationException.class})
-    public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    public ResponseEntity<?> handleAuthenticationException(AuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RestResultFactory.getUnauthorizedResult(e.getMessage()));
     }
 
     /**
