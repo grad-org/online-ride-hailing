@@ -51,4 +51,4 @@
 /images/user/{id}.jpg:
     description:
         The static content url about user image,
-        you can place this url directly to show the user image.
+        you can place this url to show the user image directly.
