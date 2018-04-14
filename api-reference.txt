@@ -1,0 +1,29 @@
+"Bad Request" => 400
+"Unauthorized" => 401
+
+/api/auth/login:
+	description:
+		if login success, return the token,
+		else return "Unauthorized" result.
+	usage: POST {username, password}
+
+/api/auth/refresh:
+	description:
+		if refresh success, return the new token,
+		else return "Bad Request" result.
+	usage: GET with token header
+
+/api/auth/verify:
+	description:
+		if username is not existed, return success result,
+		else return "Bad Request" result.
+	usage: GET ?username=xxx
+
+/api/auth/register:
+	description:
+		if register success, return the complete user JSON,
+		else return "Bad Request" result.
+	usage: POST {username,password,nickname,...}
+
+/api/user: return all users
+/api/user/{id}: return a user with id.
