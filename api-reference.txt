@@ -30,7 +30,7 @@
 	description:
 		if register success, return the complete user JSON,
 		else return "Bad Request" result.
-	usage: POST {username,password,nickname,...}
+	usage: POST {username,password}
 
 /api/user: return all users.
 /api/user/{id}: return the user with id.

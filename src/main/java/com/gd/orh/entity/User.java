@@ -1,6 +1,8 @@
 package com.gd.orh.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -19,9 +21,18 @@ public class User {
     private String username;
 
     @NotEmpty
+    @JsonIgnore
     private String password;
 
     private String nickname;
+
+    private String gender;
+
+    private Integer age;
+
+    @JsonIgnore
+    @Transient
+    private MultipartFile userImage;
 
     private Boolean enabled;
 
@@ -33,6 +44,7 @@ public class User {
             name = "USER_AUTHORITY",
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
+    @JsonIgnore
     private List<Authority> authorities;
 
 //    private Passenger passenger;

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Date;
 import java.util.Objects;
 
@@ -51,7 +52,7 @@ public class AuthenticationRestController {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -60,48 +61,44 @@ public class AuthenticationRestController {
         final String token = jwtTokenUtil.generateToken(userDetails);
 
         // Return the token
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(new JwtAuthenticationResponse(token)));
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserWithAuthenticationToken(HttpServletRequest request) {
-        String authToken = request.getHeader(tokenHeader);
-        final String token = authToken.substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
+    @GetMapping("/user")
+    public ResponseEntity<?> getUserWithAuthenticationToken(Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
 
-        User user = userRepository.findByUsername(username);
         if (user != null) {
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
         } else {
             throw new AuthenticationException("The token is invalid!");
         }
     }
 
-    @RequestMapping(value = "/refresh", method = RequestMethod.GET)
-    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
+    @GetMapping("/refresh")
+    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request, Principal principal) {
         String authToken = request.getHeader(tokenHeader);
         final String token = authToken.substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
+        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(principal.getName());
 
         if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
-            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
+            return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(new JwtAuthenticationResponse(refreshedToken)));
         } else {
             return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("The token could not be refresh!"));
         }
     }
 
-    @RequestMapping(value = "/verify", method = RequestMethod.GET)
+    @GetMapping("/verify")
     public ResponseEntity<?> verify(@RequestParam String username) {
-        if (userRepository.findByUsername(username) != null) {
-            return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("The username is existed!"));
+        if (userRepository.findByUsername(username) == null) {
+            return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("The username is not existed!"));
         } else {
             return ResponseEntity.ok().body(RestResultFactory.getSuccessResult());
         }
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid User newUser, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("The username or password could not be empty!"));
@@ -118,7 +115,7 @@ public class AuthenticationRestController {
         String rawPassword = newUser.getPassword();
         newUser.setPassword(encoder.encode(rawPassword));
         newUser.setAuthorities(Lists.newArrayList(authorityRepository.findByName(AuthorityName.ROLE_PASSENGER)));
-        return ResponseEntity.ok(userRepository.save(newUser));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(userRepository.save(newUser)));
     }
 
     @ExceptionHandler({AuthenticationException.class})
