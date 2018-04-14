@@ -1,3 +1,4 @@
+"OK", "Success" => 200
 "Bad Request" => 400
 "Unauthorized" => 401
 
@@ -7,6 +8,12 @@
 		else return "Unauthorized" result.
 	usage: POST {username, password}
 
+/api/auth/user:
+    description:
+        return the user if token is valid,
+        else return "Unauthorized" result.
+    usage: GET with token header
+
 /api/auth/refresh:
 	description:
 		if refresh success, return the new token,
@@ -15,7 +22,7 @@
 
 /api/auth/verify:
 	description:
-		if username is not existed, return success result,
+		if username is not existed, return "OK" result,
 		else return "Bad Request" result.
 	usage: GET ?username=xxx
 
@@ -25,5 +32,5 @@
 		else return "Bad Request" result.
 	usage: POST {username,password,nickname,...}
 
-/api/user: return all users
-/api/user/{id}: return a user with id.
+/api/user: return all users.
+/api/user/{id}: return the user with id.

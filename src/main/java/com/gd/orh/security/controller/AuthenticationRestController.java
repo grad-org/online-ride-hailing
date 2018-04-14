@@ -53,7 +53,6 @@ public class AuthenticationRestController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) {
-
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
         // Reload password post-security so we can generate the token
@@ -62,6 +61,20 @@ public class AuthenticationRestController {
 
         // Return the token
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+    }
+
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public ResponseEntity<?> getUserWithAuthenticationToken(HttpServletRequest request) {
+        String authToken = request.getHeader(tokenHeader);
+        final String token = authToken.substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            throw new AuthenticationException("The token is invalid!");
+        }
     }
 
     @RequestMapping(value = "/refresh", method = RequestMethod.GET)
@@ -82,7 +95,7 @@ public class AuthenticationRestController {
     @RequestMapping(value = "/verify", method = RequestMethod.GET)
     public ResponseEntity<?> verify(@RequestParam String username) {
         if (userRepository.findByUsername(username) != null) {
-            return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("User is existed!"));
+            return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("The username is existed!"));
         } else {
             return ResponseEntity.ok().body(RestResultFactory.getSuccessResult());
         }
