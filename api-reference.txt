@@ -33,4 +33,22 @@
 	usage: POST {username,password}
 
 /api/user: return all users.
+
 /api/user/{id}: return the user with id.
+
+/api/user/update/{id}:
+    description:
+        if update success, return the complete user JSON,
+        else return "Bad Request" result.
+    usage: POST "multipart/form-data" form ==> means the form's enctype is 'multipart/form-data'
+            -------------+---------------
+            |  nickname  +              |
+            |   gender   +              |
+            |     age    +              |
+            |  userImage + picture file |
+            -------------+---------------
+
+/images/user/{id}.jpg:
+    description:
+        The static content url about user image,
+        you can place this url directly to show the user image.

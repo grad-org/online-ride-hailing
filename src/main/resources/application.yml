@@ -36,6 +36,9 @@ spring:
   data:
     rest:
       base-path: /api
+  # static resource path
+  resources:
+    static-locations: classpath:static/,file:static/
 
 # JWT
 jwt:
@@ -54,4 +57,5 @@ logging:
     org.springframework:
         data: DEBUG
         security: DEBUG
+
 
