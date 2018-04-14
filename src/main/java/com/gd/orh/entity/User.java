@@ -21,7 +21,6 @@ public class User {
     private String username;
 
     @NotEmpty
-    @JsonIgnore
     private String password;
 
     private String nickname;
