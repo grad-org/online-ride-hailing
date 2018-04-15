@@ -1,4 +1,4 @@
-package com.gd.orh.security.repository;
+package com.gd.orh.userMgt.repository;
 
 import com.gd.orh.entity.User;
 import org.springframework.data.domain.Page;

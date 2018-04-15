@@ -1,6 +1,7 @@
 package com.gd.orh.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,7 @@ public class User {
     private String username;
 
     @NotEmpty
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String nickname;
@@ -33,12 +35,14 @@ public class User {
     @Transient
     private MultipartFile userImage;
 
+    @JsonIgnore
     private Boolean enabled;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonIgnore
     private Date lastPasswordResetDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "USER_AUTHORITY",
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
@@ -46,6 +50,9 @@ public class User {
     @JsonIgnore
     private List<Authority> authorities;
 
-//    private Passenger passenger;
-//    private Driver driver;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Passenger passenger;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Driver driver;
 }

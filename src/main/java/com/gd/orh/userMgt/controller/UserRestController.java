@@ -1,7 +1,7 @@
-package com.gd.orh.controller;
+package com.gd.orh.userMgt.controller;
 
 import com.gd.orh.entity.User;
-import com.gd.orh.security.repository.UserRepository;
+import com.gd.orh.userMgt.service.UserService;
 import com.gd.orh.utils.RestResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,35 +53,43 @@ public class UserRestController {
 //    }
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @PostMapping("/update/{id}")
     public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @ModelAttribute User updatedUser) {
         MultipartFile userImage = updatedUser.getUserImage();
 
+        // If the user image is existed, save it.
         if (userImage != null && !userImage.isEmpty()) {
-            // 获取根目录
             File rootDirectory = null;
             try {
-                rootDirectory = new File(ResourceUtils.getURL("classpath:").getPath());
+                // Get root path
+                // If the project was deployed in the Windows, the first way is in effect,
+                // otherwise, the second way will in effect if the project was deployed in the Linux.
+                rootDirectory =
+                    new File(ResourceUtils.getURL("classpath:").getPath());
                 if (!rootDirectory.exists()) rootDirectory = new File("");
             } catch (FileNotFoundException e) { }
-            // 上传目录为/static/images/user
-            File uploadDirectory = new File(rootDirectory.getAbsolutePath(),"static/images/user/");
+
+            // Set the upload path is /static/images/user.
+            File uploadDirectory =
+                new File(rootDirectory.getAbsolutePath(),"static/images/user/");
             if (!uploadDirectory.exists()) uploadDirectory.mkdirs();
 
+            // Save the user Image in the /static/images/user.
             try {
                 userImage.transferTo(new File(uploadDirectory, id + ".jpg"));
             } catch (IOException e) {
-                return ResponseEntity.badRequest().body(RestResultFactory.getFailResult("User Image saving failed!"));
+                return ResponseEntity.badRequest().body(
+                        RestResultFactory.getFailResult("User Image saving failed!"));
             }
         }
 
-        User user = userRepository.getOne(id);
-        user.setNickname(updatedUser.getNickname());
-        user.setGender(updatedUser.getGender());
-        user.setAge(updatedUser.getAge());
-
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(userRepository.save(user)));
+        // Make sure the user id is assigned.
+        updatedUser.setId(id);
+        // Update user.
+        User user = userService.update(updatedUser);
+        // Return updated user.
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
     }
 }

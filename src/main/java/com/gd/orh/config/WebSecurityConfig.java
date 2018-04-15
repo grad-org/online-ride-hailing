@@ -44,6 +44,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${jwt.route.authentication.register}")
     private String registerPath;
 
+    @Value("${jwt.route.authentication.verify}")
+    private String verifyPath;
+
     @Bean
     public PasswordEncoder passwordEncoderBean() {
         return new BCryptPasswordEncoder();
@@ -101,7 +104,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(
                     HttpMethod.POST,
                     loginPath,
-                    registerPath
+                    registerPath,
+                    verifyPath
             )
 
             // allow anonymous resource requests

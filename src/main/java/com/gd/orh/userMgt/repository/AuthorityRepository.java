@@ -1,4 +1,4 @@
-package com.gd.orh.security.repository;
+package com.gd.orh.userMgt.repository;
 
 import com.gd.orh.entity.Authority;
 import com.gd.orh.entity.AuthorityName;

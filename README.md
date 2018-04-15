@@ -25,10 +25,10 @@ the project for our graduation design - "online-ride-hailing".
 >description:  
 >>if username is not existed, return "OK" result,  
 >>else return "Bad Request" result.  
-5. `/api/auth/register`:  
+5. `/api/auth/registerPassenger`:  
 >usage: POST {username,password}  
 >description:  
->>if register success, return the complete user JSON,  
+>>if register passenger success, return the complete user JSON,  
 >>else return "Bad Request" result.  
 6. `/api/user`:  
 >return all users.  
@@ -45,9 +45,6 @@ the project for our graduation design - "online-ride-hailing".
 >description:  
 >>if update success, return the complete user JSON,  
 >>else return "Bad Request" result.  
-
-
-
 9. `/images/user/{id}.jpg`:  
 >description:  
 >>The static content url about user image,  

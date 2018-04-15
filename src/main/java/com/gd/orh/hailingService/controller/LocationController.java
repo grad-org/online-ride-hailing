@@ -1,4 +1,4 @@
-package com.gd.orh.controller;
+package com.gd.orh.hailingService.controller;
 
 import com.gd.orh.entity.CarLocation;
 import com.gd.orh.entity.Location;

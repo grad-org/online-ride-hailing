@@ -50,6 +50,7 @@ jwt:
         login: api/auth/login
         register: api/auth/register
         refresh: api/auth/refresh
+        verify: api/auth/verify
 
 # Logging configuration
 logging:
