@@ -22,13 +22,16 @@ public class HailingServiceController {
     @Autowired
     private TripService tripService;
 
+    // 发布行程
     @PostMapping("/passenger/{id}/trip")
-    public ResponseEntity<?> publishTrip(@PathVariable Long id, @RequestBody Trip trip) {
+    public ResponseEntity<?> publishTrip(@PathVariable Long id, @RequestBody Trip publishedTrip) {
         Passenger passenger = passengerService.findById(id);
 
-        trip.setCreatedTime(new Date());
-        trip.setTripStatus(TripStatus.PUBLISHED);
-        trip.setPassenger(passenger);
+        publishedTrip.setCreatedTime(new Date());
+        publishedTrip.setTripStatus(TripStatus.PUBLISHED);
+        publishedTrip.setPassenger(passenger);
+
+        Trip trip = tripService.create(publishedTrip);
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(trip));
     }
