@@ -8,32 +8,32 @@ the project for our graduation design - "online-ride-hailing".
 1. `/api/auth/login`:  
 >usage: POST {username, password}
 >description:  
->>if login success, return the token,  
+>>If login success, return the token,  
 >>else return "Unauthorized" result.  
 2. `/api/auth/user`:  
 >usage: GET with token header  
 >description:  
->>return the user if token is valid,  
+>>Return the user if token is valid,  
 >>else return "Unauthorized" result.        
 3. `/api/auth/refresh`:  
 >usage: GET with token header  
 >description:  
->>if refresh success, return the new token,  
+>>If refresh success, return the new token,  
 >>else return "Bad Request" result.  
 4. `/api/auth/verify`:  
 >usage: GET ?username=xxx  
 >description:  
->>if username is not existed, return "OK" result,  
+>>If username is not existed, return "OK" result,  
 >>else return "Bad Request" result.  
 5. `/api/auth/registerPassenger`:  
 >usage: POST {username,password}  
 >description:  
->>if register passenger success, return the complete user JSON,  
+>>If register passenger success, return the complete user JSON,  
 >>else return "Bad Request" result.  
 6. `/api/user`:  
->return all users.  
+>Return all users.  
 7. `/api/user/{id}`:  
->return the user with id.  
+>Return the user with id, if not found return 404 response.  
 8. `/api/user/{id}`:  
 >usage: POST "multipart/form-data" form ==> means the form's enctype is 'multipart/form-data'
 >>key|value
@@ -43,9 +43,19 @@ the project for our graduation design - "online-ride-hailing".
 >>age|
 >>userImage|picture file
 >description:  
->>if update success, return the complete user JSON,  
+>>If update success, return the complete user JSON,  
 >>else return "Bad Request" result.  
 9. `/images/user/{id}.jpg`:  
 >description:  
 >>The static content url about user image,  
 >>you can place this url to show the user image directly.  
+8. `/api/hailingService/passenger/{id}/trip`:  
+>usage: POST {departure,destination,departureTime}  
+>>key|hint
+>>------ | ------ 
+>>departure|出发地
+>>destination|目的地
+>>departureTime|出发时间(yyyy-MM-dd HH:mm:ss)
+>description:  
+>>The passenger with id publish his/her trip,  
+>>and return the trip JSON.  
