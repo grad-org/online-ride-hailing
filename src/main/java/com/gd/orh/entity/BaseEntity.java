@@ -41,7 +41,7 @@ public class BaseEntity {
     @Id
     @Column(name = "Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Transient
     private Integer page = 1;
