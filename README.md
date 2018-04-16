@@ -34,7 +34,7 @@ the project for our graduation design - "online-ride-hailing".
 >return all users.  
 7. `/api/user/{id}`:  
 >return the user with id.  
-8. `/api/user/update/{id}`:  
+8. `/api/user/{id}`:  
 >usage: POST "multipart/form-data" form ==> means the form's enctype is 'multipart/form-data'
 >>key|value
 >>------ | ------ 

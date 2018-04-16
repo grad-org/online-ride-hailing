@@ -1,9 +1,11 @@
 package com.gd.orh.userMgt.controller;
 
+import com.gd.orh.entity.ResultCode;
 import com.gd.orh.entity.User;
 import com.gd.orh.userMgt.service.UserService;
 import com.gd.orh.utils.RestResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
@@ -55,8 +57,8 @@ public class UserRestController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @ModelAttribute User updatedUser) {
+    @PostMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable("id") Long id, @ModelAttribute User updatedUser) {
         MultipartFile userImage = updatedUser.getUserImage();
 
         // If the user image is existed, save it.
@@ -65,7 +67,7 @@ public class UserRestController {
             try {
                 // Get root path
                 // If the project was deployed in the Windows, the first way is in effect,
-                // otherwise, the second way will in effect if the project was deployed in the Linux.
+                // otherwise, the second way will in effect when the project was deployed in the Linux.
                 rootDirectory =
                     new File(ResourceUtils.getURL("classpath:").getPath());
                 if (!rootDirectory.exists()) rootDirectory = new File("");
@@ -91,5 +93,24 @@ public class UserRestController {
         User user = userService.update(updatedUser);
         // Return updated user.
         return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> get(@PathVariable("id") Long id) {
+        User user = userService.findById(id);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    RestResultFactory.getFreeResult(
+                            ResultCode.NOT_FOUND, "Not found user with" + id, null));
+        }
+
+        // Return user.
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> findAll() {
+        return ResponseEntity.ok(
+                RestResultFactory.getSuccessResult().setData(userService.findAll()));
     }
 }

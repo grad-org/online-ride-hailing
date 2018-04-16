@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Transactional
 @Service
@@ -22,14 +23,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public boolean isUserExisted(String username) {
         return findByUsername(username) != null;
     }
@@ -73,5 +74,16 @@ public class UserServiceImpl implements UserService {
 
         // update the user and return it.
         return userRepository.save(persistedUser);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User findById(Long id) {
+        return userRepository.getOne(id);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }
