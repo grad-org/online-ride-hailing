@@ -1,12 +1,19 @@
+debug: true
+
 # Spring configuration
 spring:
-  # datasource
-#    url: jdbc:mysql://localhost:3306/online_ride_hailing_db?useUnicode=true&characterEncoding=UTF-8
-#    type: com.alibaba.druid.pool.DruidDataSource
-#    username: root
-#    password: root
-#    test-while-idle: true
-#    validation-query: true
+   datasource:
+    url: jdbc:mysql://localhost:3306/online_ride_hailing_db?useUnicode=true&characterEncoding=UTF-8
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      test-on-borrow: true
+      stat-view-servlet.allow: true
   # Jackson
   jackson:
       serialization:
@@ -21,24 +28,28 @@ spring:
       path: /console
       settings:
         web-allow-others: true
-  # JPA-Hibernate
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create-drop
-      naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-    properties:
-      hibernate:
-        dialect:
-          org.hibernate.dialect.MySQL5Dialect
-  # Spring Data Rest
-  data:
-    rest:
-      base-path: /api
   # static resource path
   resources:
     static-locations: classpath:static/,file:static/
+
+#Mybatis
+mybatis:
+  type-aliases-package: com.gd.orh.entity
+  mapper-locations: classpath:com/gd/orh/mapper/*.xml
+
+#Mapper
+mapper:
+  mappers:
+      - com.gd.orh.utils.MyMapper
+  not-empty: false
+  identity: MYSQL
+
+#Pagehelper
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
 
 # JWT
 jwt:
@@ -55,8 +66,8 @@ jwt:
 # Logging configuration
 logging:
   level:
+    root: DEBUG
+    tk.mybatis: TRACE
     org.springframework:
         data: DEBUG
         security: DEBUG
-
-

@@ -11,12 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@Entity
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User extends BaseEntity {
 
     @NotEmpty
     private String username;
@@ -42,17 +37,10 @@ public class User {
     @JsonIgnore
     private Date lastPasswordResetDate;
 
-    @ManyToMany
-    @JoinTable(
-            name = "USER_AUTHORITY",
-            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     @JsonIgnore
     private List<Authority> authorities;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private Passenger passenger;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private Driver driver;
 }
