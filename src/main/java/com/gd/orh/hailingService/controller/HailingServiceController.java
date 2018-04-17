@@ -26,10 +26,10 @@ public class HailingServiceController {
     @PostMapping("/passenger/{id}/trip")
     public ResponseEntity<?> publishTrip(@PathVariable Long id, @RequestBody Trip publishedTrip) {
         Passenger passenger = passengerService.findById(id);
+        publishedTrip.setPassenger(passenger);
 
         publishedTrip.setCreatedTime(new Date());
         publishedTrip.setTripStatus(TripStatus.PUBLISHED);
-        publishedTrip.setPassenger(passenger);
 
         Trip trip = tripService.create(publishedTrip);
 

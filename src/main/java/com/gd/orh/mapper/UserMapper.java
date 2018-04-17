@@ -4,4 +4,7 @@ import com.gd.orh.entity.User;
 import com.gd.orh.utils.MyMapper;
 
 public interface UserMapper extends MyMapper<User> {
+    User findById(Long id);
+
+    User findByUsername(String username);
 }

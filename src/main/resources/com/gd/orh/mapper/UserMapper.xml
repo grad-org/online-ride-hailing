@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gd.orh.mapper.UserMapper">
-  <resultMap id="AuthorityResult" type="com.gd.orh.entity.Authority">
-    <id column="Authority_ID" property="id"/>
-    <result column="NAME" property="name"/>
-  </resultMap>
-  <resultMap id="PassengerResult" type="com.gd.orh.entity.Passenger">
+  <resultMap id="PassengerResult" type="Passenger">
     <id column="PASSENGER_ID" property="id"/>
   </resultMap>
-  <resultMap id="DriverResult" type="com.gd.orh.entity.Driver">
+  <resultMap id="DriverResult" type="Driver">
     <id column="DRIVER_ID" property="id"/>
   </resultMap>
+  <resultMap id="AuthorityResult" type="Authority">
+    <id column="AUTHORITY_ID" property="id"/>
+    <result column="NAME" property="name"/>
+  </resultMap>
   
-  <resultMap id="UserResult" type="com.gd.orh.entity.User">
+  <resultMap id="UserResult" type="User">
     <id column="USER_ID" property="id"/>
     <result column="USERNAME" property="username"/>
     <result column="PASSWORD" property="password"/>
@@ -21,6 +21,34 @@
     <result column="AGE" property="age"/>
     <result column="ENABLED" property="enabled"/>
     <result column="LAST_PASSWORD_RESET_DATE" property="lastPasswordResetDate" jdbcType="TIMESTAMP"/>
+    <association property="passenger" resultMap="PassengerResult"/>
+    <association property="driver" resultMap="DriverResult"/>
     <collection property="authorities" resultMap="AuthorityResult"/>
   </resultMap>
+  
+  <select id="findById" resultMap="UserResult">
+    SELECT
+      U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
+      P.ID PASSENGER_ID,
+      D.ID DRIVER_ID,
+      A.ID AUTHORITY_ID, NAME
+    FROM USER U
+      LEFT OUTER JOIN PASSENGER P ON U.ID=P.USER_ID
+      LEFT OUTER JOIN DRIVER D ON U.ID=D.USER_ID
+      LEFT OUTER JOIN USER_AUTHORITY UA ON U.ID=UA.USER_ID LEFT OUTER JOIN AUTHORITY A ON UA.AUTHORITY_ID=A.ID
+    WHERE U.ID=#{id}
+  </select>
+
+  <select id="findByUsername" resultMap="UserResult">
+    SELECT
+    U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
+    P.ID PASSENGER_ID,
+    D.ID DRIVER_ID,
+    A.ID AUTHORITY_ID, NAME
+    FROM USER U
+    LEFT OUTER JOIN PASSENGER P ON U.ID=P.USER_ID
+    LEFT OUTER JOIN DRIVER D ON U.ID=D.USER_ID
+    LEFT OUTER JOIN USER_AUTHORITY UA ON U.ID=UA.USER_ID LEFT OUTER JOIN AUTHORITY A ON UA.AUTHORITY_ID=A.ID
+    WHERE U.USERNAME=#{username}
+  </select>
 </mapper>

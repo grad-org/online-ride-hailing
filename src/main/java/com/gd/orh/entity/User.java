@@ -34,7 +34,7 @@ public class User extends BaseEntity {
     private Boolean enabled;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     private Date lastPasswordResetDate;
 
     @JsonIgnore

@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -109,8 +110,9 @@ public class UserRestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> findAll() {
+    public ResponseEntity<?> findAll(User user) {
+        List<User> users = userService.findAll(user);
         return ResponseEntity.ok(
-                RestResultFactory.getSuccessResult().setData(userService.findAll()));
+                RestResultFactory.getSuccessResult().setData(users));
     }
 }

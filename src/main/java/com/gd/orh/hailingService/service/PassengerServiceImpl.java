@@ -1,7 +1,7 @@
 package com.gd.orh.hailingService.service;
 
 import com.gd.orh.entity.Passenger;
-import com.gd.orh.hailingService.repository.PassengerRepository;
+import com.gd.orh.mapper.PassengerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class PassengerServiceImpl implements PassengerService {
 
     @Autowired
-    private PassengerRepository passengerRepository;
+    private PassengerMapper passengerMapper;
 
     @Override
     @Transactional(readOnly = true)
     public Passenger findById(Long id) {
-        return passengerRepository.getOne(id);
+        return passengerMapper.findById(id);
     }
 }

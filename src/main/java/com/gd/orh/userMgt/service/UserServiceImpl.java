@@ -1,18 +1,20 @@
 package com.gd.orh.userMgt.service;
 
+import com.gd.orh.entity.Authority;
 import com.gd.orh.entity.AuthorityName;
 import com.gd.orh.entity.Passenger;
 import com.gd.orh.entity.User;
+import com.gd.orh.mapper.AuthorityMapper;
+import com.gd.orh.mapper.PassengerMapper;
 import com.gd.orh.mapper.UserMapper;
-import com.google.common.collect.Lists;
+import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.weekend.Weekend;
-import tk.mybatis.mapper.weekend.WeekendCriteria;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -22,14 +24,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private PassengerMapper passengerMapper;
+
+    @Autowired
+    private AuthorityMapper authorityMapper;
+
     @Override
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
-        Weekend<User> weekend = Weekend.of(User.class);
-        WeekendCriteria<User, Object> criteria = weekend.weekendCriteria();
         if (StringUtils.isNotEmpty(username)) {
-            criteria.andEqualTo("username", username);
-            return userMapper.selectOneByExample(weekend);
+            return userMapper.findByUsername(username);
         } else {
             return null;
         }
@@ -38,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public boolean isUserExisted(String username) {
-        return findByUsername(username) != null;
+        return this.findByUsername(username) != null;
     }
 
     @Override
@@ -53,23 +58,24 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(rawPassword));
 
         // Save the user and return it.
-        Long id = Long.valueOf(userMapper.insert(user));
+        userMapper.insertUseGeneratedKeys(user);
 
-        return userMapper.selectByPrimaryKey(id);
+        return user;
     }
 
     @Override
     public User createPassenger(User user) {
         // Create passenger information.
         Passenger newPassenger = new Passenger();
-        user.setPassenger(newPassenger);
         newPassenger.setUser(user);
 
-        // Grant passenger authority.
-        user.setAuthorities(Lists.newArrayList(
-                authorityRepository.findByName(AuthorityName.ROLE_PASSENGER)));
+        passengerMapper.insertPassenger(newPassenger);
 
-        return userRepository.save(user);
+        // Grant passenger authority.
+        user.setAuthorities(Arrays.asList(new Authority(AuthorityName.ROLE_PASSENGER)));
+        authorityMapper.insertUserAuthority(user);
+
+        return this.findById(user.getId());
     }
 
     @Override
@@ -89,12 +95,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User findById(Long id) {
-        return userRepository.getOne(id);
+        return userMapper.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> findAll() {
+    public List<User> findAll(User user) {
+        if (user.getPage() != null && user.getRows() != null) {
+            PageHelper.startPage(user.getPage(), user.getRows());
+        }
         return userMapper.selectAll();
     }
 }

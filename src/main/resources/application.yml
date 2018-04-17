@@ -2,25 +2,25 @@ debug: true
 
 # Spring configuration
 spring:
-   datasource:
-    url: jdbc:mysql://localhost:3306/online_ride_hailing_db?useUnicode=true&characterEncoding=UTF-8
-    type: com.alibaba.druid.pool.DruidDataSource
-    username: root
-    password: root
-    driver-class-name: com.mysql.jdbc.Driver
-    druid:
-      initial-size: 1
-      min-idle: 1
-      max-active: 20
-      test-on-borrow: true
-      stat-view-servlet.allow: true
+#   datasource:
+#    url: jdbc:mysql://localhost:3306/online_ride_hailing_db?useUnicode=true&characterEncoding=UTF-8
+#    type: com.alibaba.druid.pool.DruidDataSource
+#    username: root
+#    password: root
+#    driver-class-name: com.mysql.jdbc.Driver
+#    druid:
+#      initial-size: 1
+#      min-idle: 1
+#      max-active: 20
+#      test-on-borrow: true
+#      stat-view-servlet.allow: true
   # Jackson
   jackson:
-      serialization:
-        INDENT_OUTPUT: true
-        FAIL_ON_EMPTY_BEANS: false
-      time-zone: GMT+8
-      date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      INDENT_OUTPUT: true
+      FAIL_ON_EMPTY_BEANS: false
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
   # H2
   h2:
     console:
@@ -40,7 +40,7 @@ mybatis:
 #Mapper
 mapper:
   mappers:
-      - com.gd.orh.utils.MyMapper
+    - com.gd.orh.utils.MyMapper
   not-empty: false
   identity: MYSQL
 
@@ -58,16 +58,15 @@ jwt:
   expiration: 604800
   route:
     authentication:
-        login: api/auth/login
-        register: api/auth/register
-        refresh: api/auth/refresh
-        verify: api/auth/verify
+      login: api/auth/login
+      register: api/auth/register
+      refresh: api/auth/refresh
+      verify: api/auth/verify
 
 # Logging configuration
 logging:
   level:
-    root: DEBUG
     tk.mybatis: TRACE
     org.springframework:
-        data: DEBUG
-        security: DEBUG
+      data: DEBUG
+      security: DEBUG

@@ -11,7 +11,7 @@
         <property name="endingDelimiter" value="`"/>
 
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-            <property name="mappers" value="com.gd.orh.utils.MyMapper"/>
+            <property name="mappers" value="tk.mybatis.springboot.util.MyMapper"/>
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
@@ -20,20 +20,14 @@
                         password="root">
         </jdbcConnection>
 
-        <!--<javaModelGenerator targetPackage="entity" targetProject="src/main/java"/>-->
+        <javaModelGenerator targetPackage="entity" targetProject="src/main/java"/>
 
         <sqlMapGenerator targetPackage="com.gd.orh.mapper" targetProject="src/main/resources"/>
 
         <javaClientGenerator targetPackage="com.gd.orh.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="passenger">
-            <!--mysql 配置-->
-            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-            <!--oracle 配置-->
-            <!--<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>-->
-        </table>
-        <table tableName="authortiy">
+        <table tableName="trip">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gd.orh.mapper.PassengerMapper">
+  <resultMap id="UserResult" type="User">
+    <id column="USER_ID" property="id"/>
+    <result column="USERNAME" property="username"/>
+    <result column="PASSWORD" property="password"/>
+    <result column="NICKNAME" property="nickname"/>
+    <result column="GENDER" property="gender"/>
+    <result column="AGE" property="age"/>
+    <result column="ENABLED" property="enabled"/>
+    <result column="LAST_PASSWORD_RESET_DATE" property="lastPasswordResetDate" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <resultMap id="TripResult" type="Trip">
+    <id column="TRIP_ID" property="id"/>
+    <result column="DEPARTURE" property="departure"/>
+    <result column="DESTINATION" property="destination"/>
+    <result column="TRIP_STATUS" property="tripStatus"/>
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP"/>
+    <result column="DEPARTURE_TIME" property="departureTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <resultMap id="PassengerResult" type="Passenger">
+    <id column="PASSENGER_ID" property="id"/>
+    <association property="user" resultMap="UserResult"/>
+    <collection property="trips" resultMap="TripResult"/>
+  </resultMap>
+
+  <insert id="insertPassenger" parameterType="Passenger" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO PASSENGER(USER_ID)
+    VALUES(#{user.id})
+  </insert>
+
+  <select id="findById" resultMap="PassengerResult">
+    SELECT
+      P.ID PASSENGER_ID,
+      U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
+      T.ID TRIP_ID, DEPARTURE, DESTINATION, TRIP_STATUS, CREATED_TIME, DEPARTURE_TIME
+    FROM PASSENGER P
+      LEFT OUTER JOIN USER U ON P.USER_ID=U.ID
+      LEFT OUTER JOIN TRIP T ON P.ID=T.PASSENGER_ID
+    WHERE P.ID = #{id}
+  </select>
+</mapper>

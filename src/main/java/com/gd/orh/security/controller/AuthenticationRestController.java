@@ -92,7 +92,7 @@ public class AuthenticationRestController {
     @GetMapping("/verify")
     public ResponseEntity<?> verify(@RequestParam String username) {
         if (!userManageFacade.isUserExisted(username)) {
-            return ResponseEntity.badRequest().body(
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     RestResultFactory.getFailResult("The username is not existed!"));
         } else {
             return ResponseEntity.ok().body(RestResultFactory.getSuccessResult());
