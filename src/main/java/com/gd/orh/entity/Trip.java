@@ -1,5 +1,6 @@
 package com.gd.orh.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,7 +15,10 @@ public class Trip extends BaseEntity {
 
     private Date departureTime; // 出发时间
 
+    private TripType tripType; // 行程类型
+
     private TripStatus tripStatus; // 行程状态
 
-    private Passenger passenger;
+    @JsonProperty
+    private Passenger passenger; // 乘客资料
 }

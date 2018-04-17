@@ -59,7 +59,7 @@ public class UserRestController {
     private UserService userService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") Long id, @ModelAttribute User updatedUser) {
+    public ResponseEntity<?> update(@PathVariable("id") Long id, User updatedUser) {
         MultipartFile userImage = updatedUser.getUserImage();
 
         // If the user image is existed, save it.

@@ -4,12 +4,12 @@ function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
-        $("#orderList").show();
+        $("#tripList").show();
     }
     else {
-        $("#orderList").hide();
+        $("#tripList").hide();
     }
-    $("#orders").html("");
+    $("#trips").html("");
 }
 
 function connect() {
@@ -17,8 +17,8 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
-        stompClient.subscribe('/topic/orderBroadcast', function (order) {
-            showOrder(JSON.parse(order.body));
+        stompClient.subscribe('/topic/trip', function (trip) {
+            showTrip(JSON.parse(trip.body));
         });
     });
 }
@@ -43,11 +43,19 @@ function sendLocation() {
     stompClient.send("/app/carBroadcast", {}, JSON.stringify(location));
 
     // 直接将消息发送给订阅/topic/carBroadcast的前端，不通过后端处理
-    // stompClient.send("/topic/broadcast",{}, JSON.stringify(location));
+    // stompClient.send("/topic/carBroadcast",{}, JSON.stringify(location));
 }
 
-function showOrder(order) {
-    $("#orders").append("<tr><td>" + order + "</td></tr>");
+function showTrip(trip) {
+    $("#trips").append([
+        '<tr><td>',
+        '头像: <img src="/images/user/' + trip.passenger.user.id+'.jpg">',
+        '昵称: ' + trip.passenger.user.nickname,
+        '出行时间: ' + trip.departureTime,
+        '出发地: ' + trip.departure,
+        '目的地: ' + trip.destination,
+        '</td></tr>'
+    ].join());
 }
 
 $(function () {

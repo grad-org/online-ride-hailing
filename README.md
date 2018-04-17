@@ -68,6 +68,7 @@ the project for our graduation design - "online-ride-hailing".
 >>departure|出发地
 >>destination|目的地
 >>departureTime|出发时间(yyyy-MM-dd HH:mm:ss)
+>>tripType|REAL_TIME(实时),RESERVED(预约)  
 
 >description:  
 >>The passenger with id publish his/her trip,  

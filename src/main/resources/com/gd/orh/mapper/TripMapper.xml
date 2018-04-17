@@ -16,13 +16,13 @@
   </resultMap>
 
   <insert id="insertTrip" parameterType="Trip" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO TRIP (DEPARTURE, DESTINATION, TRIP_STATUS, CREATED_TIME, DEPARTURE_TIME, PASSENGER_ID)
-    VALUES(#{departure}, #{destination}, #{tripStatus}, #{createdTime}, #{departureTime}, #{passenger.id})
+    INSERT INTO TRIP (DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS, PASSENGER_ID)
+    VALUES(#{departure}, #{destination}, #{createdTime}, #{departureTime}, #{tripType} , #{tripStatus}, #{passenger.id})
   </insert>
 
   <select id="findById" resultMap="TripResult">
     SELECT
-      T.ID TRIP_ID, DEPARTURE, DESTINATION, TRIP_STATUS, CREATED_TIME, DEPARTURE_TIME,
+      T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
       P.ID PASSENGER_ID
     FROM TRIP T
       LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID

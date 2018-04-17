@@ -13,7 +13,9 @@ public class TripOrder extends BaseEntity {
 
     private OrderStatus orderStatus; // 订单状态
 
-    private Trip trip;
+    private Trip trip; // 行程
 
     private Driver driver;
+
+    private Passenger passenger;
 }
