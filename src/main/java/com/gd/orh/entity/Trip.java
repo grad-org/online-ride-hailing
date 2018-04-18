@@ -19,6 +19,4 @@ public class Trip extends BaseEntity {
     private TripStatus tripStatus; // 行程状态
 
     private Passenger passenger; // 乘客资料
-
-    private Driver driver; // 车主资料
 }

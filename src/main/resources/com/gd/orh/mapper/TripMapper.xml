@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gd.orh.mapper.TripMapper">
-  <resultMap id="PassengerResult" type="Passenger">
-    <id column="PASSENGER_ID" property="id"/>
+  <resultMap id="UserResult" type="User">
+    <id column="USER_ID" property="id"/>
+    <result column="USERNAME" property="username"/>
+    <result column="PASSWORD" property="password"/>
+    <result column="NICKNAME" property="nickname"/>
+    <result column="GENDER" property="gender"/>
+    <result column="AGE" property="age"/>
+    <result column="ENABLED" property="enabled"/>
+    <result column="LAST_PASSWORD_RESET_DATE" property="lastPasswordResetDate" jdbcType="TIMESTAMP"/>
   </resultMap>
 
-  <resultMap id="DriverResult" type="Driver">
-    <id column="DRIVER_ID" property="id"/>
+  <resultMap id="PassengerResult" type="Passenger">
+    <id column="PASSENGER_ID" property="id"/>
   </resultMap>
 
   <resultMap id="TripResult" type="Trip">
@@ -18,7 +25,6 @@
     <result column="TRIP_TYPE" property="tripType"/>
     <result column="TRIP_STATUS" property="tripStatus"/>
     <association property="passenger" resultMap="PassengerResult"/>
-    <association property="driver" resultMap="DriverResult"/>
   </resultMap>
 
   <insert id="insertTrip" parameterType="Trip" useGeneratedKeys="true" keyProperty="id">
@@ -30,10 +36,10 @@
     SELECT
       T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
       P.ID PASSENGER_ID,
-      D.ID DRIVER_ID
+      U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE
     FROM TRIP T
       LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
-      LEFT OUTER JOIN DRIVER D ON T.DRIVER_ID=D.ID
+      LEFT OUTER JOIN USER U ON P.USER_ID=U.ID
     WHERE T.ID=#{id}
   </select>
 
@@ -41,14 +47,20 @@
     SELECT
       T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
       P.ID PASSENGER_ID,
-      D.ID DRIVER_ID
+      U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE
     FROM TRIP T
       LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
-      LEFT OUTER JOIN DRIVER D ON T.DRIVER_ID=D.ID
+      LEFT OUTER JOIN USER U ON P.USER_ID=U.ID
     WHERE T.TRIP_STATUS=#{tripStatus}
     <if test="departureTime != null">
       AND T.DEPARTURE_TIME > #{departureTime}
     </if>
     ORDER BY T.DEPARTURE_TIME
   </select>
+
+  <update id="updateTripStatus">
+    UPDATE TRIP T
+    SET TRIP_STATUS = #{tripStatus}
+    WHERE T.ID = #{id}
+  </update>
 </mapper>

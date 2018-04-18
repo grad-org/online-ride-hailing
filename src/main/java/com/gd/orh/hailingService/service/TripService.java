@@ -13,4 +13,6 @@ public interface TripService {
     List<Trip> findByTripStatus(Trip trip);
 
     Trip findById(Long id);
+
+    boolean isTripExisted(Long id);
 }

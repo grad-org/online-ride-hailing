@@ -1,14 +1,14 @@
 package com.gd.orh.hailingService.service;
 
 import com.gd.orh.entity.Trip;
-import com.gd.orh.mapper.DriverMapper;
-import com.gd.orh.mapper.PassengerMapper;
+import com.gd.orh.entity.TripStatus;
 import com.gd.orh.mapper.TripMapper;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Transactional
@@ -18,14 +18,11 @@ public class TripServiceImpl implements TripService {
     @Autowired
     private TripMapper tripMapper;
 
-    @Autowired
-    private PassengerMapper passengerMapper;
-
-    @Autowired
-    private DriverMapper driverMapper;
-
     @Override
     public Trip publishTrip(Trip trip) {
+        trip.setCreatedTime(new Date());
+        trip.setTripStatus(TripStatus.PUBLISHED);
+
         tripMapper.insertTrip(trip);
         return trip;
     }
@@ -46,11 +43,14 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Trip findById(Long id) {
-        Trip trip = tripMapper.findById(id);
-        trip.setPassenger(passengerMapper.findById(trip.getPassenger().getId()));
-        trip.setDriver(driverMapper.findById(trip.getPassenger().getId()));
+        return tripMapper.findById(id);
+    }
 
-        return trip;
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isTripExisted(Long id) {
+        return tripMapper.existsWithPrimaryKey(id);
     }
 }

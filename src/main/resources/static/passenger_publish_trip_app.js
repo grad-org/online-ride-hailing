@@ -21,16 +21,17 @@ function publishTrip() {
     var departureTime = $("#departureTime").val();
     var tripType = $("#tripType").val();
 
+    var passengerId = 2;
     var trip = {
         "departure": departure,
         "destination": destination,
         "departureTime": departureTime,
-        "tripType": tripType
+        "tripType": tripType,
+        "passengerId": passengerId
     };
 
-    var passengerId = 2;
 
-    stompClient.send("/api/hailingService/passenger/"+passengerId+"/publishTrip", {}, JSON.stringify(trip));
+    stompClient.send("/api/hailingService/passenger/publishTrip", {}, JSON.stringify(trip));
 }
 
 $(function () {

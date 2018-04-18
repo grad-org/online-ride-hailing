@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gd.orh.mapper.TripOrderMapper">
+  <resultMap id="PassengerResult" type="Passenger">
+    <id column="PASSENGER_ID" property="id"/>
+  </resultMap>
+  
   <resultMap id="TripResult" type="Trip">
     <id column="TRIP_ID" property="id"/>
     <result column="DEPARTURE" property="departure"/>
@@ -10,7 +14,10 @@
     <result column="TRIP_TYPE" property="tripType"/>
     <result column="TRIP_STATUS" property="tripStatus"/>
     <association property="passenger" resultMap="PassengerResult"/>
-    <association property="driver" resultMap="DriverResult"/>
+  </resultMap>
+
+  <resultMap id="DriverResult" type="Driver">
+    <id column="DRIVER_ID" property="id"/>
   </resultMap>
 
   <resultMap id="TripOrderResult" type="TripOrder">
@@ -21,4 +28,23 @@
     <association property="trip" resultMap="TripResult"/>
     <association property="driver" resultMap="DriverResult"/>
   </resultMap>
+
+  <insert id="insertTripOrder" parameterType="TripOrder" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO TRIP_ORDER (ACCEPTED_TIME, ORDER_STATUS, TRIP_ID, DRIVER_ID)
+    VALUES(#{acceptedTime},#{orderStatus},#{trip.id},#{driver.id})
+  </insert>
+
+  <select id="findById" resultMap="TripOrderResult">
+    SELECT
+      T_O.ID TRIP_ORDER_ID, ACCEPTED_TIME, COMPLETED_TIME, ORDER_STATUS,
+      T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
+      P.ID PASSENGER_ID,
+      D.ID DRIVER_ID
+    FROM TRIP_ORDER T_O
+      LEFT OUTER JOIN TRIP T ON T_O.TRIP_ID=T.ID
+      LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
+      LEFT OUTER JOIN DRIVER D ON T.DRIVER_ID=D.ID
+    WHERE T_O.ID=#{id}
+  </select>
+
 </mapper>

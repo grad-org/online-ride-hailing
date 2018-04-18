@@ -11,4 +11,6 @@ public interface TripMapper extends MyMapper<Trip> {
     Trip findById(Long id);
 
     List<Trip> findByTripStatus(Trip trip);
+
+    void updateTripStatus(Trip trip);
 }
