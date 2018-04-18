@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gd.orh.mapper.TripOrderMapper">
+  <resultMap id="TripResult" type="Trip">
+    <id column="TRIP_ID" property="id"/>
+    <result column="DEPARTURE" property="departure"/>
+    <result column="DESTINATION" property="destination"/>
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP"/>
+    <result column="DEPARTURE_TIME" property="departureTime" jdbcType="TIMESTAMP"/>
+    <result column="TRIP_TYPE" property="tripType"/>
+    <result column="TRIP_STATUS" property="tripStatus"/>
+    <association property="passenger" resultMap="PassengerResult"/>
+    <association property="driver" resultMap="DriverResult"/>
+  </resultMap>
+
+  <resultMap id="TripOrderResult" type="TripOrder">
+    <id column="ID" property="id"/>
+    <result column="ACCEPTED_TIME" property="acceptedTime" jdbcType="TIMESTAMP"/>
+    <result column="COMPLETED_TIME" property="completedTime" jdbcType="TIMESTAMP"/>
+    <result column="ORDER_STATUS" property="orderStatus"/>
+    <association property="trip" resultMap="TripResult"/>
+    <association property="driver" resultMap="DriverResult"/>
+  </resultMap>
+</mapper>

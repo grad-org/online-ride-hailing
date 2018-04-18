@@ -27,7 +27,7 @@
         <javaClientGenerator targetPackage="com.gd.orh.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="trip">
+        <table tableName="trip_order">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->

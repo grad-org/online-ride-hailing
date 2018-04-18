@@ -4,7 +4,7 @@ function connect() {
     var socket = new SockJS('/orh');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/carBroadcast', function (carLocation) {
+        stompClient.subscribe('/topic/driver/uploadCarLocation', function (carLocation) {
             showCarLocation(JSON.parse(carLocation.body));
         });
     });

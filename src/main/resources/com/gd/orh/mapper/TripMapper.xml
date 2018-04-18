@@ -5,14 +5,20 @@
     <id column="PASSENGER_ID" property="id"/>
   </resultMap>
 
+  <resultMap id="DriverResult" type="Driver">
+    <id column="DRIVER_ID" property="id"/>
+  </resultMap>
+
   <resultMap id="TripResult" type="Trip">
     <id column="TRIP_ID" property="id"/>
     <result column="DEPARTURE" property="departure"/>
     <result column="DESTINATION" property="destination"/>
-    <result column="TRIP_STATUS" property="tripStatus"/>
     <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP"/>
     <result column="DEPARTURE_TIME" property="departureTime" jdbcType="TIMESTAMP"/>
-
+    <result column="TRIP_TYPE" property="tripType"/>
+    <result column="TRIP_STATUS" property="tripStatus"/>
+    <association property="passenger" resultMap="PassengerResult"/>
+    <association property="driver" resultMap="DriverResult"/>
   </resultMap>
 
   <insert id="insertTrip" parameterType="Trip" useGeneratedKeys="true" keyProperty="id">
@@ -23,9 +29,26 @@
   <select id="findById" resultMap="TripResult">
     SELECT
       T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
-      P.ID PASSENGER_ID
+      P.ID PASSENGER_ID,
+      D.ID DRIVER_ID
     FROM TRIP T
       LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
+      LEFT OUTER JOIN DRIVER D ON T.DRIVER_ID=D.ID
     WHERE T.ID=#{id}
+  </select>
+
+  <select id="findByTripStatus" resultMap="TripResult">
+    SELECT
+      T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
+      P.ID PASSENGER_ID,
+      D.ID DRIVER_ID
+    FROM TRIP T
+      LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
+      LEFT OUTER JOIN DRIVER D ON T.DRIVER_ID=D.ID
+    WHERE T.TRIP_STATUS=#{tripStatus}
+    <if test="departureTime != null">
+      AND T.DEPARTURE_TIME > #{departureTime}
+    </if>
+    ORDER BY T.DEPARTURE_TIME
   </select>
 </mapper>

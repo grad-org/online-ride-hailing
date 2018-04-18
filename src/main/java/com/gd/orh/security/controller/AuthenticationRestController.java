@@ -3,7 +3,7 @@ package com.gd.orh.security.controller;
 import com.gd.orh.entity.User;
 import com.gd.orh.security.JwtTokenUtil;
 import com.gd.orh.security.JwtUser;
-import com.gd.orh.security.external.UserManageFacade;
+import com.gd.orh.external.UserManageFacade;
 import com.gd.orh.utils.RestResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,7 +63,7 @@ public class AuthenticationRestController {
 
     @GetMapping("/user")
     public ResponseEntity<?> getUserWithAuthenticationToken(Principal principal) {
-        User user = userManageFacade.findByUsername(principal.getName());
+        User user = userManageFacade.findUserByUsername(principal.getName());
 
         if (user != null) {
             return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
@@ -107,16 +107,16 @@ public class AuthenticationRestController {
                 RestResultFactory.getFailResult("The username or password could not be empty!"));
         }
 
-        // If username is existed, register fail.
-        if (userManageFacade.isUserExisted(newUser.getUsername())) {
+        // If passenger is existed, register fail,
+        // else register the user with Passenger.
+        User persistedUser = userManageFacade.findUserByUsername(newUser.getUsername());
+        if (persistedUser != null && persistedUser.getPassenger().getId() != null) {
             return ResponseEntity.badRequest().body(
-                RestResultFactory.getFailResult("User is existed!"));
+                RestResultFactory.getFailResult("passenger is existed!"));
+        } else {
+            User user = userManageFacade.registerPassenger(newUser);
+            return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
         }
-
-        // register the user with Passenger.
-        User user = userManageFacade.registerPassenger(newUser);
-
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
     }
 
     @ExceptionHandler(AuthenticationException.class)

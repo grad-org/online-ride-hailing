@@ -15,9 +15,14 @@ function setConnected(connected) {
 function connect() {
     var socket = new SockJS('/orh');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+
+    var token = window.localStorage.getItem('Auth-Token');
+
+    stompClient.connect({'Auth-Token': token}, function (frame) {
         setConnected(true);
-        stompClient.subscribe('/topic/trip', function (trip) {
+        // 连接之后，先调用/api/trip/published获取已发布的行程并进行渲染
+
+        stompClient.subscribe('/topic/passenger/publishTrip', function (trip) {
             showTrip(JSON.parse(trip.body));
         });
     });
@@ -40,10 +45,10 @@ function sendLocation() {
     // ...
 
     // 将消息发送到后端，由后端处理数据后再推送到订阅/topic/carBroadcast的前端
-    stompClient.send("/app/carBroadcast", {}, JSON.stringify(location));
+    stompClient.send("/api/hailingService/driver/uploadCarLocation", {}, JSON.stringify(location));
 
-    // 直接将消息发送给订阅/topic/carBroadcast的前端，不通过后端处理
-    // stompClient.send("/topic/carBroadcast",{}, JSON.stringify(location));
+    // 直接将消息发送给订阅/topic/carLocation的前端，不需要通过后端处理
+    // stompClient.send("/topic/carLocation",{}, JSON.stringify(location));
 }
 
 function showTrip(trip) {
@@ -55,7 +60,7 @@ function showTrip(trip) {
         '出发地: ' + trip.departure,
         '目的地: ' + trip.destination,
         '</td></tr>'
-    ].join());
+    ].join(''));
 }
 
 $(function () {
@@ -78,6 +83,19 @@ $(function () {
             $( "#connect" ).click(function() { connect(); });
             $( "#disconnect" ).click(function() { disconnect(); });
             $( "#send" ).click(function() { sendLocation(); });
+
+            // 登录认证
+            $.ajaxSetup({
+                contentType: "application/json; charset=utf-8"
+            });
+
+            $.post({
+                url: '/api/auth/login',
+                data: JSON.stringify({username: "d1", password: "d1"}),
+                success: function(response) {
+                    window.localStorage.setItem('Auth-Token', response.data.token);
+                }
+            });
         }
         else {
             alert('failed'+this.getStatus());

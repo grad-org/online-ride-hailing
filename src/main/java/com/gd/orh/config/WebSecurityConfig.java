@@ -44,9 +44,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${jwt.route.authentication.register}")
     private String registerPath;
 
-    @Value("${jwt.route.authentication.verify}")
-    private String verifyPath;
-
     @Bean
     public PasswordEncoder passwordEncoderBean() {
         return new BCryptPasswordEncoder();
@@ -81,8 +78,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // Un-secure H2 Database
             .antMatchers("/console/**").permitAll()
 
-            .antMatchers("/**").permitAll()
-            .antMatchers("/api/user").authenticated();
+            .antMatchers("/**").permitAll();
+
+            http.formLogin();
 
         // Custom JWT based security filter
         JwtAuthorizationTokenFilter authenticationTokenFilter = new JwtAuthorizationTokenFilter(userDetailsService(), jwtTokenUtil, tokenHeader);
@@ -104,8 +102,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(
                     HttpMethod.POST,
                     loginPath,
-                    registerPath,
-                    verifyPath
+                    registerPath
             )
 
             // allow anonymous resource requests
@@ -114,8 +111,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(
                     HttpMethod.GET,
                     "/",
-                    "/*.html",
                     "/favicon.ico",
+                    "/*.html",
                     "/**/*.html",
                     "/**/*.css",
                     "/**/*.js"

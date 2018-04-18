@@ -15,6 +15,7 @@ public class JwtUserFactory {
 
     public static JwtUser create(User user) {
         return new JwtUser(
+                user.getId(),
                 user.getUsername(),
                 user.getPassword(),
                 mapToGrantedAuthorities(user.getAuthorities()),

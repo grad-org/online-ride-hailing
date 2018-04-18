@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class TripOrder extends BaseEntity {
 
-    private Date createdTime; // 创建时间
+    private Date acceptedTime; // 受理时间
 
     private Date completedTime; // 完成时间
 
@@ -15,7 +15,5 @@ public class TripOrder extends BaseEntity {
 
     private Trip trip; // 行程
 
-    private Driver driver;
-
-    private Passenger passenger;
+    private Driver driver; // 乘客资料
 }

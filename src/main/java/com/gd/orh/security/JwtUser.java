@@ -9,11 +9,16 @@ import java.util.Date;
 
 @AllArgsConstructor
 public class JwtUser implements UserDetails {
+    private final Long id;
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
     private final boolean enabled;
     private final Date lastPasswordResetDate;
+
+    public Long getId() {
+        return id;
+    }
 
     @Override
     public String getUsername() {
