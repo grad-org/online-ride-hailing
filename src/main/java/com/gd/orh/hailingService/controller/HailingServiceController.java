@@ -43,7 +43,7 @@ public class HailingServiceController {
 
     // 发布行程,广播给正在听单的车主
     @MessageMapping("/passenger/publishTrip")
-    @SendTo("/topic/passenger/publishTrip")
+    @SendTo("/topic/hailingService/passenger/publishTrip")
     public Trip publishTrip(TripDTO tripDTO) {
         Trip trip = tripDTO.convertToTrip();
 
@@ -57,7 +57,7 @@ public class HailingServiceController {
 
     // 车主上传车辆位置,广播给乘客
     @MessageMapping("/driver/uploadCarLocation")
-    @SendTo("/topic/driver/uploadCarLocation")
+    @SendTo("/topic/hailingService/driver/uploadCarLocation")
     public CarLocation uploadLocation(Location location, Principal principal) {
         CarLocation carLocation = new CarLocation();
 

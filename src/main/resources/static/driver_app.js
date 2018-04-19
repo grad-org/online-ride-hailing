@@ -22,7 +22,7 @@ function connect() {
         setConnected(true);
         // 连接之后，先调用/api/trip/published获取已发布的行程并进行渲染
 
-        stompClient.subscribe('/topic/passenger/publishTrip', function (trip) {
+        stompClient.subscribe('/topic/hailingService/passenger/publishTrip', function (trip) {
             showTrip(JSON.parse(trip.body));
         });
     });
@@ -47,8 +47,8 @@ function sendLocation() {
     // 将消息发送到后端，由后端处理数据后再推送到订阅/topic/carBroadcast的前端
     stompClient.send("/api/hailingService/driver/uploadCarLocation", {}, JSON.stringify(location));
 
-    // 直接将消息发送给订阅/topic/carLocation的前端，不需要通过后端处理
-    // stompClient.send("/topic/carLocation",{}, JSON.stringify(location));
+    // 直接将消息发送给订阅/topic/hailingService/driver/uploadCarLocation的前端，不需要通过后端处理
+    // stompClient.send("/topic/hailingService/driver/uploadCarLocation",{}, JSON.stringify(location));
 }
 
 function showTrip(trip) {

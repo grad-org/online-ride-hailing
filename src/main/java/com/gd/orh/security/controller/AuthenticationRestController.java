@@ -1,5 +1,6 @@
 package com.gd.orh.security.controller;
 
+import com.gd.orh.entity.ResultCode;
 import com.gd.orh.entity.User;
 import com.gd.orh.security.JwtTokenUtil;
 import com.gd.orh.security.JwtUser;
@@ -92,8 +93,9 @@ public class AuthenticationRestController {
     @GetMapping("/verify")
     public ResponseEntity<?> verify(@RequestParam String username) {
         if (!userManageFacade.isUserExisted(username)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    RestResultFactory.getFailResult("The username is not existed!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(RestResultFactory
+                            .getFreeResult(ResultCode.NOT_FOUND, "The username is not existed!", null));
         } else {
             return ResponseEntity.ok().body(RestResultFactory.getSuccessResult());
         }
