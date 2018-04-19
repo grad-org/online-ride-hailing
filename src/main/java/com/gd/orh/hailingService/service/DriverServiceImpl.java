@@ -16,6 +16,6 @@ public class DriverServiceImpl implements DriverService {
     @Override
     @Transactional(readOnly = true)
     public Driver findById(Long id) {
-        return driverMapper.findById(id);
+            return driverMapper.findById(id);
     }
 }

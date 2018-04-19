@@ -2,27 +2,74 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gd.orh.mapper.DriverMapper">
   <resultMap id="UserResult" type="User">
-    <id column="USER_ID" property="id" />
-    <result column="USERNAME" property="username" />
-    <result column="PASSWORD" property="password" />
-    <result column="NICKNAME" property="nickname" />
-    <result column="GENDER" property="gender" />
-    <result column="AGE" property="age" />
-    <result column="ENABLED" property="enabled" />
-    <result column="LAST_PASSWORD_RESET_DATE" jdbcType="TIMESTAMP" property="lastPasswordResetDate" />
+    <id column="USER_ID" property="id"/>
+    <result column="USERNAME" property="username"/>
+    <result column="PASSWORD" property="password"/>
+    <result column="NICKNAME" property="nickname"/>
+    <result column="GENDER" property="gender"/>
+    <result column="AGE" property="age"/>
+    <result column="ENABLED" property="enabled"/>
+    <result column="LAST_PASSWORD_RESET_DATE" property="lastPasswordResetDate" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <resultMap id="TripResult" type="Trip">
+    <id column="TRIP_ID" property="id"/>
+  </resultMap>
+  
+  <resultMap id="TripOrderResult" type="TripOrder">
+    <id column="TRIP_ORDER_ID" property="id"/>
+    <result column="ACCEPTED_TIME" property="acceptedTime"/>
+    <result column="COMPLETED_TIME" property="completedTime"/>
+    <result column="ORDER_STATUS" property="orderStatus"/>
+    <association property="trip" resultMap="TripResult"/>
+  </resultMap>
+  
+  <resultMap id="DrivingLicenseResult" type="DrivingLicense">
+    <id column="DRIVING_LICENSE_ID" property="id"/>
+    <result column="DRIVER_NAME" property="driverName"/>
+    <result column="IDENTIFICATION" property="identification"/>
+    <result column="ISSUE_DATE" property="issueDate" jdbcType="TIMESTAMP"/>
+  </resultMap>
+  
+  <resultMap id="CarResult" type="Car">
+    <id column="CAR_ID" property="id"/>
+    <result column="PLATE_NO" property="PlateNo"/>
+    <result column="BRAND" property="brand"/>
+    <result column="SERIES" property="series"/>
+    <result column="COLOR" property="color"/>
+  </resultMap>
+  
+  <resultMap id="VehicleLicenseResult" type="VehicleLicense">
+    <id column="VEHICLE_LICENSE_ID" property="id"/>
+    <result column="DRIVER_NAME" property="owner"/>
+    <result column="REGISTER_DATE" property="registerDate" jdbcType="TIMESTAMP"/>
+    <association property="car" resultMap="CarResult"/>
   </resultMap>
 
   <resultMap id="DriverResult" type="Driver">
-    <id column="DRIVER_ID" property="id" />
-    <association property="user" resultMap="UserResult" />
+    <id column="DRIVER_ID" property="id"/>
+    <association property="user" resultMap="UserResult"/>
+    <association property="drivingLicense" resultMap="Dr"/>
+    <association property="vehicleLicense" resultMap="VehicleLicenseResult"/>
+    <collection property="tripOrders" resultMap="TripOrderResult"/>
   </resultMap>
 
   <select id="findById" resultMap="DriverResult">
     SELECT
-    D.ID DRIVER_ID,
-    U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE
+      D.ID DRIVER_ID,
+      U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
+      T_O.ID TRIP_ORDER_ID, ACCEPTED_TIME, COMPLETED_TIME, ORDER_STATUS,
+      T.ID TRIP_ID,
+      DL.ID DRIVING_LICENSE_ID, DRIVER_NAME, IDENTIFICATION, ISSUE_DATE,
+      DL.ID VEHICLE_LICENSE_ID, OWNER, REGISTER_DATE, ISSUE_DATE,
+      C.ID CAR_ID,PLATE_NO, BRAND, SERIES, COLOR
     FROM DRIVER D
-    LEFT OUTER JOIN USER U ON D.USER_ID=U.ID
+    LEFT OUTER JOIN USER U ON U.ID=D.USER_ID
+    LEFT OUTER JOIN TRIP_ORDER T_O ON D.ID=T_O.DRIVER_ID
+    LEFT OUTER JOIN TRIP T ON T.ID=T_O.TRIP_ID
+    LEFT OUTER JOIN DRIVING_LICENSE DL ON D.ID=DL.DRIVER_ID
+    LEFT OUTER JOIN VEHICLE_LICENSE VL ON D.ID=VL.DRIVER_ID
+    LEFT OUTER JOIN CAR C ON VL.ID=C.VEHICLE_LICENSE_ID
     WHERE D.ID = #{id}
   </select>
 </mapper>

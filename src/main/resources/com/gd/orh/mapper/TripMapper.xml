@@ -14,6 +14,7 @@
 
   <resultMap id="PassengerResult" type="Passenger">
     <id column="PASSENGER_ID" property="id"/>
+    <association property="user" resultMap="UserResult"/>
   </resultMap>
 
   <resultMap id="TripResult" type="Trip">
@@ -63,4 +64,29 @@
     SET TRIP_STATUS = #{tripStatus}
     WHERE T.ID = #{id}
   </update>
+
+  <select id="searchPublishedTripsByCondition" resultMap="TripResult">
+    SELECT
+    T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
+    P.ID PASSENGER_ID,
+    U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE
+    FROM TRIP T
+    LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
+    LEFT OUTER JOIN USER U ON P.USER_ID=U.ID
+    WHERE
+      T.TRIP_STATUS='PUBLISHED'
+      <if test="departureTime != null ">
+        AND T.DEPARTURE_TIME &gt; #{departureTime}
+      </if>
+      <if test="tripType != null ">
+        AND T.TRIP_TYPE=#{tripType}
+      </if>
+      <if test="startDate != null ">
+        AND T.DEPARTURE_TIME &gt;= #{startDate}
+      </if>
+      <if test="endDate != null ">
+        AND T.DEPARTURE_TIME &lt;= #{endDate}
+      </if>
+    ORDER BY T.DEPARTURE_TIME
+  </select>
 </mapper>

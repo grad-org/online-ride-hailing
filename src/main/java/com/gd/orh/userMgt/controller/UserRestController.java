@@ -102,7 +102,7 @@ public class UserRestController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     RestResultFactory.getFreeResult(
-                            ResultCode.NOT_FOUND, "Not found user with" + id, null));
+                            ResultCode.NOT_FOUND, "Not found user with: " + id, null));
         }
 
         // Return user.

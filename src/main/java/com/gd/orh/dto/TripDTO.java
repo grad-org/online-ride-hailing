@@ -57,15 +57,11 @@ public class TripDTO {
     }
 
     public Trip convertToTrip() {
-        TripDTOConverter tripDTOConverter = new TripDTOConverter();
-        Trip convert = tripDTOConverter.convert(this);
-        return convert;
+        return new TripDTOConverter().convert(this);
     }
 
     public TripDTO convertFor(Trip trip) {
-        TripDTOConverter tripDTOConverter = new TripDTOConverter();
-        TripDTO convert = tripDTOConverter.reverse().convert(trip);
 
-        return convert;
+        return new TripDTOConverter().reverse().convert(trip);
     }
 }

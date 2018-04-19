@@ -1,5 +1,6 @@
 package com.gd.orh.hailingService.service;
 
+import com.gd.orh.entity.ListeningOrderCondition;
 import com.gd.orh.entity.Trip;
 import com.gd.orh.entity.TripStatus;
 import com.gd.orh.mapper.TripMapper;
@@ -29,8 +30,11 @@ public class TripServiceImpl implements TripService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Trip> findPublishedTrip(Trip trip) {
-        return this.findByTripStatus(trip);
+    public List<Trip> findPublishedTripsByListeningOrderCondition(ListeningOrderCondition condition) {
+        if (condition.getPage() != null && condition.getRows() != null) {
+            PageHelper.startPage(condition.getPage(), condition.getRows());
+        }
+        return tripMapper.searchPublishedTripsByCondition(condition);
     }
 
     @Override

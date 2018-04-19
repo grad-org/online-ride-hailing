@@ -1,9 +1,9 @@
 package com.gd.orh.hailingService.controller;
 
+import com.gd.orh.dto.CarLocationDTO;
 import com.gd.orh.dto.TripDTO;
 import com.gd.orh.dto.TripOrderDTO;
 import com.gd.orh.entity.*;
-import com.gd.orh.external.UserManageFacade;
 import com.gd.orh.hailingService.service.DriverService;
 import com.gd.orh.hailingService.service.PassengerService;
 import com.gd.orh.hailingService.service.TripOrderService;
@@ -14,12 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
 
 @RestController
 @MessageMapping("/hailingService")
@@ -39,11 +38,11 @@ public class HailingServiceController {
     private TripOrderService tripOrderService;
 
     @Autowired
-    private UserManageFacade userManageFacade;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     // 发布行程,广播给正在听单的车主
-    @MessageMapping("/passenger/publishTrip")
-    @SendTo("/topic/hailingService/passenger/publishTrip")
+    @MessageMapping("/trip/publishTrip")
+    @SendTo("/topic/hailingService/trip/publishTrip")
     public Trip publishTrip(TripDTO tripDTO) {
         Trip trip = tripDTO.convertToTrip();
 
@@ -56,21 +55,15 @@ public class HailingServiceController {
     }
 
     // 车主上传车辆位置,广播给乘客
-    @MessageMapping("/driver/uploadCarLocation")
-    @SendTo("/topic/hailingService/driver/uploadCarLocation")
-    public CarLocation uploadLocation(Location location, Principal principal) {
-        CarLocation carLocation = new CarLocation();
+    @MessageMapping("/car/uploadCarLocation")
+    @SendTo("/topic/hailingService/car/uploadCarLocation")
+    public CarLocationDTO uploadLocation(CarLocationDTO carLocationDTO) {
 
-        User user = userManageFacade.findUserByPrincipal(principal);
-
-        carLocation.setCarId(user.getNickname());
-        carLocation.setLocation(location);
-
-        return carLocation;
+        return carLocationDTO;
     }
 
     // 车主受理订单
-    @PostMapping("/driver/acceptTripOrder")
+    @PostMapping("/tripOrder/acceptTripOrder")
     public ResponseEntity<?> acceptTripOrder(@RequestBody TripOrderDTO tripOrderDTO) {
 
         Long tripId = tripOrderDTO.getTripId();
@@ -100,6 +93,14 @@ public class HailingServiceController {
 
         // 车主受理订单
         tripOrderService.acceptTripOrder(tripOrder);
+
+        // 通知乘客接单
+        simpMessagingTemplate
+            .convertAndSendToUser(
+                trip.getPassenger().getUser().getUsername(),
+                "queue/hailingService/tripOrder/acceptance-notification",
+                tripOrder
+            );
 
         return ResponseEntity.ok().body(
                 RestResultFactory.getSuccessResult(tripOrder));

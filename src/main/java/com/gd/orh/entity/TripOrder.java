@@ -15,5 +15,5 @@ public class TripOrder extends BaseEntity {
 
     private Trip trip; // 行程
 
-    private Driver driver; // 乘客资料
+    private Driver driver; // 车主资料
 }
