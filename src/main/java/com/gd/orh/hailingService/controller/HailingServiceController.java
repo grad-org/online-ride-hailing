@@ -122,9 +122,7 @@ public class HailingServiceController {
                 tripOrder
             );
 
-        return ResponseEntity
-                .ok()
-                .body(RestResultFactory.getSuccessResult(tripOrder));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrder));
     }
 
     // 确认乘客上车
@@ -173,8 +171,6 @@ public class HailingServiceController {
         // 确认乘客上车
         tripOrderService.confirmPickUp(tripOrder);
 
-        return ResponseEntity
-                .ok()
-                .body(RestResultFactory.getSuccessResult(tripOrder));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrder));
     }
 }

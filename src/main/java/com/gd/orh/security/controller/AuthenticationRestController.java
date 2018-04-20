@@ -48,18 +48,18 @@ public class AuthenticationRestController {
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest) {
+
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
         // Reload password post-security so we can generate the token
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails =
+                userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
         // Return the token
-        return ResponseEntity.ok(
-                RestResultFactory.getSuccessResult().setData(
-                        new JwtAuthenticationResponse(token)));
+        return ResponseEntity
+                .ok(RestResultFactory.getSuccessResult().setData(new JwtAuthenticationResponse(token)));
     }
 
     @GetMapping("/user")
@@ -81,23 +81,29 @@ public class AuthenticationRestController {
 
         if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
-            return ResponseEntity.ok(
-                    RestResultFactory.getSuccessResult().setData(
-                            new JwtAuthenticationResponse(refreshedToken)));
+            return ResponseEntity
+                    .ok(RestResultFactory.getSuccessResult().setData(
+                        new JwtAuthenticationResponse(refreshedToken)
+                    ));
         } else {
-            return ResponseEntity.badRequest().body(
-                    RestResultFactory.getFailResult("The token could not be refresh!"));
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult("The token could not be refresh!"));
         }
     }
 
     @GetMapping("/verify")
     public ResponseEntity<?> verify(@RequestParam String username) {
         if (!userManageFacade.isUserExisted(username)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(RestResultFactory
-                            .getFreeResult(ResultCode.NOT_FOUND, "The username is not existed!", null));
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(RestResultFactory.getFreeResult(
+                        ResultCode.NOT_FOUND,
+                        "The username is not existed!",
+                        null
+                    ));
         } else {
-            return ResponseEntity.ok().body(RestResultFactory.getSuccessResult());
+            return ResponseEntity.ok(RestResultFactory.getSuccessResult());
         }
     }
 
@@ -105,16 +111,20 @@ public class AuthenticationRestController {
     public ResponseEntity<?> registerPassenger(@RequestBody @Valid User newUser, BindingResult result) {
         // If username or password is empty, register fail.
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(
-                RestResultFactory.getFailResult("The username or password could not be empty!"));
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult(
+                        "The username or password could not be empty!"
+                    ));
         }
 
         // If passenger is existed, register fail,
         // else register the user with Passenger.
         User persistedUser = userManageFacade.findUserByUsername(newUser.getUsername());
         if (persistedUser != null && persistedUser.getPassenger().getId() != null) {
-            return ResponseEntity.badRequest().body(
-                RestResultFactory.getFailResult("passenger is existed!"));
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult("passenger is existed!"));
         } else {
             User user = userManageFacade.registerPassenger(newUser);
             return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
@@ -123,7 +133,9 @@ public class AuthenticationRestController {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleAuthenticationException(AuthenticationException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RestResultFactory.getUnauthorizedResult(e.getMessage()));
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(RestResultFactory.getUnauthorizedResult(e.getMessage()));
     }
 
     /**
@@ -134,7 +146,8 @@ public class AuthenticationRestController {
         Objects.requireNonNull(password);
 
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
             throw new AuthenticationException("User is disabled!", e);
         } catch (BadCredentialsException e) {

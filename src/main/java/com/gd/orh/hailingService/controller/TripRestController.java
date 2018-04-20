@@ -29,6 +29,7 @@ public class TripRestController {
         condition.setDepartureTime(new Date());
 
         List<Trip> trips = tripService.findPublishedTripsByListeningOrderCondition(condition);
+
         return ResponseEntity
                 .ok(RestResultFactory.getSuccessResult().setData(trips));
     }
@@ -39,11 +40,14 @@ public class TripRestController {
         if (trip == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(RestResultFactory.getFreeResult(ResultCode.NOT_FOUND, "Not found trip with: " + id, null));
+                    .body(RestResultFactory.getFreeResult(
+                        ResultCode.NOT_FOUND,
+                        "Not found trip with id: " + id + "!",
+                        null
+                    ));
         }
 
         // Return user.
-        return ResponseEntity
-                .ok(RestResultFactory.getSuccessResult().setData(trip));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(trip));
     }
 }

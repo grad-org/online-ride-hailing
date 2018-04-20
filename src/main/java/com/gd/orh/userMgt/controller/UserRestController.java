@@ -62,29 +62,33 @@ public class UserRestController {
     public ResponseEntity<?> update(@PathVariable("id") Long id, User updatedUser) {
         MultipartFile userImage = updatedUser.getUserImage();
 
-        // If the user image is existed, save it.
+        // If the user image is exists, save it.
         if (userImage != null && !userImage.isEmpty()) {
             File rootDirectory = null;
             try {
-                // Get root path
-                // If the project was deployed in the Windows, the first way is in effect,
-                // otherwise, the second way will in effect when the project was deployed in the Linux.
+                // Get root path if project was deployed in the Windows
                 rootDirectory =
-                    new File(ResourceUtils.getURL("classpath:").getPath());
+                        new File(ResourceUtils.getURL("classpath:").getPath());
+
+                // The root directory will not exists when the project was deployed in the Linux,
+                // so use this way to get root directory.
                 if (!rootDirectory.exists()) rootDirectory = new File("");
             } catch (FileNotFoundException e) { }
 
             // Set the upload path is /static/images/user.
             File uploadDirectory =
                 new File(rootDirectory.getAbsolutePath(),"static/images/user/");
+
+            // if the upload directory is not exists, create the directory.
             if (!uploadDirectory.exists()) uploadDirectory.mkdirs();
 
             // Save the user Image in the /static/images/user.
             try {
                 userImage.transferTo(new File(uploadDirectory, id + ".jpg"));
             } catch (IOException e) {
-                return ResponseEntity.badRequest().body(
-                        RestResultFactory.getFailResult("User Image saving failed!"));
+                return ResponseEntity
+                        .badRequest()
+                        .body(RestResultFactory.getFailResult("User Image saving failed!"));
             }
         }
 
@@ -100,9 +104,13 @@ public class UserRestController {
     public ResponseEntity<?> get(@PathVariable("id") Long id) {
         User user = userService.findById(id);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    RestResultFactory.getFreeResult(
-                            ResultCode.NOT_FOUND, "Not found user with: " + id, null));
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(RestResultFactory.getFreeResult(
+                        ResultCode.NOT_FOUND,
+                        "Not found user with id: " + id + "!",
+                        null
+                    ));
         }
 
         // Return user.
@@ -112,7 +120,7 @@ public class UserRestController {
     @GetMapping
     public ResponseEntity<?> findAll(User user) {
         List<User> users = userService.findAll(user);
-        return ResponseEntity.ok(
-                RestResultFactory.getSuccessResult().setData(users));
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(users));
     }
 }
