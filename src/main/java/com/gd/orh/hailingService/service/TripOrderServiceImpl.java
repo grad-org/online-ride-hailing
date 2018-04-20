@@ -34,4 +34,24 @@ public class TripOrderServiceImpl implements TripOrderService {
         tripMapper.updateTripStatus(trip);
         return tripOrder;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isTripOrderExisted(Long tripOrderId) {
+        return tripOrderMapper.existsWithPrimaryKey(tripOrderId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TripOrder findById(Long tripOrderId) {
+        return tripOrderMapper.findById(tripOrderId);
+    }
+
+    @Override
+    public void confirmPickUp(TripOrder tripOrder) {
+        tripOrder.setOrderStatus(OrderStatus.PROCESSING);
+        tripOrder.getTrip().setTripStatus(TripStatus.WAS_PICK_UP);
+        tripOrderMapper.updateOrderStatus(tripOrder);
+        tripMapper.updateTripStatus(tripOrder.getTrip());
+    }
 }

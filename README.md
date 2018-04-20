@@ -86,23 +86,30 @@ the project for our graduation design - "online-ride-hailing".
 
 >usage: GET /api/trip/{id}  
 
-12. `/api/hailingService/car/uploadCarLocation`
+12. `/hailingService/car/uploadCarLocation`
 >description:  
->>The diver upload his/her car location internally,  
->>then the passenger who is idle will draw nearby cars' driving route by the car location.  
+>>After the diver began to listen the order, his/her car location will be broadcast to the passengers.    
 
 >usage:
 >>1. `stompClient.send("/api/hailingService/car/uploadCarLocation", {}, JSON.stringify({carId, lng, lat}))`
->>2. `stompClient.subscribe("/topic/hailingService/car/uploadCarLocation", function(data))`
+>>2. `stompClient.subscribe("/topic/hailingService/car/uploadCarLocation", function(carLocation))`
 
-13. `/api/hailingService/trip/publishTrip`
+12. `/hailingService/car/uploadCarLocation/{passengerUsername}`
+>description:
+>>After the driver accept the order, his/her car location will send to the specific passenger.  
+
+>usage:
+>>1. `stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passenger's username}", {}, JSON.stringify({carId, lng, lat}))`
+>>2. `stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation',function(carLocation))`  
+
+13. `/hailingService/trip/publishTrip`
 >description:  
 >>The passenger publish the trip through WebSocket,  
 >>and the driver who is listening the trip order will subscribe it.  
 
 >usage:
 >>1. `stompClient.send("/api/hailingService/trip/publishTrip", {}, JSON.stringify({departure, destination, departureTime, tripType, passengerId}))`
->>2. `stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(data))`
+>>2. `stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(trip))`
 
 14. `/api/hailingService/tripOrder/acceptTripOrder`
 >usage: POST {tripId,driverId}
@@ -112,12 +119,21 @@ the project for our graduation design - "online-ride-hailing".
 >>return "Not Found" result if the trip is not found,  
 >>return "Bad Request" result if the trip could not be accepted.  
 
-15. `queue/hailingService/tripOrder/acceptance-notification`
+15. `/hailingService/tripOrder/acceptance-notification`
 >description:  
 >>When the driver accept the trip order,  
 >>the server will provide a queue to make the passenger receive a acceptance notification(1 to 1 communication).  
 
 >usage:
 >>1. `stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passengger's username}", {}, JSON.stringify({...}))` **(Not available temporarily!)**
->>2. `stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification", function(data))`
+>>2. `stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification", function(tripOrder))`
+
+16. `/api/hailingService/tripOrder/pickupPassenger`
+>usage: POST {tripOrderId,tripId,driverId}
+
+>description:
+>>The driver pick up passenger, update the trip order and trip status.    
+>>return "Not Found" result if the trip order is not found,  
+>>return "Bad Request" result if the giving trip is not available.  
+>>return "Bad Request" result if the trip order could not be processed.    
 

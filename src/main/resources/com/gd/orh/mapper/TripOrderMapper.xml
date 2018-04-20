@@ -33,6 +33,11 @@
     INSERT INTO TRIP_ORDER (ACCEPTED_TIME, ORDER_STATUS, TRIP_ID, DRIVER_ID)
     VALUES(#{acceptedTime},#{orderStatus},#{trip.id},#{driver.id})
   </insert>
+  <update id="updateOrderStatus">
+    UPDATE TRIP_ORDER
+    SET ORDER_STATUS=#{orderStatus}
+    WHERE TRIP_ORDER.ID=#{id}
+  </update>
 
   <select id="findById" resultMap="TripOrderResult">
     SELECT
@@ -43,7 +48,7 @@
     FROM TRIP_ORDER T_O
       LEFT OUTER JOIN TRIP T ON T_O.TRIP_ID=T.ID
       LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
-      LEFT OUTER JOIN DRIVER D ON T.DRIVER_ID=D.ID
+      LEFT OUTER JOIN DRIVER D ON T_O.DRIVER_ID=D.ID
     WHERE T_O.ID=#{id}
   </select>
 

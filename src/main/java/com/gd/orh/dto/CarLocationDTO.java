@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarLocationDTO {
-    private Long cardId;
+    private Long carId;
 
     private String lng; // 经度
 
@@ -25,7 +25,7 @@ public class CarLocationDTO {
             CarLocation carLocation = new CarLocation();
 
             Car car = new Car();
-            car.setId(carLocationDTO.getCardId());
+            car.setId(carLocationDTO.getCarId());
             carLocation.setCar(car);
 
             Location location = new Location(carLocationDTO.getLng(), carLocationDTO.getLat());
@@ -37,14 +37,14 @@ public class CarLocationDTO {
         @Override
         protected CarLocationDTO doBackward(CarLocation carLocation) {
 
-            Long cardId =
+            Long carId =
                     carLocation.getCar() != null ? carLocation.getCar().getId() : null;
             String lng =
                     carLocation.getLocation() != null ? carLocation.getLocation().getLng() : null;
             String lat =
                     carLocation.getLocation() != null ? carLocation.getLocation().getLat() : null;
 
-            CarLocationDTO carLocationDTO = new CarLocationDTO(cardId, lng, lat);
+            CarLocationDTO carLocationDTO = new CarLocationDTO(carId, lng, lat);
 
             return carLocationDTO;
         }

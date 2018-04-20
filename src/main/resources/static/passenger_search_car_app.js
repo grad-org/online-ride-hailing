@@ -30,7 +30,7 @@ function showCarLocation(carLocation) {
     // 判断车辆位置是否在指定范围内，是则显示
     // ...
 
-    $("#carLocations").append("<tr><td>" + JSON.stringify(carLocation) + "</td></tr>"); // JSON.stringify(): json对象->字符串
+    $("#carLocations").append("<tr><td>" + carLocation + "</td></tr>"); // JSON.stringify(): json对象->字符串
 }
 
 $(function () {

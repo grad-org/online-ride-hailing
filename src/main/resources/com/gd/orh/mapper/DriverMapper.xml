@@ -49,7 +49,7 @@
   <resultMap id="DriverResult" type="Driver">
     <id column="DRIVER_ID" property="id"/>
     <association property="user" resultMap="UserResult"/>
-    <association property="drivingLicense" resultMap="Dr"/>
+    <association property="drivingLicense" resultMap="DrivingLicenseResult"/>
     <association property="vehicleLicense" resultMap="VehicleLicenseResult"/>
     <collection property="tripOrders" resultMap="TripOrderResult"/>
   </resultMap>

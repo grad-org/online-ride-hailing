@@ -33,13 +33,12 @@ function publishTrip() {
     var departureTime = $("#departureTime").val();
     var tripType = $("#tripType").val();
 
-    var passengerId = 1;
     var trip = {
         "departure": departure,
         "destination": destination,
         "departureTime": departureTime,
         "tripType": tripType,
-        "passengerId": passengerId
+        "passengerId": 1
     };
 
     // 发布行程
@@ -47,9 +46,16 @@ function publishTrip() {
 
     // 接收接单通知
     stompClient.subscribe('/user/queue/hailingService/tripOrder/acceptance-notification',function(tripOrder){
-        // 跳转到监控行车页面，展示行程订单信息
+        // 取消监控附近车辆行进轨迹, unsubscribe
         // ...
+
+        // 展示行程订单信息
         showTripOrder(JSON.parse(tripOrder.body));
+
+        // 监控接单车辆的行车轨迹
+        stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation',function(carLocation){
+            console.log(JSON.parse(carLocation.body));
+        });
     });
 }
 

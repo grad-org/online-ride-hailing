@@ -7,4 +7,6 @@ public interface TripOrderMapper extends MyMapper<TripOrder> {
     Long insertTripOrder(TripOrder tripOrder);
 
     TripOrder findById(Long id);
+
+    void updateOrderStatus(TripOrder tripOrder);
 }
