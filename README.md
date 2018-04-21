@@ -150,4 +150,9 @@
 >>如果当前行程无法被处理（行程订单状态错误），返回"Bad Request"结果。  
 
 >用法： POST {tripOrderId，tripId，driverId}  
-  
+
+18. `/api/fareRule/search/findRecentFareRule` 查询当前计费规则
+>描述：
+>>返回当前计费规则  
+
+>用法：GET  

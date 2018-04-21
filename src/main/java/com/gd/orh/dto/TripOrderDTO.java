@@ -7,4 +7,7 @@ public class TripOrderDTO {
     private Long tripOrderId;
     private Long tripId;
     private Long driverId;
+    private Long fareRuleId;
+    private Long lengthOfMileage;
+    private Long lengthOfTime;
 }

@@ -69,15 +69,15 @@ public class HailingServiceController {
     public void uploadLocation(
             @DestinationVariable("passengerUsername") String passengerUsername,
             @Payload CarLocationDTO carLocationDTO) {
-        // 通知乘客接单
-        simpMessagingTemplate
-            .convertAndSendToUser(
-                passengerUsername,
-                "/queue/hailingService/car/uploadCarLocation",
-                carLocationDTO);
+
+        simpMessagingTemplate.convertAndSendToUser(
+            passengerUsername,
+            "/queue/hailingService/car/uploadCarLocation",
+            carLocationDTO
+        );
     }
 
-    // 车主受理订单
+    // 受理订单
     @PostMapping("/tripOrder/acceptTripOrder")
     public ResponseEntity<?> acceptTripOrder(@RequestBody TripOrderDTO tripOrderDTO) {
 
@@ -87,18 +87,17 @@ public class HailingServiceController {
         if (!tripService.isTripExisted(tripId)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(
-                        RestResultFactory.getFreeResult(
-                            ResultCode.NOT_FOUND,
-                            "The trip is not existed!",
-                            null
+                    .body(RestResultFactory.getFreeResult(
+                        ResultCode.NOT_FOUND,
+                        "The trip is not existed!",
+                        null
                     ));
         }
 
         Trip trip = tripService.findById(tripId);
 
         // 当前行程状态不允许被受理
-        if (trip.getTripStatus().ordinal() > TripStatus.PUBLISHED.ordinal()) {
+        if (trip.getTripStatus() != TripStatus.PUBLISHED) {
             return ResponseEntity
                     .badRequest()
                     .body(RestResultFactory.getFailResult("The trip could not be accepted!"));
@@ -156,7 +155,7 @@ public class HailingServiceController {
         }
 
         // 当前行程状态不允许车主进行确认上车
-        if (tripOrder.getOrderStatus().ordinal() > OrderStatus.ACCEPTED.ordinal()) {
+        if (tripOrder.getOrderStatus() != OrderStatus.ACCEPTED) {
             return ResponseEntity
                     .badRequest()
                     .body(RestResultFactory.getFailResult("The trip order could not be processed!"));
@@ -196,5 +195,54 @@ public class HailingServiceController {
 
         // 返回预估车费
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(predictFareDTO));
+    }
+
+    // 确认到达
+    @PostMapping("/tripOrder/confirmArrival")
+    public ResponseEntity<?> confirmArrival(@RequestBody TripOrderDTO tripOrderDTO) {
+        Long tripOrderId = tripOrderDTO.getTripOrderId();
+
+        // 行程订单不存在
+        if (!tripOrderService.isTripOrderExisted(tripOrderId)) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(RestResultFactory.getFreeResult(
+                            ResultCode.NOT_FOUND,
+                            "The trip order is not existed!",
+                            null
+                    ));
+        }
+
+        TripOrder tripOrder = tripOrderService.findById(tripOrderId);
+        Long tripId = tripOrderDTO.getTripId();
+
+        // 订单对应的行程不一致
+        if (!tripOrder.getTrip().getId().equals(tripId)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult(
+                            "The giving trip is not available!",
+                            null
+                    ));
+        }
+
+        // 当前行程状态不允许车主进行确认到达
+        if (tripOrder.getOrderStatus() != OrderStatus.PROCESSING) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult("The trip order could not be processed!"));
+        }
+
+        Trip trip = tripService.findById(tripId);
+        tripOrder.setTrip(trip);
+
+        Long driverId = tripOrderDTO.getDriverId();
+        Driver driver = driverService.findById(driverId);
+        tripOrder.setDriver(driver);
+
+        // 确认乘客上车
+        tripOrderService.confirmPickUp(tripOrder);
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrder));
     }
 }
