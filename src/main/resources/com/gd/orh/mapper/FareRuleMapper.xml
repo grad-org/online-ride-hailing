@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gd.orh.mapper.FareRuleMapper">
+  <resultMap id="FareRuleResult" type="FareRule">
+    <id column="FARE_RULE_ID" property="id"/>
+    <result column="INITIAL_PRICE" property="initialPrice"/>
+    <result column="INITIAL_MILEAGE" property="initialMileage"/>
+    <result column="UNIT_PRICE_PER_KILOMETER" property="unitPricePerKilometer"/>
+    <result column="UNIT_PRICE_PER_MINUTE" property="unitPricePerMinute"/>
+    <result column="SETUP_TIME" property="setupTime"/>
+  </resultMap>
+
+  <select id="findRecentFareRule" resultMap="FareRuleResult">
+    SELECT ID FARE_RULE_ID, INITIAL_PRICE, INITIAL_MILEAGE, UNIT_PRICE_PER_KILOMETER, UNIT_PRICE_PER_MINUTE, SETUP_TIME
+    FROM FARE_RULE
+    ORDER BY SETUP_TIME DESC
+    LIMIT 1
+  </select>
+</mapper>

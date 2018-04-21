@@ -1,13 +1,11 @@
 package com.gd.orh.hailingService.controller;
 
 import com.gd.orh.dto.CarLocationDTO;
+import com.gd.orh.dto.FareDTO;
 import com.gd.orh.dto.TripDTO;
 import com.gd.orh.dto.TripOrderDTO;
 import com.gd.orh.entity.*;
-import com.gd.orh.hailingService.service.DriverService;
-import com.gd.orh.hailingService.service.PassengerService;
-import com.gd.orh.hailingService.service.TripOrderService;
-import com.gd.orh.hailingService.service.TripService;
+import com.gd.orh.hailingService.service.*;
 import com.gd.orh.utils.RestResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +15,10 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/hailingService")
@@ -37,6 +35,9 @@ public class HailingServiceController {
 
     @Autowired
     private TripOrderService tripOrderService;
+
+    @Autowired
+    private FareRuleService fareRuleService;
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -172,5 +173,28 @@ public class HailingServiceController {
         tripOrderService.confirmPickUp(tripOrder);
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrder));
+    }
+
+    // 预估车费
+    @GetMapping("/fare/predictFare")
+    public ResponseEntity<?> predictFare(@Valid FareDTO fareDTO, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult(
+                        "The giving mileage or time could not be empty and must be greater than 0!"
+                    ));
+        }
+
+        Fare fare = fareDTO.convertToFare();
+
+        // 获取最新计费规则
+        FareRule recentFareRule = fareRuleService.findRecentFareRule();
+        fare.setFareRule(recentFareRule);
+
+        FareDTO predictFareDTO = new FareDTO().convertFor(fare);
+
+        // 返回预估车费
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(predictFareDTO));
     }
 }

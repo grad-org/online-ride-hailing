@@ -20,13 +20,30 @@
     <id column="DRIVER_ID" property="id"/>
   </resultMap>
 
+  <resultMap id="FareRuleResult" type="FareRule">
+    <id column="FARE_RULE_ID" property="id"/>
+    <result column="INITIAL_PRICE" property="initialPrice"/>
+    <result column="INITIAL_MILEAGE" property="initialMileage"/>
+    <result column="UNIT_PRICE_PER_KILOMETER" property="unitPricePerKilometer"/>
+    <result column="UNIT_PRICE_PER_MINUTE" property="unitPricePerMinute"/>
+    <result column="SETUP_TIME" property="setupTime"/>
+  </resultMap>
+
+  <resultMap id="FareResult" type="Fare">
+    <id column="FARE_ID" property="id"/>
+    <result column="LENGTH_OF_MILEAGE" property="lengthOfMileage"/>
+    <result column="LENGTH_OF_TIME" property="lengthOfTime"/>
+    <association property="fareRule" resultMap="FareRuleResult"/>
+  </resultMap>
+
   <resultMap id="TripOrderResult" type="TripOrder">
-    <id column="ID" property="id"/>
+    <id column="TRIP_ORDER_ID" property="id"/>
     <result column="ACCEPTED_TIME" property="acceptedTime" jdbcType="TIMESTAMP"/>
     <result column="COMPLETED_TIME" property="completedTime" jdbcType="TIMESTAMP"/>
     <result column="ORDER_STATUS" property="orderStatus"/>
     <association property="trip" resultMap="TripResult"/>
     <association property="driver" resultMap="DriverResult"/>
+    <association property="fare" resultMap="FareResult"/>
   </resultMap>
 
   <insert id="insertTripOrder" parameterType="TripOrder" useGeneratedKeys="true" keyProperty="id">
@@ -44,11 +61,15 @@
       T_O.ID TRIP_ORDER_ID, ACCEPTED_TIME, COMPLETED_TIME, ORDER_STATUS,
       T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
       P.ID PASSENGER_ID,
-      D.ID DRIVER_ID
+      D.ID DRIVER_ID,
+      F.ID FARE_ID, LENGTH_OF_MILEAGE, LENGTH_OF_TIME,
+      FR.ID FARE_RULE_ID, INITIAL_PRICE, INITIAL_MILEAGE, UNIT_PRICE_PER_KILOMETER, UNIT_PRICE_PER_MINUTE, SETUP_TIME
     FROM TRIP_ORDER T_O
       LEFT OUTER JOIN TRIP T ON T_O.TRIP_ID=T.ID
       LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
       LEFT OUTER JOIN DRIVER D ON T_O.DRIVER_ID=D.ID
+      LEFT OUTER JOIN FARE F ON T_O.FARE_ID=F.ID
+      LEFT OUTER JOIN FARE_RULE FR ON F.FARE_RULE_ID=FR.ID
     WHERE T_O.ID=#{id}
   </select>
 

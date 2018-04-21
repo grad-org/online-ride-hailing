@@ -11,7 +11,7 @@
         <property name="endingDelimiter" value="`"/>
 
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-            <property name="mappers" value="tk.mybatis.springboot.util.MyMapper"/>
+            <property name="mappers" value="com.gd.orh.utils.MyMapper"/>
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
@@ -27,7 +27,7 @@
         <javaClientGenerator targetPackage="com.gd.orh.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="trip_order">
+        <table tableName="FARE">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->

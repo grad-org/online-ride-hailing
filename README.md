@@ -28,7 +28,7 @@
 
 4. `/api/auth/verify` 验证用户名是否存在
 >描述：
->>如果用户名不存在，返回"OK"结果，  
+>>如果用户名存在，返回"OK"结果，  
 >>否则返回"Not Found"结果。  
 
 >用法：GET ?username=xxx  
@@ -107,7 +107,14 @@
 >>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerUsername}"， {}， JSON.stringify({carId， lng， lat}))`
 >>2. 乘客：`stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation'，function(carLocation))`  
 
-13. `/hailingService/trip/publishTrip` 乘客发布行程
+13. `/api/hailingService/fare/predictFare` 预估车费
+>描述：
+>>给定预估里程数和预估时长数，返回预估车费结果，  
+>>如果lengthOfMileage和lengthOfTime任意一个为空或任意一个不大于0，返回"Bad Request"结果。  
+
+>用法：GET ?lengthOfMileage=m&lengthOfTime=t  
+
+14. `/hailingService/trip/publishTrip` 乘客发布行程
 >描述：  
 >>乘客发布他的行程，正在听单的车主将会接收到此行程信息。
 
@@ -119,7 +126,7 @@
 >>------ | ------
 >>tripType|REAL_TIME（实时），RESERVED（预约）
 
-14. `/api/hailingService/tripOrder/acceptTripOrder` 车主受理订单，通知乘客
+15. `/api/hailingService/tripOrder/acceptTripOrder` 车主受理订单，通知乘客
 >描述：
 >>车主受理订单，并通知对应的乘客，  
 >>如果没有找到对应行程，返回"Not Found"结果，  
@@ -127,7 +134,7 @@
 
 >用法： POST {tripId，driverId}
 
-15. `/hailingService/tripOrder/acceptance-notification` 车主受理订单后触发受理通知
+16. `/hailingService/tripOrder/acceptance-notification` 车主受理订单后触发受理通知
 >描述：  
 >>乘客受理订单后，将会通过该通道通知乘客。  
 
@@ -135,7 +142,7 @@
 >>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passenggerUusername}"， {}， JSON.stringify({...}))` **（暂时未提供！）**
 >>2. 乘客：`stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification"， function(tripOrder))`
 
-16. `/api/hailingService/tripOrder/pickupPassenger` 车主确认乘客上车
+17. `/api/hailingService/tripOrder/pickupPassenger` 车主确认乘客上车
 >描述：
 >>车主确认乘客上车后，更新行程订单状态和行程状态。    
 >>如果行程订单没找到，返回"Not Found"结果，  
