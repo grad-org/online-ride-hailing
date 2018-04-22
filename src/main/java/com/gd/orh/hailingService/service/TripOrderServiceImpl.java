@@ -49,16 +49,18 @@ public class TripOrderServiceImpl implements TripOrderService {
     }
 
     @Override
-    public void confirmPickUp(TripOrder tripOrder) {
+    public TripOrder confirmPickUp(TripOrder tripOrder) {
         tripOrder.setOrderStatus(OrderStatus.PROCESSING);
         tripOrderMapper.updateOrderStatus(tripOrder);
 
         tripOrder.getTrip().setTripStatus(TripStatus.WAS_PICK_UP);
         tripMapper.updateTripStatus(tripOrder.getTrip());
+
+        return tripOrder;
     }
 
     @Override
-    public void confirmArrival(TripOrder tripOrder) {
+    public TripOrder confirmArrival(TripOrder tripOrder) {
         tripOrder.setCompletedTime(new Date());
         tripOrderMapper.updateCompletedTime(tripOrder);
 
@@ -71,5 +73,7 @@ public class TripOrderServiceImpl implements TripOrderService {
 
         tripOrder.getTrip().setTripStatus(TripStatus.ARRIVED);
         tripMapper.updateTripStatus(tripOrder.getTrip());
+
+        return tripOrder;
     }
 }

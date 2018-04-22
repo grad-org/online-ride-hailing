@@ -19,12 +19,12 @@ function disconnect() {
 }
 
 function showTripOrder(tripOrder) {
-    console.log("司机名: " + tripOrder.driver.user.nickname);
-    console.log("头像: " + "/images/user/" + tripOrder.driver.user.id + '.jpg');
-    console.log("车牌号: " + tripOrder.driver.vehicleLicense.car.plateNo);
-    console.log("车型: " + tripOrder.driver.vehicleLicense.car.brand + '#' + tripOrder.driver.vehicleLicense.car.series + '#' + tripOrder.driver.vehicleLicense.car.color);
-    console.log("出发地: " + tripOrder.trip.departure);
-    console.log("目的地: " + tripOrder.trip.destination);
+    console.log("司机名: " + tripOrder.driverNickname);
+    console.log("头像: " + "/images/user/" + tripOrder.driverUserId + '.jpg');
+    console.log("车牌号: " + tripOrder.plateNo);
+    console.log("车型: " + tripOrder.brand + '#' + tripOrder.series + '#' + tripOrder.color);
+    console.log("出发地: " + tripOrder.departure);
+    console.log("目的地: " + tripOrder.destination);
 }
 
 function publishTrip() {
@@ -42,8 +42,8 @@ function publishTrip() {
     };
 
     // 发布行程
-    // stompClient.send("/api/hailingService/trip/publishTrip", {}, JSON.stringify(trip)); -- 该方法将不提供 --
-    // 已改成通过POST方法发布行程
+    // stompClient.send("/api/hailingService/trip/publishTrip", {}, JSON.stringify(trip)); -- 该方法已不提供 --
+    // 改成用POST来发布行程
 
     // 接收接单通知
     stompClient.subscribe('/user/queue/hailingService/tripOrder/acceptance-notification',function(tripOrder){

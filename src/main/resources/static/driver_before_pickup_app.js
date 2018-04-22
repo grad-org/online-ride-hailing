@@ -69,8 +69,8 @@ function sendLocation() {
 function showTrip(trip) {
     $("#trips").append([
         '<tr><td>',
-        '头像: <img src="/images/user/' + trip.passenger.user.id+'.jpg">',
-        '昵称: ' + trip.passenger.user.nickname,
+        '头像: <img src="/images/user/' + trip.passengerUserId+'.jpg">',
+        '昵称: ' + trip.passengerNickname,
         '出行时间: ' + trip.departureTime,
         '出发地: ' + trip.departure,
         '目的地: ' + trip.destination,

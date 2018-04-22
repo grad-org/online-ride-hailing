@@ -48,17 +48,21 @@ public class HailingServiceController {
         Trip trip = tripDTO.convertToTrip();
 
         Passenger passenger = passengerService.findById(trip.getPassenger().getId());
+
         trip.setPassenger(passenger);
 
-        Trip publishedTrip = tripService.publishTrip(trip);
+        trip = tripService.publishTrip(trip);
 
-        simpMessagingTemplate
-                .convertAndSend(
-                        "/topic/hailingService/trip/publishTrip",
-                        publishedTrip
-                );
+        TripDTO publishedTripDTO = new TripDTO().convertFor(trip);
 
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult(publishedTrip));
+        publishedTripDTO.setDepartureLocation(tripDTO.getDepartureLocation());
+
+        simpMessagingTemplate.convertAndSend(
+            "/topic/hailingService/trip/publishTrip",
+            publishedTripDTO
+        );
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(publishedTripDTO));
     }
 
     // 车主上传车辆位置,广播给乘客
@@ -85,11 +89,10 @@ public class HailingServiceController {
     // 受理订单
     @PostMapping("/tripOrder/acceptTripOrder")
     public ResponseEntity<?> acceptTripOrder(@RequestBody TripOrderDTO tripOrderDTO) {
-
-        Long tripId = tripOrderDTO.getTripId();
+        TripOrder tripOrder = tripOrderDTO.convertToTripOrder();
 
         // 行程不存在
-        if (!tripService.isTripExisted(tripId)) {
+        if (!tripService.isTripExisted(tripOrder.getTrip().getId())) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(RestResultFactory.getFreeResult(
@@ -99,7 +102,7 @@ public class HailingServiceController {
                     ));
         }
 
-        Trip trip = tripService.findById(tripId);
+        Trip trip = tripService.findById(tripOrder.getTrip().getId());
 
         // 当前行程状态不允许被受理
         if (trip.getTripStatus() != TripStatus.PUBLISHED) {
@@ -108,26 +111,24 @@ public class HailingServiceController {
                     .body(RestResultFactory.getFailResult("The trip could not be accepted!"));
         }
 
-        Long driverId = tripOrderDTO.getDriverId();
+        Driver driver = driverService.findById(tripOrder.getDriver().getId());
 
-        Driver driver = driverService.findById(driverId);
-
-        TripOrder tripOrder = new TripOrder();
         tripOrder.setDriver(driver);
         tripOrder.setTrip(trip);
 
         // 车主受理订单
-        tripOrderService.acceptTripOrder(tripOrder);
+        tripOrder = tripOrderService.acceptTripOrder(tripOrder);
+
+        TripOrderDTO acceptedTripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
 
         // 通知乘客接单
-        simpMessagingTemplate
-            .convertAndSendToUser(
-                trip.getPassenger().getUser().getUsername(),
-                "/queue/hailingService/tripOrder/acceptance-notification",
-                tripOrder
-            );
+        simpMessagingTemplate.convertAndSendToUser(
+            trip.getPassenger().getUser().getUsername(),
+            "/queue/hailingService/tripOrder/acceptance-notification",
+            acceptedTripOrderDTO
+        );
 
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrder));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(acceptedTripOrderDTO));
     }
 
     // 确认乘客上车

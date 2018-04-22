@@ -9,7 +9,7 @@ public interface TripOrderService {
 
     TripOrder findById(Long tripOrderId);
 
-    void confirmPickUp(TripOrder tripOrder);
+    TripOrder confirmPickUp(TripOrder tripOrder);
 
-    void confirmArrival(TripOrder tripOrder);
+    TripOrder confirmArrival(TripOrder tripOrder);
 }

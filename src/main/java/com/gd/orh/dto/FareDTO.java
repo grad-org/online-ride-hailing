@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 
 @Data
 public class FareDTO {
+    private Long fareId;
+
     @NotNull
     @Min(value = 0)
     private BigDecimal lengthOfMileage; // 里程数
@@ -35,6 +37,7 @@ public class FareDTO {
         @Override
         protected Fare doForward(FareDTO fareDTO) {
             Fare fare = new Fare();
+            fare.setId(fareDTO.getFareId());
 
             BeanUtils.copyProperties(fareDTO, fare);
 

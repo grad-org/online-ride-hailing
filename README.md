@@ -115,11 +115,11 @@
 >用法：GET ?lengthOfMileage=m&lengthOfTime=t  
 
 14. `api/hailingService/trip/publishTrip` 乘客发布行程
->描述：  
+>描述：
 >>乘客发布他的行程，正在听单的车主将会接收到此行程信息。
 
 >用法：
->>1. 乘客：POST {departure,destination,departureTime,tripType,passengerId}
+>>1. 乘客：POST {departure,destination,departureTime,tripType,passengerId,departureLocation:{lng,lat}}
 >>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(trip))`
 
 >>参数|可选值
