@@ -50,6 +50,7 @@
     INSERT INTO TRIP_ORDER (ACCEPTED_TIME, ORDER_STATUS, TRIP_ID, DRIVER_ID)
     VALUES(#{acceptedTime},#{orderStatus},#{trip.id},#{driver.id})
   </insert>
+
   <update id="updateOrderStatus">
     UPDATE TRIP_ORDER
     SET ORDER_STATUS=#{orderStatus}
@@ -73,4 +74,15 @@
     WHERE T_O.ID=#{id}
   </select>
 
+  <update id="updateFare">
+    UPDATE TRIP_ORDER
+    SET FARE_ID=#{fare.id}
+    WHERE TRIP_ORDER.ID=#{id}
+  </update>
+
+  <update id="updateCompletedTime">
+    UPDATE TRIP_ORDER
+    SET COMPLETED_TIME=#{completedTime}
+    WHERE TRIP_ORDER.ID=#{id}
+  </update>
 </mapper>

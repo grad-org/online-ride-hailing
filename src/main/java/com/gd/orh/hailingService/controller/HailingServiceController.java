@@ -43,9 +43,8 @@ public class HailingServiceController {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     // 发布行程,广播给正在听单的车主
-    @MessageMapping("/hailingService/trip/publishTrip")
-    @SendTo("/topic/hailingService/trip/publishTrip")
-    public Trip publishTrip(TripDTO tripDTO) {
+    @PostMapping("/trip/publishTrip")
+    public ResponseEntity<?> publishTrip(@RequestBody TripDTO tripDTO) {
         Trip trip = tripDTO.convertToTrip();
 
         Passenger passenger = passengerService.findById(trip.getPassenger().getId());
@@ -53,7 +52,13 @@ public class HailingServiceController {
 
         Trip publishedTrip = tripService.publishTrip(trip);
 
-        return publishedTrip;
+        simpMessagingTemplate
+                .convertAndSend(
+                        "/topic/hailingService/trip/publishTrip",
+                        publishedTrip
+                );
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(publishedTrip));
     }
 
     // 车主上传车辆位置,广播给乘客
@@ -230,8 +235,15 @@ public class HailingServiceController {
         if (tripOrder.getOrderStatus() != OrderStatus.PROCESSING) {
             return ResponseEntity
                     .badRequest()
-                    .body(RestResultFactory.getFailResult("The trip order could not be processed!"));
+                    .body(RestResultFactory.getFailResult("The trip order could not be confirmed!"));
         }
+
+        FareRule fareRule = fareRuleService.findById(tripOrderDTO.getFareRuleId());
+        Fare fare = new Fare(
+                tripOrderDTO.getLengthOfMileage(),
+                tripOrderDTO.getLengthOfTime(),
+                fareRule);
+        tripOrder.setFare(fare);
 
         Trip trip = tripService.findById(tripId);
         tripOrder.setTrip(trip);
@@ -240,8 +252,8 @@ public class HailingServiceController {
         Driver driver = driverService.findById(driverId);
         tripOrder.setDriver(driver);
 
-        // 确认乘客上车
-        tripOrderService.confirmPickUp(tripOrder);
+        // 确认到达
+        tripOrderService.confirmArrival(tripOrder);
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrder));
     }

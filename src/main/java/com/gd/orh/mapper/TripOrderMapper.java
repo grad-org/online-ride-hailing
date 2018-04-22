@@ -4,9 +4,13 @@ import com.gd.orh.entity.TripOrder;
 import com.gd.orh.utils.MyMapper;
 
 public interface TripOrderMapper extends MyMapper<TripOrder> {
-    Long insertTripOrder(TripOrder tripOrder);
+    void insertTripOrder(TripOrder tripOrder);
 
     TripOrder findById(Long id);
 
     void updateOrderStatus(TripOrder tripOrder);
+
+    void updateFare(TripOrder tripOrder);
+
+    void updateCompletedTime(TripOrder tripOrder);
 }

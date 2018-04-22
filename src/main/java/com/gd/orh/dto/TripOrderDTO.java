@@ -2,12 +2,14 @@ package com.gd.orh.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class TripOrderDTO {
     private Long tripOrderId;
     private Long tripId;
     private Long driverId;
     private Long fareRuleId;
-    private Long lengthOfMileage;
-    private Long lengthOfTime;
+    private BigDecimal lengthOfMileage;
+    private Integer lengthOfTime;
 }

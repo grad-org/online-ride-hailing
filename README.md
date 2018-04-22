@@ -114,12 +114,12 @@
 
 >用法：GET ?lengthOfMileage=m&lengthOfTime=t  
 
-14. `/hailingService/trip/publishTrip` 乘客发布行程
+14. `api/hailingService/trip/publishTrip` 乘客发布行程
 >描述：  
 >>乘客发布他的行程，正在听单的车主将会接收到此行程信息。
 
 >用法：
->>1. 乘客：`stompClient.send("/api/hailingService/trip/publishTrip"， {}， JSON.stringify({departure， destination， departureTime， tripType， passengerId}))`
+>>1. 乘客：POST {departure， destination， departureTime， tripType， passengerId}
 >>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip"， function(trip))`
 
 >>参数|可选值
@@ -131,6 +131,7 @@
 >>车主受理订单，并通知对应的乘客，  
 >>如果没有找到对应行程，返回"Not Found"结果，  
 >>如果当前行程无法被受理（行程状态错误），返回"Bad Request"结果。 
+>>返回行程订单  
 
 >用法： POST {tripId，driverId}
 
@@ -148,6 +149,7 @@
 >>如果行程订单没找到，返回"Not Found"结果，  
 >>如果给定的行程是无效的，返回"Bad Request"结果，    
 >>如果当前行程无法被处理（行程订单状态错误），返回"Bad Request"结果。  
+>>返回行程订单
 
 >用法： POST {tripOrderId，tripId，driverId}  
 
@@ -156,3 +158,13 @@
 >>返回当前计费规则  
 
 >用法：GET  
+
+19. `/api/hailingService/tripOrder/confirmArrival` 车主确认到达
+>描述：
+>>车主确认乘客到达后，结束计算行程费用，更新行程订单状态和行程状态，并插入车费明细记录。    
+>>如果行程订单没找到，返回"Not Found"结果，  
+>>如果给定的行程是无效的，返回"Bad Request"结果，    
+>>如果当前行程无法被确认完成（行程订单状态错误），返回"Bad Request"结果。  
+>>返回行程订单  
+
+>用法： POST {tripOrderId,tripId,driverId,FareRuleId,lengthOfMileage,lengthOfTime}  

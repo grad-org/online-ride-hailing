@@ -1,9 +1,7 @@
 package com.gd.orh.hailingService.service;
 
-import com.gd.orh.entity.OrderStatus;
-import com.gd.orh.entity.Trip;
-import com.gd.orh.entity.TripOrder;
-import com.gd.orh.entity.TripStatus;
+import com.gd.orh.entity.*;
+import com.gd.orh.mapper.FareMapper;
 import com.gd.orh.mapper.TripMapper;
 import com.gd.orh.mapper.TripOrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +19,9 @@ public class TripOrderServiceImpl implements TripOrderService {
 
     @Autowired
     private TripMapper tripMapper;
+
+    @Autowired
+    private FareMapper fareMapper;
 
     @Override
     public TripOrder acceptTripOrder(TripOrder tripOrder) {
@@ -50,8 +51,25 @@ public class TripOrderServiceImpl implements TripOrderService {
     @Override
     public void confirmPickUp(TripOrder tripOrder) {
         tripOrder.setOrderStatus(OrderStatus.PROCESSING);
-        tripOrder.getTrip().setTripStatus(TripStatus.WAS_PICK_UP);
         tripOrderMapper.updateOrderStatus(tripOrder);
+
+        tripOrder.getTrip().setTripStatus(TripStatus.WAS_PICK_UP);
+        tripMapper.updateTripStatus(tripOrder.getTrip());
+    }
+
+    @Override
+    public void confirmArrival(TripOrder tripOrder) {
+        tripOrder.setCompletedTime(new Date());
+        tripOrderMapper.updateCompletedTime(tripOrder);
+
+        Fare fare = tripOrder.getFare();
+        fareMapper.insertFare(fare);
+
+        tripOrder.setOrderStatus(OrderStatus.COMPLETED);
+        tripOrderMapper.updateOrderStatus(tripOrder);
+        tripOrderMapper.updateFare(tripOrder);
+
+        tripOrder.getTrip().setTripStatus(TripStatus.ARRIVED);
         tripMapper.updateTripStatus(tripOrder.getTrip());
     }
 }

@@ -1,11 +1,15 @@
 package com.gd.orh.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 // 车费明细
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Fare extends BaseEntity {
 
     private BigDecimal lengthOfMileage; // 里程数

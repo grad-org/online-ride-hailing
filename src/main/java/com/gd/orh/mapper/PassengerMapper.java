@@ -6,5 +6,5 @@ import com.gd.orh.utils.MyMapper;
 public interface PassengerMapper extends MyMapper<Passenger> {
     Passenger findById(Long id);
 
-    Long insertPassenger(Passenger passenger);
+    void insertPassenger(Passenger passenger);
 }

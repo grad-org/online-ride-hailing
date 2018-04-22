@@ -7,7 +7,7 @@ import com.gd.orh.utils.MyMapper;
 import java.util.List;
 
 public interface TripMapper extends MyMapper<Trip> {
-    Long insertTrip(Trip trip);
+    void insertTrip(Trip trip);
 
     Trip findById(Long id);
 

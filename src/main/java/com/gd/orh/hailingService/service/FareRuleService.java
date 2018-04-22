@@ -18,4 +18,9 @@ public class FareRuleService {
     public FareRule findRecentFareRule() {
         return fareRuleMapper.findRecentFareRule();
     }
+
+    @Transactional(readOnly = true)
+    public FareRule findById(Long id) {
+        return fareRuleMapper.selectByPrimaryKey(id);
+    }
 }

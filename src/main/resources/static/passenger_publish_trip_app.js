@@ -42,7 +42,8 @@ function publishTrip() {
     };
 
     // 发布行程
-    stompClient.send("/api/hailingService/trip/publishTrip", {}, JSON.stringify(trip));
+    // stompClient.send("/api/hailingService/trip/publishTrip", {}, JSON.stringify(trip)); -- 该方法将不提供 --
+    // 已改成通过POST方法发布行程
 
     // 接收接单通知
     stompClient.subscribe('/user/queue/hailingService/tripOrder/acceptance-notification',function(tripOrder){
