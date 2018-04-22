@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -25,9 +24,6 @@ public class TripRestController {
 
     @GetMapping("/search/findPublishedTripByCondition")
     public ResponseEntity<?> findPublishedTrip(ListeningOrderCondition condition) {
-
-        condition.setDepartureTime(new Date());
-
         List<Trip> trips = tripService.findPublishedTripsByListeningOrderCondition(condition);
 
         return ResponseEntity

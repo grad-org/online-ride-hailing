@@ -76,8 +76,11 @@
 >>根据设置条件返回未过期的（出发时间大于当前时间）已发布行程。  
 >>如果没有为page和row显式赋值，默认page（页码）为1，rows（每页记录数）为10。  
 
->用法：GET [?page,row,tripType,startDate,endDate]
->>如tripType,startDate,endDate没有指定，则默认没有限制
+>用法：GET [?page,row,tripType,startDate,endDate]  
+>>如tripType,startDate,endDate没有指定，则默认没有限制  
+>>查询已发布的实时行程：GET?tripType=REAL_TIME[,page,row]
+>>查询已发布的预约行程：GET?tripType=RESERVED[,startDate,endDate,page,row]
+>>查询已发布的所有行程：GET?[,startDate,endDate,page,row]
 
 >>参数|可选值
 >>------ | ------
@@ -121,6 +124,8 @@
 >用法：
 >>1. 乘客：POST {departure,destination,departureTime,tripType,passengerId,departureLocation:{lng,lat}}
 >>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(trip))`
+
+>>实时行程不用指定departureTime，即departureTime为null
 
 >>参数|可选值
 >>------ | ------

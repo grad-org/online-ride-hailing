@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gd.orh.mapper.TripMapper">
+
   <resultMap id="UserResult" type="User">
     <id column="USER_ID" property="id"/>
     <result column="USERNAME" property="username"/>
@@ -73,20 +74,36 @@
     FROM TRIP T
     LEFT OUTER JOIN PASSENGER P ON T.PASSENGER_ID=P.ID
     LEFT OUTER JOIN USER U ON P.USER_ID=U.ID
-    WHERE
-      T.TRIP_STATUS='PUBLISHED'
-      <if test="departureTime != null ">
-        AND T.DEPARTURE_TIME &gt; #{departureTime}
-      </if>
-      <if test="tripType != null ">
-        AND T.TRIP_TYPE=#{tripType}
-      </if>
-      <if test="startDate != null ">
-        AND T.DEPARTURE_TIME &gt;= #{startDate}
-      </if>
-      <if test="endDate != null ">
-        AND T.DEPARTURE_TIME &lt;= #{endDate}
-      </if>
-    ORDER BY T.DEPARTURE_TIME
+    <choose>
+      <when test="tripType == null">
+        WHERE T.TRIP_STATUS='PUBLISHED' AND T.TRIP_TYPE='REAL_TIME'
+        <choose>
+          <when test="startDate == null and endDate == null">
+            OR (T.TRIP_STATUS='PUBLISHED' AND T.TRIP_TYPE='RESERVED' AND T.DEPARTURE_TIME &gt; #{departureTime})
+          </when>
+          <when test="startDate != null and endDate != null">
+            OR (T.TRIP_STATUS='PUBLISHED' AND T.TRIP_TYPE='RESERVED' AND T.DEPARTURE_TIME &gt;= #{startDate} AND T.DEPARTURE_TIME &lt;= #{endDate} AND T.DEPARTURE_TIME &gt; #{departureTime})
+          </when>
+          <when test="startDate != null">
+            OR (T.TRIP_STATUS='PUBLISHED' AND T.TRIP_TYPE='RESERVED' AND T.DEPARTURE_TIME &gt;= #{startDate} AND T.DEPARTURE_TIME &gt; #{departureTime})
+          </when>
+          <when test="endDate != null">
+            OR (T.TRIP_STATUS='PUBLISHED' AND T.TRIP_TYPE='RESERVED' AND T.DEPARTURE_TIME &lt;= #{endDate} AND T.DEPARTURE_TIME &gt; #{departureTime})
+          </when>
+        </choose>
+      </when>
+      <when test="tripType == @com.gd.orh.entity.TripType@REAL_TIME">
+        WHERE T.TRIP_STATUS='PUBLISHED' AND T.TRIP_TYPE='REAL_TIME'
+      </when>
+      <when test="tripType == @com.gd.orh.entity.TripType@RESERVED">
+        WHERE T.TRIP_STATUS='PUBLISHED' AND T.TRIP_TYPE='RESERVED' AND T.DEPARTURE_TIME &gt; #{departureTime}
+        <if test="startDate != null">
+          AND T.DEPARTURE_TIME &gt; #{startDate}
+        </if>
+        <if test="endDate != null">
+          AND T.DEPARTURE_TIME &lt; #{endDate}
+        </if>
+      </when>
+    </choose>
   </select>
 </mapper>

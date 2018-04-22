@@ -31,6 +31,8 @@ public class TripServiceImpl implements TripService {
     @Override
     @Transactional(readOnly = true)
     public List<Trip> findPublishedTripsByListeningOrderCondition(ListeningOrderCondition condition) {
+        condition.setDepartureTime(new Date());
+
         if (condition.getPage() != null && condition.getRows() != null) {
             PageHelper.startPage(condition.getPage(), condition.getRows());
         }

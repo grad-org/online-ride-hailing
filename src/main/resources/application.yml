@@ -67,6 +67,6 @@ jwt:
 logging:
   level:
     tk.mybatis: TRACE
+    com.gd.orh.mapper: DEBUG
     org.springframework:
-      data: DEBUG
       security: DEBUG
