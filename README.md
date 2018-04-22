@@ -133,7 +133,7 @@
 >>如果当前行程无法被受理（行程状态错误），返回"Bad Request"结果。 
 >>返回行程订单  
 
->用法： POST {tripId,driverId}
+>用法： POST {tripId,driverId,departureLocation:{lng,lat}}
 
 16. `/hailingService/tripOrder/acceptance-notification` 车主受理订单后触发受理通知
 >描述：  
