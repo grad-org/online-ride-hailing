@@ -11,7 +11,7 @@
 >>如果登录成功，则返回token，  
 >>否则返回"Unauthorized"结果。
 
->用法： POST {username， password}  
+>用法： POST {username,password}  
 
 2. `/api/auth/user` 获取当前用户信息
 >描述：
@@ -38,7 +38,7 @@
 >>如果注册乘客成功，返回用户信息，  
 >>否则返回"Bad Request"结果。  
 
->用法：POST {username，password}  
+>用法：POST {username,password}  
 
 6. `/api/user` 返回所有用户信息
 >描述：  
@@ -96,16 +96,16 @@
 >>在车主开始听单后，定时将车辆位置推送到此通道。  
 
 >用法：
->>1. 车主：`stompClient.send("/api/hailingService/car/uploadCarLocation"， {}， JSON.stringify({carId， lng， lat}))`
->>2. 乘客：`stompClient.subscribe("/topic/hailingService/car/uploadCarLocation"， function(carLocation))`
+>>1. 车主：`stompClient.send("/api/hailingService/car/uploadCarLocation", {}, JSON.stringify({carId, lng, lat}))`
+>>2. 乘客：`stompClient.subscribe("/topic/hailingService/car/uploadCarLocation", function(carLocation))`
 
 12. `/hailingService/car/uploadCarLocation/{passengerUsername}` 车主上传车辆位置并通知用户名为{passengerUsername}的乘客
 >描述：
 >>在车主受理订单后，定时将车辆位置推送到此通道，乘客通过订阅此通道监控车辆行进轨迹。  
 
 >用法：
->>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerUsername}"， {}， JSON.stringify({carId， lng， lat}))`
->>2. 乘客：`stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation'，function(carLocation))`  
+>>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerUsername}", {}, JSON.stringify({carId, lng, lat}))`
+>>2. 乘客：`stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation', function(carLocation))`  
 
 13. `/api/hailingService/fare/predictFare` 预估车费
 >描述：
@@ -119,8 +119,8 @@
 >>乘客发布他的行程，正在听单的车主将会接收到此行程信息。
 
 >用法：
->>1. 乘客：POST {departure， destination， departureTime， tripType， passengerId}
->>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip"， function(trip))`
+>>1. 乘客：POST {departure,destination,departureTime,tripType,passengerId}
+>>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(trip))`
 
 >>参数|可选值
 >>------ | ------
@@ -133,15 +133,15 @@
 >>如果当前行程无法被受理（行程状态错误），返回"Bad Request"结果。 
 >>返回行程订单  
 
->用法： POST {tripId，driverId}
+>用法： POST {tripId,driverId}
 
 16. `/hailingService/tripOrder/acceptance-notification` 车主受理订单后触发受理通知
 >描述：  
 >>乘客受理订单后，将会通过该通道通知乘客。  
 
 >用法：
->>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passenggerUusername}"， {}， JSON.stringify({...}))` **（暂时未提供！）**
->>2. 乘客：`stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification"， function(tripOrder))`
+>>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passenggerUusername}", {}, JSON.stringify({...}))` **（暂时未提供！）**
+>>2. 乘客：`stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification",function(tripOrder))`
 
 17. `/api/hailingService/tripOrder/pickupPassenger` 车主确认乘客上车
 >描述：
@@ -151,7 +151,7 @@
 >>如果当前行程无法被处理（行程订单状态错误），返回"Bad Request"结果。  
 >>返回行程订单
 
->用法： POST {tripOrderId，tripId，driverId}  
+>用法： POST {tripOrderId,tripId,driverId}  
 
 18. `/api/fareRule/search/findRecentFareRule` 查询当前计费规则
 >描述：
