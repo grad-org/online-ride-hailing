@@ -78,9 +78,9 @@
 
 >用法：GET [?page,row,tripType,startDate,endDate]  
 >>如tripType,startDate,endDate没有指定，则默认没有限制  
->>查询已发布的实时行程：GET?tripType=REAL_TIME[,page,row]
->>查询已发布的预约行程：GET?tripType=RESERVED[,startDate,endDate,page,row]
->>查询已发布的所有行程：GET?[,startDate,endDate,page,row]
+>>查询已发布的实时行程：GET?tripType=REAL_TIME[,page,row]  
+>>查询已发布的预约行程：GET?tripType=RESERVED[,startDate,endDate,page,row]  
+>>查询已发布的所有行程：GET?[,startDate,endDate,page,row]  
 
 >>参数|可选值
 >>------ | ------
@@ -122,7 +122,7 @@
 >>乘客发布他的行程，正在听单的车主将会接收到此行程信息。
 
 >用法：
->>1. 乘客：POST {departure,destination,departureTime,tripType,passengerId,departureLocation:{lng,lat}}
+>>1. 乘客：POST {departure,destination,departureTime,tripType,passengerId}
 >>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(trip))`
 
 >>实时行程不用指定departureTime，即departureTime为null
@@ -157,9 +157,9 @@
 
 >用法： POST {tripOrderId}  
 
-18. `/api/fareRule/search/findRecentFareRule` 查询当前计费规则
+18. `/api/fareRule/{id}` 查询对应id的计费规则
 >描述：
->>返回当前计费规则  
+>>返回对应id计费规则  
 
 >用法：GET  
 
@@ -171,3 +171,9 @@
 >>返回行程订单  
 
 >用法： POST {tripOrderId,lengthOfMileage,lengthOfTime}  
+
+20. `/api/tripOrder/search/findAllByPassenger/{passengerId}` 根据乘客id查询历史行程
+>描述：
+>>根据乘客id查询历史行程  
+
+>用法：GET [?page]  

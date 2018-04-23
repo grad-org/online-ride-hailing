@@ -58,8 +58,6 @@ public class HailingServiceController {
 
         TripDTO publishedTripDTO = new TripDTO().convertFor(trip);
 
-//        publishedTripDTO.setDepartureLocation(tripDTO.getDepartureLocation());
-
         simpMessagingTemplate.convertAndSend(
             "/topic/hailingService/trip/publishTrip",
             publishedTripDTO

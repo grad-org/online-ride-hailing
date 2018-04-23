@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Optional;
 
 @Data
@@ -16,6 +17,7 @@ public class TripOrderDTO {
     private Long tripId;
     private String departure;
     private String destination;
+    private Date createdTime;
 
     private Long driverId;
     private Long driverUserId;
@@ -27,14 +29,11 @@ public class TripOrderDTO {
     private String series;
     private String color;
 
-//    private Location departureLocation;
-
     private BigDecimal lengthOfMileage;
     private Integer lengthOfTime;
     private BigDecimal MileageCost;
     private BigDecimal TimeCost;
     private BigDecimal TotalCost;
-
 
     private static class TripOrderDTOConverter extends Converter<TripOrderDTO, TripOrder> {
 
@@ -85,6 +84,13 @@ public class TripOrderDTO {
                     .ofNullable(tripOrder)
                     .map(TripOrder::getTrip)
                     .map(Trip::getDestination)
+                    .orElse(null)
+            );
+
+            tripOrderDTO.setCreatedTime(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getTrip)
+                    .map(Trip::getCreatedTime)
                     .orElse(null)
             );
 

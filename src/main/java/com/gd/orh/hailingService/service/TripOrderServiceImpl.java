@@ -4,11 +4,13 @@ import com.gd.orh.entity.*;
 import com.gd.orh.mapper.FareMapper;
 import com.gd.orh.mapper.TripMapper;
 import com.gd.orh.mapper.TripOrderMapper;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Transactional
 @Service
@@ -76,5 +78,13 @@ public class TripOrderServiceImpl implements TripOrderService {
         tripMapper.updateTripStatus(tripOrder.getTrip());
 
         return tripOrder;
+    }
+
+    @Override
+    public List<TripOrder> findAllByPassenger(Passenger passenger) {
+        if (passenger.getPage() != null && passenger.getRows() != null)
+            PageHelper.startPage(passenger.getPage(), passenger.getRows());
+
+        return tripOrderMapper.findAllByPassengerId(passenger.getId());
     }
 }

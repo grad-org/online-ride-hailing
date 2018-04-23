@@ -1,10 +1,43 @@
 package com.gd.orh.hailingService.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.gd.orh.dto.TripOrderDTO;
+import com.gd.orh.entity.Passenger;
+import com.gd.orh.entity.TripOrder;
+import com.gd.orh.hailingService.service.TripOrderService;
+import com.gd.orh.utils.RestResultFactory;
+import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tripOrder")
 public class TripOrderRestController {
 
+    @Autowired
+    private TripOrderService tripOrderService;
+
+
+    @GetMapping("/search/findAllByPassenger/{passengerId}")
+    public ResponseEntity<?> findAllByPassenger(
+            @PathVariable("passengerId") Long passengerId,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "rows",defaultValue = "10") Integer rows) {
+
+        Passenger passenger = new Passenger();
+        passenger.setId(passengerId);
+        passenger.setPage(page);
+        passenger.setRows(rows);
+
+        List<TripOrder> tripOrders = tripOrderService.findAllByPassenger(passenger);
+        List<TripOrderDTO> tripOrderDTOs = Lists.newArrayList();
+
+        for (TripOrder each: tripOrders) {
+            tripOrderDTOs.add(new TripOrderDTO().convertFor(each));
+        }
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrderDTOs));
+    }
 }

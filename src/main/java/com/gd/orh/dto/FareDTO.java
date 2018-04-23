@@ -1,7 +1,6 @@
 package com.gd.orh.dto;
 
 import com.gd.orh.entity.Fare;
-import com.gd.orh.entity.FareRule;
 import com.google.common.base.Converter;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -31,7 +30,7 @@ public class FareDTO {
     // 总费用 (起步价+里程费+时长费)
     public BigDecimal totalCost;
 
-    private FareRule fareRule; // 计费规则
+    private FareRuleDTO fareRuleDTO; // 计费规则
 
     private static class FareDTOConverter extends Converter<FareDTO, Fare> {
         @Override
@@ -40,6 +39,9 @@ public class FareDTO {
             BeanUtils.copyProperties(fareDTO, fare);
 
             fare.setId(fareDTO.getFareId());
+
+            if (fareDTO.getFareRuleDTO() != null)
+                fare.setFareRule(fareDTO.getFareRuleDTO().convertToFareRule());
 
             return fare;
         }
@@ -50,6 +52,9 @@ public class FareDTO {
             BeanUtils.copyProperties(fare, fareDTO);
 
             fareDTO.setFareId(fare.getId());
+
+            if (fare.getFareRule() != null)
+                fareDTO.setFareRuleDTO(new FareRuleDTO().convertFor(fare.getFareRule()));
 
             return fareDTO;
         }
