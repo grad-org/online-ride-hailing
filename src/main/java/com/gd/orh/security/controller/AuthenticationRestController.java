@@ -1,5 +1,6 @@
 package com.gd.orh.security.controller;
 
+import com.gd.orh.dto.UserDTO;
 import com.gd.orh.entity.ResultCode;
 import com.gd.orh.entity.User;
 import com.gd.orh.security.JwtTokenUtil;
@@ -67,7 +68,8 @@ public class AuthenticationRestController {
         User user = userManageFacade.findUserByUsername(principal.getName());
 
         if (user != null) {
-            return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
+            UserDTO userDTO = new UserDTO().convertFor(user);
+            return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(userDTO));
         } else {
             throw new AuthenticationException("The token is invalid!");
         }
@@ -108,7 +110,7 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/registerPassenger")
-    public ResponseEntity<?> registerPassenger(@RequestBody @Valid User newUser, BindingResult result) {
+    public ResponseEntity<?> registerPassenger(@RequestBody @Valid UserDTO userDTO, BindingResult result) {
         // If username or password is empty, register fail.
         if (result.hasErrors()) {
             return ResponseEntity
@@ -118,16 +120,21 @@ public class AuthenticationRestController {
                     ));
         }
 
+        User user = userDTO.convertToUser();
+
         // If passenger is existed, register fail,
         // else register the user with Passenger.
-        User persistedUser = userManageFacade.findUserByUsername(newUser.getUsername());
-        if (persistedUser != null && persistedUser.getPassenger().getId() != null) {
+        User existedUser = userManageFacade.findUserByUsername(user.getUsername());
+        if (existedUser != null && existedUser.getPassenger().getId() != null) {
             return ResponseEntity
                     .badRequest()
                     .body(RestResultFactory.getFailResult("passenger is existed!"));
         } else {
-            User user = userManageFacade.registerPassenger(newUser);
-            return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
+            user = userManageFacade.registerPassenger(user);
+
+            UserDTO registeredUserDTO = new UserDTO().convertFor(user);
+
+            return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(registeredUserDTO));
         }
     }
 

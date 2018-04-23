@@ -1,10 +1,12 @@
 package com.gd.orh.hailingService.controller;
 
+import com.gd.orh.dto.TripDTO;
 import com.gd.orh.entity.ListeningOrderCondition;
 import com.gd.orh.entity.ResultCode;
 import com.gd.orh.entity.Trip;
 import com.gd.orh.hailingService.service.TripService;
 import com.gd.orh.utils.RestResultFactory;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +27,14 @@ public class TripRestController {
     @GetMapping("/search/findPublishedTripByCondition")
     public ResponseEntity<?> findPublishedTrip(ListeningOrderCondition condition) {
         List<Trip> trips = tripService.findPublishedTripsByListeningOrderCondition(condition);
+        List<TripDTO> tripDTOs = Lists.newArrayList();
 
+        for (Trip each : trips) {
+            tripDTOs.add(new TripDTO().convertFor(each));
+        }
+        
         return ResponseEntity
-                .ok(RestResultFactory.getSuccessResult().setData(trips));
+                .ok(RestResultFactory.getSuccessResult().setData(tripDTOs));
     }
 
     @GetMapping("/{id}")
@@ -43,7 +50,9 @@ public class TripRestController {
                     ));
         }
 
+        TripDTO tripDTO = new TripDTO().convertFor(trip);
+
         // Return user.
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(trip));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(tripDTO));
     }
 }

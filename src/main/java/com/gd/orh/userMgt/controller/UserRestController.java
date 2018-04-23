@@ -1,9 +1,11 @@
 package com.gd.orh.userMgt.controller;
 
+import com.gd.orh.dto.UserDTO;
 import com.gd.orh.entity.ResultCode;
 import com.gd.orh.entity.User;
 import com.gd.orh.userMgt.service.UserService;
 import com.gd.orh.utils.RestResultFactory;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,8 +61,9 @@ public class UserRestController {
     private UserService userService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") Long id, User updatedUser) {
-        MultipartFile userImage = updatedUser.getUserImage();
+    public ResponseEntity<?> update(@PathVariable("id") Long id, UserDTO userDTO) {
+
+        MultipartFile userImage = userDTO.getUserImage();
 
         // If the user image is exists, save it.
         if (userImage != null && !userImage.isEmpty()) {
@@ -93,11 +96,17 @@ public class UserRestController {
         }
 
         // Make sure the user id is assigned.
-        updatedUser.setId(id);
+        userDTO.setUserId(id);
+
+        User user = userDTO.convertToUser();
+
         // Update user.
-        User user = userService.update(updatedUser);
+        user = userService.update(user);
+
+        UserDTO updatedUserDTO = new UserDTO().convertFor(user);
+
         // Return updated user.
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(updatedUserDTO));
     }
 
     @GetMapping("/{id}")
@@ -113,14 +122,27 @@ public class UserRestController {
                     ));
         }
 
+        UserDTO userDTO = new UserDTO().convertFor(user);
+
         // Return user.
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(user));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(userDTO));
     }
 
     @GetMapping
-    public ResponseEntity<?> findAll(User user) {
-        List<User> users = userService.findAll(user);
+    public ResponseEntity<?> findAll(
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "rows",defaultValue = "10") Integer rows) {
+        User user = new User();
+        user.setPage(page);
+        user.setRows(rows);
 
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(users));
+        List<User> users = userService.findAll(user);
+        List<UserDTO> userDTOs = Lists.newArrayList();
+
+        for (User each: users) {
+            userDTOs.add(new UserDTO().convertFor(each));
+        }
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(userDTOs));
     }
 }

@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        User persistedUser = userMapper.selectByPrimaryKey(user.getId());
+        User persistedUser = userMapper.findById(user.getId());
 
         persistedUser.setNickname(user.getNickname());
         persistedUser.setGender(user.getGender());
@@ -104,6 +104,6 @@ public class UserServiceImpl implements UserService {
         if (user.getPage() != null && user.getRows() != null) {
             PageHelper.startPage(user.getPage(), user.getRows());
         }
-        return userMapper.selectAll();
+        return userMapper.findAll();
     }
 }

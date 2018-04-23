@@ -3,9 +3,9 @@ package com.gd.orh.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.*;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
@@ -25,10 +25,6 @@ public class User extends BaseEntity {
     private String gender;
 
     private Integer age;
-
-    @JsonIgnore
-    @Transient
-    private MultipartFile userImage;
 
     @JsonIgnore
     private Boolean enabled;
