@@ -20,6 +20,9 @@ public class Fare extends BaseEntity {
 
     // 里程费 (总里程-起步里程)*每公里价
     public BigDecimal getMileageCost() {
+        if (lengthOfMileage == null)
+            return null;
+
         if (lengthOfMileage.compareTo(fareRule.getInitialMileage()) < 0)
             return BigDecimal.ZERO;
 
@@ -30,11 +33,17 @@ public class Fare extends BaseEntity {
 
     // 时长费 (所用时长*每分钟价)
     public BigDecimal getTimeCost() {
+        if (lengthOfTime == null)
+            return null;
+
         return BigDecimal.valueOf(lengthOfTime).multiply(fareRule.getUnitPricePerMinute());
     }
 
     // 总费用 (起步价+里程费+时长费)
     public BigDecimal getTotalCost() {
+        if (getMileageCost() == null || getTimeCost() == null)
+            return null;
+
         return fareRule.getInitialPrice()
                 .add(getMileageCost())
                 .add(getTimeCost());

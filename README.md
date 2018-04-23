@@ -110,7 +110,7 @@
 >>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerUsername}", {}, JSON.stringify({carId, lng, lat}))`
 >>2. 乘客：`stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation', function(carLocation))`  
 
-13. `/api/hailingService/fare/predictFare` 预估车费
+13. `/api/fare/predictFare` 预估车费
 >描述：
 >>给定预估里程数和预估时长数，返回预估车费结果，  
 >>如果lengthOfMileage和lengthOfTime任意一个为空或任意一个不大于0，返回"Bad Request"结果。  
@@ -138,7 +138,7 @@
 >>如果当前行程无法被受理（行程状态错误），返回"Bad Request"结果。 
 >>返回行程订单  
 
->用法： POST {tripId,driverId,departureLocation:{lng,lat}}
+>用法： POST {tripId,driverId}
 
 16. `/hailingService/tripOrder/acceptance-notification` 车主受理订单后触发受理通知
 >描述：  
@@ -156,7 +156,7 @@
 >>如果当前行程无法被处理（行程订单状态错误），返回"Bad Request"结果。  
 >>返回行程订单
 
->用法： POST {tripOrderId,tripId,driverId}  
+>用法： POST {tripOrderId}  
 
 18. `/api/fareRule/search/findRecentFareRule` 查询当前计费规则
 >描述：
@@ -172,4 +172,4 @@
 >>如果当前行程无法被确认完成（行程订单状态错误），返回"Bad Request"结果。  
 >>返回行程订单  
 
->用法： POST {tripOrderId,tripId,driverId,FareRuleId,lengthOfMileage,lengthOfTime}  
+>用法： POST {tripOrderId,lengthOfMileage,lengthOfTime}  

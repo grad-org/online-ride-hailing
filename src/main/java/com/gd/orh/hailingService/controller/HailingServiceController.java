@@ -37,6 +37,9 @@ public class HailingServiceController {
     private TripOrderService tripOrderService;
 
     @Autowired
+    private FareService fareService;
+
+    @Autowired
     private FareRuleService fareRuleService;
 
     @Autowired
@@ -55,7 +58,7 @@ public class HailingServiceController {
 
         TripDTO publishedTripDTO = new TripDTO().convertFor(trip);
 
-        publishedTripDTO.setDepartureLocation(tripDTO.getDepartureLocation());
+//        publishedTripDTO.setDepartureLocation(tripDTO.getDepartureLocation());
 
         simpMessagingTemplate.convertAndSend(
             "/topic/hailingService/trip/publishTrip",
@@ -110,11 +113,16 @@ public class HailingServiceController {
                     .badRequest()
                     .body(RestResultFactory.getFailResult("The trip could not be accepted!"));
         }
+        tripOrder.setTrip(trip);
 
         Driver driver = driverService.findById(tripOrder.getDriver().getId());
-
         tripOrder.setDriver(driver);
-        tripOrder.setTrip(trip);
+
+        Fare fare = new Fare();
+        FareRule fareRule = fareRuleService.findRecentFareRule();
+        fare.setFareRule(fareRule);
+
+        tripOrder.setFare(fare);
 
         // 车主受理订单
         tripOrder = tripOrderService.acceptTripOrder(tripOrder);
@@ -134,10 +142,10 @@ public class HailingServiceController {
     // 确认乘客上车
     @PostMapping("/tripOrder/pickUpPassenger")
     public ResponseEntity<?> pickupPassenger(@RequestBody TripOrderDTO tripOrderDTO) {
-        Long tripOrderId = tripOrderDTO.getTripOrderId();
+        TripOrder tripOrder = tripOrderDTO.convertToTripOrder();
 
         // 行程订单不存在
-        if (!tripOrderService.isTripOrderExisted(tripOrderId)) {
+        if (!tripOrderService.isTripOrderExisted(tripOrder.getId())) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(RestResultFactory.getFreeResult(
@@ -147,18 +155,7 @@ public class HailingServiceController {
                     ));
         }
 
-        TripOrder tripOrder = tripOrderService.findById(tripOrderId);
-        Long tripId = tripOrderDTO.getTripId();
-
-        // 订单对应的行程不一致
-        if (!tripOrder.getTrip().getId().equals(tripId)) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(RestResultFactory.getFailResult(
-                            "The giving trip is not available!",
-                            null
-                    ));
-        }
+        tripOrder = tripOrderService.findById(tripOrder.getId());
 
         // 当前行程状态不允许车主进行确认上车
         if (tripOrder.getOrderStatus() != OrderStatus.ACCEPTED) {
@@ -167,17 +164,18 @@ public class HailingServiceController {
                     .body(RestResultFactory.getFailResult("The trip order could not be processed!"));
         }
 
-        Trip trip = tripService.findById(tripId);
+        Trip trip = tripService.findById(tripOrder.getTrip().getId());
         tripOrder.setTrip(trip);
 
-        Long driverId = tripOrderDTO.getDriverId();
-        Driver driver = driverService.findById(driverId);
+        Driver driver = driverService.findById(tripOrder.getDriver().getId());
         tripOrder.setDriver(driver);
 
         // 确认乘客上车
         tripOrderService.confirmPickUp(tripOrder);
 
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrder));
+        TripOrderDTO pickupTripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(pickupTripOrderDTO));
     }
 
     // 预估车费
@@ -206,10 +204,10 @@ public class HailingServiceController {
     // 确认到达
     @PostMapping("/tripOrder/confirmArrival")
     public ResponseEntity<?> confirmArrival(@RequestBody TripOrderDTO tripOrderDTO) {
-        Long tripOrderId = tripOrderDTO.getTripOrderId();
+        TripOrder tripOrder = tripOrderDTO.convertToTripOrder();
 
         // 行程订单不存在
-        if (!tripOrderService.isTripOrderExisted(tripOrderId)) {
+        if (!tripOrderService.isTripOrderExisted(tripOrder.getId())) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(RestResultFactory.getFreeResult(
@@ -219,18 +217,7 @@ public class HailingServiceController {
                     ));
         }
 
-        TripOrder tripOrder = tripOrderService.findById(tripOrderId);
-        Long tripId = tripOrderDTO.getTripId();
-
-        // 订单对应的行程不一致
-        if (!tripOrder.getTrip().getId().equals(tripId)) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(RestResultFactory.getFailResult(
-                            "The giving trip is not available!",
-                            null
-                    ));
-        }
+        tripOrder = tripOrderService.findById(tripOrder.getId());
 
         // 当前行程状态不允许车主进行确认到达
         if (tripOrder.getOrderStatus() != OrderStatus.PROCESSING) {
@@ -239,23 +226,22 @@ public class HailingServiceController {
                     .body(RestResultFactory.getFailResult("The trip order could not be confirmed!"));
         }
 
-        FareRule fareRule = fareRuleService.findById(tripOrderDTO.getFareRuleId());
-        Fare fare = new Fare(
-                tripOrderDTO.getLengthOfMileage(),
-                tripOrderDTO.getLengthOfTime(),
-                fareRule);
-        tripOrder.setFare(fare);
-
-        Trip trip = tripService.findById(tripId);
+        Trip trip = tripService.findById(tripOrder.getTrip().getId());
         tripOrder.setTrip(trip);
 
-        Long driverId = tripOrderDTO.getDriverId();
-        Driver driver = driverService.findById(driverId);
+        Driver driver = driverService.findById(tripOrder.getDriver().getId());
         tripOrder.setDriver(driver);
+
+        Fare fare = fareService.findById(tripOrder.getFare().getId());
+        fare.setLengthOfMileage(tripOrderDTO.getLengthOfMileage());
+        fare.setLengthOfTime(tripOrderDTO.getLengthOfTime());
+        tripOrder.setFare(fare);
 
         // 确认到达
         tripOrderService.confirmArrival(tripOrder);
 
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrder));
+        TripOrderDTO arrivalTripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(arrivalTripOrderDTO));
     }
 }

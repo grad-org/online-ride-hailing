@@ -10,7 +10,5 @@ public interface TripOrderMapper extends MyMapper<TripOrder> {
 
     void updateOrderStatus(TripOrder tripOrder);
 
-    void updateFare(TripOrder tripOrder);
-
     void updateCompletedTime(TripOrder tripOrder);
 }

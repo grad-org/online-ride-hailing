@@ -27,12 +27,14 @@ public class TripOrderDTO {
     private String series;
     private String color;
 
-    private Location departureLocation;
-
-    private Long fareRuleId;
+//    private Location departureLocation;
 
     private BigDecimal lengthOfMileage;
     private Integer lengthOfTime;
+    private BigDecimal MileageCost;
+    private BigDecimal TimeCost;
+    private BigDecimal TotalCost;
+
 
     private static class TripOrderDTOConverter extends Converter<TripOrderDTO, TripOrder> {
 
@@ -154,13 +156,35 @@ public class TripOrderDTO {
                     .orElse(null)
             );
 
-            tripOrderDTO.setFareRuleId(Optional
+            tripOrderDTO.setLengthOfMileage(Optional
                     .ofNullable(tripOrder)
                     .map(TripOrder::getFare)
-                    .map(Fare::getFareRule)
-                    .map(FareRule::getId)
-                    .orElse(null)
-            );
+                    .map(Fare::getLengthOfMileage)
+                    .orElse(null));
+
+            tripOrderDTO.setLengthOfTime(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getFare)
+                    .map(Fare::getLengthOfTime)
+                    .orElse(null));
+
+            tripOrderDTO.setMileageCost(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getFare)
+                    .map(Fare::getMileageCost)
+                    .orElse(null));
+
+            tripOrderDTO.setTimeCost(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getFare)
+                    .map(Fare::getTimeCost)
+                    .orElse(null));
+
+            tripOrderDTO.setTotalCost(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getFare)
+                    .map(Fare::getTotalCost)
+                    .orElse(null));
 
             return tripOrderDTO;
         }

@@ -21,4 +21,19 @@
     insert into FARE (LENGTH_OF_MILEAGE, LENGTH_OF_TIME, FARE_RULE_ID)
     values (#{lengthOfMileage}, #{lengthOfMileage}, #{fareRule.id});
   </insert>
+
+  <update id="updateFare" parameterType="fare">
+    UPDATE FARE
+    SET LENGTH_OF_MILEAGE=#{lengthOfMileage},LENGTH_OF_TIME=#{lengthOfTime}
+    WHERE FARE.ID=#{id}
+  </update>
+
+  <select id="findById" resultMap="FareResult">
+    SELECT
+      F.ID FARE_ID, LENGTH_OF_MILEAGE, LENGTH_OF_TIME, FARE_RULE_ID,
+      FR.ID FARE_RULE_ID, INITIAL_PRICE, INITIAL_MILEAGE, UNIT_PRICE_PER_KILOMETER, UNIT_PRICE_PER_MINUTE, SETUP_TIME
+    FROM FARE F
+    LEFT OUTER JOIN FARE_RULE FR ON F.FARE_RULE_ID=FR.ID
+    WHERE F.ID=#{id}
+  </select>
 </mapper>

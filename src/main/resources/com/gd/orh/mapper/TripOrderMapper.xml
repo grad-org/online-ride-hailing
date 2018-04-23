@@ -47,8 +47,8 @@
   </resultMap>
 
   <insert id="insertTripOrder" parameterType="TripOrder" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO TRIP_ORDER (ACCEPTED_TIME, ORDER_STATUS, TRIP_ID, DRIVER_ID)
-    VALUES(#{acceptedTime},#{orderStatus},#{trip.id},#{driver.id})
+    INSERT INTO TRIP_ORDER (ACCEPTED_TIME, ORDER_STATUS, TRIP_ID, DRIVER_ID, FARE_ID)
+    VALUES(#{acceptedTime},#{orderStatus},#{trip.id},#{driver.id},#{fare.id})
   </insert>
 
   <update id="updateOrderStatus">
@@ -73,12 +73,6 @@
       LEFT OUTER JOIN FARE_RULE FR ON F.FARE_RULE_ID=FR.ID
     WHERE T_O.ID=#{id}
   </select>
-
-  <update id="updateFare">
-    UPDATE TRIP_ORDER
-    SET FARE_ID=#{fare.id}
-    WHERE TRIP_ORDER.ID=#{id}
-  </update>
 
   <update id="updateCompletedTime">
     UPDATE TRIP_ORDER

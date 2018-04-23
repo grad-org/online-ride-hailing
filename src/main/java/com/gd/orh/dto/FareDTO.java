@@ -37,9 +37,9 @@ public class FareDTO {
         @Override
         protected Fare doForward(FareDTO fareDTO) {
             Fare fare = new Fare();
-            fare.setId(fareDTO.getFareId());
-
             BeanUtils.copyProperties(fareDTO, fare);
+
+            fare.setId(fareDTO.getFareId());
 
             return fare;
         }
@@ -47,8 +47,9 @@ public class FareDTO {
         @Override
         protected FareDTO doBackward(Fare fare) {
             FareDTO fareDTO = new FareDTO();
-
             BeanUtils.copyProperties(fare, fareDTO);
+
+            fareDTO.setFareId(fare.getId());
 
             return fareDTO;
         }

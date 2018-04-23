@@ -25,6 +25,9 @@ public class TripOrderServiceImpl implements TripOrderService {
 
     @Override
     public TripOrder acceptTripOrder(TripOrder tripOrder) {
+        Fare fare = tripOrder.getFare();
+        fareMapper.insertFare(fare);
+
         tripOrder.setAcceptedTime(new Date());
         tripOrder.setOrderStatus(OrderStatus.ACCEPTED);
         tripOrderMapper.insertTripOrder(tripOrder);
@@ -64,12 +67,10 @@ public class TripOrderServiceImpl implements TripOrderService {
         tripOrder.setCompletedTime(new Date());
         tripOrderMapper.updateCompletedTime(tripOrder);
 
-        Fare fare = tripOrder.getFare();
-        fareMapper.insertFare(fare);
-
         tripOrder.setOrderStatus(OrderStatus.COMPLETED);
         tripOrderMapper.updateOrderStatus(tripOrder);
-        tripOrderMapper.updateFare(tripOrder);
+
+        fareMapper.updateFare(tripOrder.getFare());
 
         tripOrder.getTrip().setTripStatus(TripStatus.ARRIVED);
         tripMapper.updateTripStatus(tripOrder.getTrip());

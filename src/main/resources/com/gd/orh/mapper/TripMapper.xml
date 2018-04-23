@@ -105,5 +105,6 @@
         </if>
       </when>
     </choose>
+    ORDER BY T.DEPARTURE_TIME
   </select>
 </mapper>
