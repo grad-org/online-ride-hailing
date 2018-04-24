@@ -7,15 +7,15 @@ import com.gd.orh.entity.Driver;
 import com.gd.orh.userMgt.service.DriverService;
 import com.gd.orh.utils.FileUploadUtil;
 import com.gd.orh.utils.RestResultFactory;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -91,5 +91,35 @@ public class DriverRestController {
         DriverDTO authenticatedDriverDTO = new DriverDTO().convertFor(driver);
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(authenticatedDriverDTO));
+    }
+
+    @GetMapping("/search/findPendingReviewDriver")
+    public ResponseEntity<?> findAllPendingReviewDriver(
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "rows",defaultValue = "10") Integer rows) {
+        Driver driver = new Driver();
+
+        driver.setPage(page);
+        driver.setRows(rows);
+
+        List<Driver> drivers = driverService.findPendingReviewDriver(driver);
+        List<DriverDTO> driverDTOs = Lists.newArrayList();
+
+        drivers.forEach(each -> driverDTOs.add(new DriverDTO().convertFor(each)));
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(driverDTOs));
+    }
+
+    // 审核车主资料
+    @PostMapping("/reviewDriver")
+    public ResponseEntity<?> reviewDriver(DriverDTO driverDTO) {
+
+        Driver driver = driverDTO.convertTo();
+
+        driver = driverService.reviewDriver(driver);
+
+        DriverDTO reviewedDriverDTO = new DriverDTO().convertFor(driver);
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(reviewedDriverDTO));
     }
 }

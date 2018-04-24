@@ -5,9 +5,12 @@ import com.gd.orh.mapper.CarMapper;
 import com.gd.orh.mapper.DriverMapper;
 import com.gd.orh.mapper.DrivingLicenseMapper;
 import com.gd.orh.mapper.VehicleLicenseMapper;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional
 @Service
@@ -48,5 +51,28 @@ public class DriverServiceImpl implements DriverService {
         carMapper.insertCar(car);
 
         return driver;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Driver> findPendingReviewDriver(Driver driver) {
+        driver.setDriverStatus(DriverStatus.PENDING_REVIEW);
+        return findAllDriverByDriverStatus(driver);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Driver> findAllDriverByDriverStatus(Driver driver) {
+        if (driver.getPage() != null && driver.getRows() != null) {
+            PageHelper.startPage(driver.getPage(), driver.getRows());
+        }
+        return driverMapper.findAllByDriverStatus(driver);
+    }
+
+    @Override
+    public Driver reviewDriver(Driver driver) {
+        driverMapper.updateDriverStatus(driver);
+
+        return driverMapper.findById(driver.getId());
     }
 }

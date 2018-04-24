@@ -216,3 +216,18 @@
 >>carDTO.brand|品牌
 >>carDTO.series|系列
 >>carDTO.color|颜色
+
+22. `/api/driver/search/findPendingReviewDriver` 查询待审核的车主资料
+>描述：
+>>查询待审核的车主资料  
+
+>用法：GET  
+
+23. `/api/driver/reviewDriver` 审核车主资料
+>描述：
+>>查询待审核的车主资料  
+
+>用法：POST {driverId, driverStatus}  
+>>参数|可选值
+>>------ | ------
+>>driverStatus|APPROVED（审核通过）、UNAPPROVED（审核不通过）
