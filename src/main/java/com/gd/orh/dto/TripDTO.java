@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Data
-public class TripDTO {
+public class TripDTO extends BaseDTO<TripDTO, Trip> {
     private Long tripId;
     private String departure; // 出发地
     private String destination; // 目的地
@@ -79,12 +79,8 @@ public class TripDTO {
         }
     }
 
-    public Trip convertToTrip() {
-        return new TripDTOConverter().convert(this);
-    }
-
-    public TripDTO convertFor(Trip trip) {
-
-        return new TripDTOConverter().reverse().convert(trip);
+    @Override
+    protected Converter<TripDTO, Trip> getConverter() {
+        return new TripDTOConverter();
     }
 }

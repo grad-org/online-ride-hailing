@@ -1,4 +1,4 @@
-package com.gd.orh.hailingService.service;
+package com.gd.orh.tripOrderMgt.service;
 
 import com.gd.orh.entity.*;
 import com.gd.orh.mapper.FareMapper;
@@ -43,14 +43,14 @@ public class TripOrderServiceImpl implements TripOrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isTripOrderExisted(Long tripOrderId) {
-        return tripOrderMapper.existsWithPrimaryKey(tripOrderId);
+    public boolean isTripOrderExisted(Long id) {
+        return tripOrderMapper.existsWithPrimaryKey(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TripOrder findById(Long tripOrderId) {
-        return tripOrderMapper.findById(tripOrderId);
+    public TripOrder findById(Long id) {
+        return tripOrderMapper.findById(id);
     }
 
     @Override
@@ -86,5 +86,13 @@ public class TripOrderServiceImpl implements TripOrderService {
             PageHelper.startPage(passenger.getPage(), passenger.getRows());
 
         return tripOrderMapper.findAllByPassengerId(passenger.getId());
+    }
+
+    @Override
+    public List<TripOrder> findAllByDriver(Driver driver) {
+        if (driver.getPage() != null && driver.getRows() != null)
+            PageHelper.startPage(driver.getPage(), driver.getRows());
+
+        return tripOrderMapper.findAllByDriverId(driver.getId());
     }
 }

@@ -18,8 +18,8 @@
   </resultMap>
 
   <insert id="insertFare" parameterType="Fare" useGeneratedKeys="true" keyProperty="id">
-    insert into FARE (LENGTH_OF_MILEAGE, LENGTH_OF_TIME, FARE_RULE_ID)
-    values (#{lengthOfMileage}, #{lengthOfMileage}, #{fareRule.id});
+    INSERT INTO FARE (LENGTH_OF_MILEAGE, LENGTH_OF_TIME, FARE_RULE_ID)
+    VALUES (#{lengthOfMileage}, #{lengthOfMileage}, #{fareRule.id})
   </insert>
 
   <update id="updateFare" parameterType="fare">

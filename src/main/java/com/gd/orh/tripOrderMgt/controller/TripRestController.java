@@ -1,10 +1,10 @@
-package com.gd.orh.hailingService.controller;
+package com.gd.orh.tripOrderMgt.controller;
 
 import com.gd.orh.dto.TripDTO;
 import com.gd.orh.entity.ListeningOrderCondition;
 import com.gd.orh.entity.ResultCode;
 import com.gd.orh.entity.Trip;
-import com.gd.orh.hailingService.service.TripService;
+import com.gd.orh.tripOrderMgt.service.TripService;
 import com.gd.orh.utils.RestResultFactory;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +29,7 @@ public class TripRestController {
         List<Trip> trips = tripService.findPublishedTripsByListeningOrderCondition(condition);
         List<TripDTO> tripDTOs = Lists.newArrayList();
 
-        for (Trip each : trips) {
-            tripDTOs.add(new TripDTO().convertFor(each));
-        }
+        trips.forEach(each -> tripDTOs.add(new TripDTO().convertFor(each)));
         
         return ResponseEntity
                 .ok(RestResultFactory.getSuccessResult().setData(tripDTOs));

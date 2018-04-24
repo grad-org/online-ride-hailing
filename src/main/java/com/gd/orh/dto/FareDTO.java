@@ -8,9 +8,10 @@ import org.springframework.beans.BeanUtils;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Data
-public class FareDTO {
+public class FareDTO extends BaseDTO<FareDTO, Fare> {
     private Long fareId;
 
     @NotNull
@@ -40,8 +41,11 @@ public class FareDTO {
 
             fare.setId(fareDTO.getFareId());
 
-            if (fareDTO.getFareRuleDTO() != null)
-                fare.setFareRule(fareDTO.getFareRuleDTO().convertToFareRule());
+            fare.setFareRule(Optional
+                    .ofNullable(fareDTO)
+                    .map(FareDTO::getFareRuleDTO)
+                    .map(FareRuleDTO::convertTo)
+                    .orElse(null));
 
             return fare;
         }
@@ -60,11 +64,8 @@ public class FareDTO {
         }
     }
 
-    public Fare convertToFare() {
-        return new FareDTOConverter().convert(this);
-    }
-
-    public FareDTO convertFor(Fare fare) {
-        return new FareDTOConverter().reverse().convert(fare);
+    @Override
+    protected Converter<FareDTO, Fare> getConverter() {
+        return new FareDTOConverter();
     }
 }

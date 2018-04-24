@@ -15,4 +15,6 @@ public interface TripOrderMapper extends MyMapper<TripOrder> {
     void updateCompletedTime(TripOrder tripOrder);
 
     List<TripOrder> findAllByPassengerId(Long passengerId);
+
+    List<TripOrder> findAllByDriverId(Long driverId);
 }

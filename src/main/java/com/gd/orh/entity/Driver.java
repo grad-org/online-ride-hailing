@@ -6,6 +6,8 @@ import java.util.List;
 
 @Data
 public class Driver extends BaseEntity {
+    private DriverStatus driverStatus;
+
     private User user;
 
     private List<TripOrder> tripOrders;

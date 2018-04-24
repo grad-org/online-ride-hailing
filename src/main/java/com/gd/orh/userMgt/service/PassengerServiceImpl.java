@@ -1,4 +1,4 @@
-package com.gd.orh.hailingService.service;
+package com.gd.orh.userMgt.service;
 
 import com.gd.orh.entity.Passenger;
 import com.gd.orh.mapper.PassengerMapper;

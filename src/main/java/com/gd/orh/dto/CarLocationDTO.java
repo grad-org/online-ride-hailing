@@ -8,10 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarLocationDTO {
+public class CarLocationDTO extends BaseDTO<CarLocationDTO, CarLocation> {
     private Long carId;
 
     private String lng; // 经度
@@ -36,13 +38,24 @@ public class CarLocationDTO {
 
         @Override
         protected CarLocationDTO doBackward(CarLocation carLocation) {
+            Long carId = Optional
+                    .ofNullable(carLocation)
+                    .map(CarLocation::getCar)
+                    .map(Car::getId)
+                    .orElse(null);
 
-            Long carId =
-                    carLocation.getCar() != null ? carLocation.getCar().getId() : null;
-            String lng =
-                    carLocation.getLocation() != null ? carLocation.getLocation().getLng() : null;
-            String lat =
-                    carLocation.getLocation() != null ? carLocation.getLocation().getLat() : null;
+            String lng = Optional
+                    .ofNullable(carLocation)
+                    .map(CarLocation::getLocation)
+                    .map(Location::getLng)
+                    .orElse(null);
+
+            String lat = Optional
+                    .ofNullable(carLocation)
+                    .map(CarLocation::getLocation)
+                    .map(Location::getLat)
+                    .orElse(null);
+
 
             CarLocationDTO carLocationDTO = new CarLocationDTO(carId, lng, lat);
 
@@ -50,11 +63,8 @@ public class CarLocationDTO {
         }
     }
 
-    public CarLocation convertToCarLocation() {
-        return new CarLocationDTOConverter().convert(this);
-    }
-
-    public CarLocationDTO convertFor(CarLocation carLocation) {
-        return new CarLocationDTOConverter().reverse().convert(carLocation);
+    @Override
+    public Converter<CarLocationDTO, CarLocation> getConverter() {
+        return new CarLocationDTOConverter();
     }
 }

@@ -95,7 +95,7 @@ public class AuthenticationRestController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<?> verify(@RequestParam String username) {
+    public ResponseEntity<?> verify(@RequestParam("username") String username) {
         if (!userManageFacade.isUserExisted(username)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -109,8 +109,8 @@ public class AuthenticationRestController {
         }
     }
 
-    @PostMapping("/registerPassenger")
-    public ResponseEntity<?> registerPassenger(@RequestBody @Valid UserDTO userDTO, BindingResult result) {
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody @Valid UserDTO userDTO, BindingResult result) {
         // If username or password is empty, register fail.
         if (result.hasErrors()) {
             return ResponseEntity
@@ -120,7 +120,7 @@ public class AuthenticationRestController {
                     ));
         }
 
-        User user = userDTO.convertToUser();
+        User user = userDTO.convertTo();
 
         // If passenger is existed, register fail,
         // else register the user with Passenger.

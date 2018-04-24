@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gd.orh.mapper.DrivingLicenseMapper">
+  <resultMap id="DriverResult" type="Driver">
+    <id column="DRIVER_ID" property="id"/>
+    <result column="DRIVER_STATUS" property="driverStatus"/>
+  </resultMap>
+
+  <resultMap id="DrivingLicenseResult" type="DrivingLicense">
+    <id column="DRIVING_LICENSE_ID" property="id"/>
+    <result column="DRIVER_NAME" property="driverName"/>
+    <result column="IDENTIFICATION" property="identification"/>
+    <result column="ISSUE_DATE" property="issueDate" jdbcType="TIMESTAMP"/>
+    <association property="driver" resultMap="DriverResult"/>
+  </resultMap>
+
+  <insert id="insertDrivingLicense" parameterType="drivingLicense" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO DRIVING_LICENSE (DRIVER_NAME, IDENTIFICATION, ISSUE_DATE, DRIVER_ID)
+    VALUES (#{driverName},#{identification},#{issueDate},#{driver.id})
+  </insert>
+</mapper>

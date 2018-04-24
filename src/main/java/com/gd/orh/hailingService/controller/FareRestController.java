@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +32,7 @@ public class FareRestController {
                     ));
         }
 
-        Fare fare = fareDTO.convertToFare();
+        Fare fare = fareDTO.convertTo();
 
         Fare predictedFare = fareService.predictFare(fare);
 
@@ -39,5 +40,14 @@ public class FareRestController {
 
         // 返回预估车费
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(predictedFareDTO));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
+        Fare fare = fareService.findById(id);
+
+        FareDTO fareDTO = new FareDTO().convertFor(fare);
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(fareDTO));
     }
 }

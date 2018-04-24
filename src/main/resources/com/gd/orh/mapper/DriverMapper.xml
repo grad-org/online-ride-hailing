@@ -48,6 +48,7 @@
 
   <resultMap id="DriverResult" type="Driver">
     <id column="DRIVER_ID" property="id"/>
+    <result column="DRIVER_STATUS" property="driverStatus"/>
     <association property="user" resultMap="UserResult"/>
     <association property="drivingLicense" resultMap="DrivingLicenseResult"/>
     <association property="vehicleLicense" resultMap="VehicleLicenseResult"/>
@@ -56,7 +57,7 @@
 
   <select id="findById" resultMap="DriverResult">
     SELECT
-      D.ID DRIVER_ID,
+      D.ID DRIVER_ID,DRIVER_STATUS,
       U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
       T_O.ID TRIP_ORDER_ID, ACCEPTED_TIME, COMPLETED_TIME, ORDER_STATUS,
       T.ID TRIP_ID,
@@ -72,4 +73,8 @@
     LEFT OUTER JOIN CAR C ON VL.ID=C.VEHICLE_LICENSE_ID
     WHERE D.ID = #{id}
   </select>
+
+  <insert id="insertDriver" parameterType="driver" useGeneratedKeys="true" keyProperty="id">
+    insert into DRIVER (DRIVER_STATUS, USER_ID) values (#{driverStatus}, #{user.id})
+  </insert>
 </mapper>

@@ -33,9 +33,9 @@
 
 >用法：GET ?username=xxx  
 
-5. `/api/auth/registerPassenger` 注册乘客
+5. `/api/auth/register` 注册
 >描述：
->>如果注册乘客成功，返回用户信息，  
+>>如果注册成功，返回用户信息，  
 >>否则返回"Bad Request"结果。  
 
 >用法：POST {username,password}  
@@ -176,4 +176,43 @@
 >描述：
 >>根据乘客id查询历史行程  
 
->用法：GET [?page]  
+>用法：GET [?page,row]  
+
+21. `/api/tripOrder/search/findAllByDriverId/{driverId}` 根据车主id查询历史行程
+>描述：
+>>根据车主id查询历史行程  
+
+>用法：GET [?page,row]  
+
+22. `/api/tripOrder/{id}` 根据行程订单id查询行程明细
+>描述：
+>>根据行程订单id查询行程明细  
+
+>用法：GET  
+
+23. `/api/fare/{id}` 根据行程id查询行程车费明细
+>描述：
+>>根据行程id查询行程车费明细  
+
+>用法：GET  
+
+24. `/api/driver/certifyDriver` 认证车主
+>描述：
+>>认证车主信息，包括驾驶证、行驶证、车辆信息
+>>如果存在图片但上传图片失败，返回"Bad Request"结果。  
+
+>用法：POST 'enctype'='multipart/form-data'的表单
+>>key|value
+>>------ | ------ 
+>>userId|
+>>drivingLicenseDTO.driverName|司机姓名
+>>drivingLicenseDTO.identification|身份证号
+>>drivingLicenseDTO.issueDate|初次领取驾驶证日期
+>>drivingLicenseDTO.drivingLicenseImage|驾驶证照片
+>>vehicleLicenseDTO.owner|车辆所有人
+>>vehicleLicenseDTO.registerDate|车辆注册日期
+>>vehicleLicenseDTO.vehicleLicenseImage|行驶证照片
+>>carDTO.PlateNo|车牌号
+>>carDTO.brand|品牌
+>>carDTO.series|系列
+>>carDTO.color|颜色

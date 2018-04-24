@@ -10,12 +10,11 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import java.util.Optional;
 
 @Data
-public class UserDTO {
+public class UserDTO extends BaseDTO<UserDTO, User> {
     private Long userId;
     @NotEmpty
     private String username;
@@ -25,11 +24,12 @@ public class UserDTO {
     private String nickname;
     private String gender;
     private Integer age;
+
     @JsonIgnore
-    @Transient
     private MultipartFile userImage;
 
     private Long passengerId;
+
     private Long driverId;
 
     private static class UserDTOConverter extends Converter<UserDTO, User> {
@@ -78,11 +78,8 @@ public class UserDTO {
         }
     }
 
-    public User convertToUser() {
-        return new UserDTOConverter().convert(this);
-    }
-
-    public UserDTO convertFor(User user) {
-        return new UserDTOConverter().reverse().convert(user);
+    @Override
+    protected Converter<UserDTO, User> getConverter() {
+        return new UserDTOConverter();
     }
 }

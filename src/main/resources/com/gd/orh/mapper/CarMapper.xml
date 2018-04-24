@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gd.orh.mapper.CarMapper">
+  <resultMap id="VehicleLicenseResult" type="VehicleLicense">
+    <id column="VEHICLE_LICENSE_ID" property="id"/>
+    <result column="DRIVER_NAME" property="owner"/>
+    <result column="REGISTER_DATE" property="registerDate" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <resultMap id="CarResult" type="Car">
+    <id column="CAR_ID" property="id"/>
+    <result column="PLATE_NO" property="PlateNo"/>
+    <result column="BRAND" property="brand"/>
+    <result column="SERIES" property="series"/>
+    <result column="COLOR" property="color"/>
+    <association property="vehicleLicense" resultMap="VehicleLicenseResult"/>
+  </resultMap>
+
+  <insert id="insertCar" parameterType="car" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO CAR (PLATE_NO, BRAND, SERIES, COLOR, VEHICLE_LICENSE_ID)
+    VALUES (#{plateNo},#{brand},#{series},#{color},#{vehicleLicense.id})
+  </insert>
+</mapper>

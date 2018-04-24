@@ -5,7 +5,12 @@ import com.gd.orh.dto.FareDTO;
 import com.gd.orh.dto.TripDTO;
 import com.gd.orh.dto.TripOrderDTO;
 import com.gd.orh.entity.*;
+import com.gd.orh.fareRuleMgt.service.FareRuleService;
 import com.gd.orh.hailingService.service.*;
+import com.gd.orh.tripOrderMgt.service.TripOrderService;
+import com.gd.orh.tripOrderMgt.service.TripService;
+import com.gd.orh.userMgt.service.DriverService;
+import com.gd.orh.userMgt.service.PassengerService;
 import com.gd.orh.utils.RestResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +53,7 @@ public class HailingServiceController {
     // 发布行程,广播给正在听单的车主
     @PostMapping("/trip/publishTrip")
     public ResponseEntity<?> publishTrip(@RequestBody TripDTO tripDTO) {
-        Trip trip = tripDTO.convertToTrip();
+        Trip trip = tripDTO.convertTo();
 
         Passenger passenger = passengerService.findById(trip.getPassenger().getId());
 
@@ -90,7 +95,7 @@ public class HailingServiceController {
     // 受理订单
     @PostMapping("/tripOrder/acceptTripOrder")
     public ResponseEntity<?> acceptTripOrder(@RequestBody TripOrderDTO tripOrderDTO) {
-        TripOrder tripOrder = tripOrderDTO.convertToTripOrder();
+        TripOrder tripOrder = tripOrderDTO.convertTo();
 
         // 行程不存在
         if (!tripService.isTripExisted(tripOrder.getTrip().getId())) {
@@ -140,7 +145,7 @@ public class HailingServiceController {
     // 确认乘客上车
     @PostMapping("/tripOrder/pickUpPassenger")
     public ResponseEntity<?> pickupPassenger(@RequestBody TripOrderDTO tripOrderDTO) {
-        TripOrder tripOrder = tripOrderDTO.convertToTripOrder();
+        TripOrder tripOrder = tripOrderDTO.convertTo();
 
         // 行程订单不存在
         if (!tripOrderService.isTripOrderExisted(tripOrder.getId())) {
@@ -187,7 +192,7 @@ public class HailingServiceController {
                     ));
         }
 
-        Fare fare = fareDTO.convertToFare();
+        Fare fare = fareDTO.convertTo();
 
         // 获取最新计费规则
         FareRule recentFareRule = fareRuleService.findRecentFareRule();
@@ -202,7 +207,7 @@ public class HailingServiceController {
     // 确认到达
     @PostMapping("/tripOrder/confirmArrival")
     public ResponseEntity<?> confirmArrival(@RequestBody TripOrderDTO tripOrderDTO) {
-        TripOrder tripOrder = tripOrderDTO.convertToTripOrder();
+        TripOrder tripOrder = tripOrderDTO.convertTo();
 
         // 行程订单不存在
         if (!tripOrderService.isTripOrderExisted(tripOrder.getId())) {

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Data
-public class TripOrderDTO {
+public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
     private Long tripOrderId;
     private OrderStatus orderStatus;
 
@@ -196,12 +196,8 @@ public class TripOrderDTO {
         }
     }
 
-    public TripOrder convertToTripOrder() {
-        return new TripOrderDTOConverter().convert(this);
-    }
-
-    public TripOrderDTO convertFor(TripOrder tripOrder) {
-
-        return new TripOrderDTOConverter().reverse().convert(tripOrder);
+    @Override
+    protected Converter<TripOrderDTO, TripOrder> getConverter() {
+        return new TripOrderDTOConverter();
     }
 }

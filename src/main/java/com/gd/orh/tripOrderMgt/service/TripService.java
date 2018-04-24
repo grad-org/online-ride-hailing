@@ -1,4 +1,4 @@
-package com.gd.orh.hailingService.service;
+package com.gd.orh.tripOrderMgt.service;
 
 import com.gd.orh.entity.ListeningOrderCondition;
 import com.gd.orh.entity.Trip;
