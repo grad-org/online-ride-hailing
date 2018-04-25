@@ -20,14 +20,14 @@
                         password="root">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="entity" targetProject="src/main/java"/>
+        <javaModelGenerator targetPackage="com.gd.orh.entity" targetProject="src/main/java"/>
 
         <sqlMapGenerator targetPackage="com.gd.orh.mapper" targetProject="src/main/resources"/>
 
         <javaClientGenerator targetPackage="com.gd.orh.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="CAR">
+        <table tableName="PASSENGER_RATING">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->

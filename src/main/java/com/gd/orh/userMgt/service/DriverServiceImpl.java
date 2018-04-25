@@ -75,4 +75,15 @@ public class DriverServiceImpl implements DriverService {
 
         return driverMapper.findById(driver.getId());
     }
+
+    @Override
+    public Driver updateVehicleLicense(Driver driver) {
+        driver.setDriverStatus(DriverStatus.PENDING_REVIEW);
+        driverMapper.updateDriverStatus(driver);
+
+        vehicleLicenseMapper.updateByPrimaryKey(driver.getVehicleLicense());
+        carMapper.updateByPrimaryKey(driver.getVehicleLicense().getCar());
+
+        return driverMapper.findById(driver.getId());
+    }
 }

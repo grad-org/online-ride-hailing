@@ -14,4 +14,6 @@ public interface DriverService {
     List<Driver> findAllDriverByDriverStatus(Driver driver);
 
     Driver reviewDriver(Driver driver);
+
+    Driver updateVehicleLicense(Driver driver);
 }

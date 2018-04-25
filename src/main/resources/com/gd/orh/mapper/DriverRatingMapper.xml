@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gd.orh.mapper.DriverRatingMapper">
+  <resultMap id="UserResult" type="User">
+    <id column="USER_ID" property="id"/>
+    <result column="NICKNAME" property="nickname"/>
+  </resultMap>
+
+  <resultMap id="DriverResult" type="Driver">
+    <id column="DRIVER_ID" property="id"/>
+    <association property="user" resultMap="UserResult"/>
+  </resultMap>
+
+  <resultMap id="DriverRatingResult" type="DriverRating">
+    <id column="DRIVER_RATING_ID" property="id"/>
+    <result column="RATING_SCORE" property="ratingScore"/>
+    <result column="TRIP_ORDER_ID" property="tripOrderId"/>
+    <association property="driver" resultMap="DriverResult"/>
+  </resultMap>
+
+
+  <insert id="insertDriverRating" parameterType="DriverRating" useGeneratedKeys="true" keyProperty="id">
+    insert into DRIVER_RATING (RATING_SCORE, DRIVER_ID, TRIP_ORDER_ID)
+    values (#{ratingScore},#{driver.id},#{tripOrderId})
+  </insert>
+
+  <select id="findById" resultMap="DriverRatingResult">
+    SELECT
+      DR.ID DRIVER_RATING_ID, RATING_SCORE, TRIP_ORDER_ID,
+      D.ID DRIVER_ID,
+      U.ID USER_ID, NICKNAME
+    FROM DRIVER_RATING DR
+      LEFT OUTER JOIN DRIVER D ON DR.DRIVER_ID=D.ID
+      LEFT JOIN USER U ON D.USER_ID=U.ID
+  </select>
+</mapper>

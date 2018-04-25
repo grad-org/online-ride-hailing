@@ -143,4 +143,53 @@ public class DriverRestController {
         // Return driver.
         return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(driverDTO));
     }
+
+    // 修改行驶证资料
+    @PostMapping("/updateVehicleLicense/{driverId}")
+    public ResponseEntity<?> updateVehicleLicense(
+            @PathVariable("driverId") Long driverId,
+            @Valid DriverDTO driverDTO,
+            BindingResult result) {
+
+        // 验证逻辑
+        if (result.hasErrors()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult(
+                            "All properties could not empty!"
+                    ));
+        }
+
+        // 保存行驶证照片
+        MultipartFile vehicleLicenseImage = Optional
+                .ofNullable(driverDTO)
+                .map(DriverDTO::getVehicleLicenseDTO)
+                .map(VehicleLicenseDTO::getVehicleLicenseImage)
+                .orElse(null);
+
+        if (vehicleLicenseImage != null && !vehicleLicenseImage.isEmpty()) {
+
+            boolean isFail =
+                    !FileUploadUtil.upload(
+                            vehicleLicenseImage,
+                            "static/images/vehicleLicense/",
+                            driverDTO.getDriverId() + ".jpg"
+                    );
+
+            if (isFail) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(RestResultFactory.getFailResult("Vehicle License Image saving failed!"));
+            }
+        }
+
+        driverDTO.setDriverId(driverId);
+        Driver driver = driverDTO.convertTo();
+
+        driver = driverService.updateVehicleLicense(driver);
+
+        DriverDTO authenticatedDriverDTO = new DriverDTO().convertFor(driver);
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(authenticatedDriverDTO));
+    }
 }

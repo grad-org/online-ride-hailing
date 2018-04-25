@@ -11,7 +11,7 @@
 >>如果登录成功，则返回token，  
 >>否则返回"Unauthorized"结果。
 
->用法： POST {username,password}  
+>用法：POST {username,password}  
 
 2. `/api/auth/user` 获取当前用户信息
 >描述：
@@ -24,7 +24,7 @@
 >>如果当前token有效且未过期，返回新的token，  
 >>否则返回"Bad Request"结果。  
 
->用法： GET 携带'Authorization'请求头  
+>用法：GET 携带'Authorization'请求头  
 
 4. `/api/auth/verify` 验证用户名是否存在
 >描述：
@@ -138,7 +138,7 @@
 >>如果当前行程无法被受理（行程状态错误），返回"Bad Request"结果。 
 >>返回行程订单  
 
->用法： POST {tripId,driverId}
+>用法：POST {tripId,driverId}
 
 16. `/hailingService/tripOrder/acceptance-notification` 车主受理订单后触发受理通知
 >描述：  
@@ -155,7 +155,7 @@
 >>如果当前行程无法被处理（行程订单状态错误），返回"Bad Request"结果。  
 >>返回行程订单
 
->用法： POST {tripOrderId}  
+>用法：POST {tripOrderId}  
 
 18. `/api/fareRule/{id}` 查询对应id的计费规则
 >描述：
@@ -170,7 +170,7 @@
 >>如果当前行程无法被确认完成（行程订单状态错误），返回"Bad Request"结果。  
 >>返回行程订单  
 
->用法： POST {tripOrderId,lengthOfMileage,lengthOfTime}  
+>用法：POST {tripOrderId,lengthOfMileage,lengthOfTime}  
 
 20. `/api/tripOrder/search/findAllByPassenger/{passengerId}` 根据乘客id查询历史行程
 >描述：
@@ -231,11 +231,59 @@
 >描述：
 >>行驶证照片，直接指定即可。  
 
-25. `/api/driver/reviewDriver` 审核车主资料
+25. `/api/driver/{id}` 根据车主id查询车主资料
+>描述：
+>>根据车主id查询车主资料  
+
+>用法：GET  
+
+26. `/api/driver/reviewDriver` 审核车主资料
 >描述：
 >>查询待审核的车主资料  
 
 >用法：POST {driverId, driverStatus}  
 >>参数|可选值
 >>------ | ------
->>driverStatus|APPROVED（审核通过）、UNAPPROVED（审核不通过  
+>>driverStatus|APPROVED（审核通过）、UNAPPROVED（审核不通过）  
+
+27. `/api/driver/updateVehicleLicense/{driverId}` 修改行驶证资料，待管理员审核
+>描述：
+>>行驶证资料包括行驶证、车辆信息
+>>如果存在图片但上传图片失败，返回"Bad Request"结果。  
+
+>用法：POST 'enctype'='multipart/form-data'的表单
+>>key|value
+>>------ | ------ 
+>>vehicleLicenseDTO.vehicleLicenseId|
+>>carDTO.carId|
+>>vehicleLicenseDTO.owner|车辆所有人
+>>vehicleLicenseDTO.registerDate|车辆注册日期
+>>vehicleLicenseDTO.vehicleLicenseImage|行驶证照片
+>>carDTO.PlateNo|车牌号
+>>carDTO.brand|品牌
+>>carDTO.series|系列
+>>carDTO.color|颜色
+
+28. `/api/serviceRating/rateDriver` 评价车主
+>描述：
+>>乘客评价车主  
+
+>用法：POST {ratingScore,driverId,driverUserId}  
+
+29. `/api/serviceRating/ratePassenger` 评价乘客
+>描述：
+>>车主评价乘客  
+
+>用法：POST {ratingScore,passengerId,passengerUserId}  
+
+30. `/api/serviceRating/driverRating/{id}` 根据车主评价id返回车主评价
+>描述：
+>>根据车主评价id返回车主评价  
+
+>用法：GET  
+
+31. `/api/serviceRating/passengerRating/{id}` 根据乘客评价id返回乘客评价
+>描述：
+>>根据乘客评价id返回乘客评价  
+
+>用法：GET  
