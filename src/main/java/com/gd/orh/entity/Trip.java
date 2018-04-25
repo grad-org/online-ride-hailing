@@ -8,7 +8,11 @@ import java.util.Date;
 public class Trip extends BaseEntity {
     private String departure; // 出发地
 
+    private String departureLocation; // 出发地位置
+
     private String destination; // 目的地
+
+    private String destinationLocation; // 目的地位置
 
     private Date createdTime; // 创建时间
 

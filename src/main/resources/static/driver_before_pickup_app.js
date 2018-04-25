@@ -40,7 +40,9 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-// 终止听单，用于接单后的操作，订单完成后重新订阅
+// 终止听单，用于接单后的操作
+// ...
+// 订单完成后，要自己再次重新订阅
 function unsubscribe() {
     if (listenOrderSubscription !== null) {
         listenOrderSubscription.unsubscribe();

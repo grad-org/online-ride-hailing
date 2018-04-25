@@ -21,7 +21,9 @@
   <resultMap id="TripResult" type="Trip">
     <id column="TRIP_ID" property="id"/>
     <result column="DEPARTURE" property="departure"/>
+    <result column="DEPARTURE_LOCATION" property="departureLocation"/>
     <result column="DESTINATION" property="destination"/>
+    <result column="DESTINATION_LOCATION" property="destinationLocation"/>
     <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP"/>
     <result column="DEPARTURE_TIME" property="departureTime" jdbcType="TIMESTAMP"/>
     <result column="TRIP_TYPE" property="tripType"/>
@@ -30,13 +32,13 @@
   </resultMap>
 
   <insert id="insertTrip" parameterType="Trip" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO TRIP (DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS, PASSENGER_ID)
-    VALUES(#{departure}, #{destination}, #{createdTime}, #{departureTime}, #{tripType} , #{tripStatus}, #{passenger.id})
+    INSERT INTO TRIP (DEPARTURE, DEPARTURE_LOCATION, DESTINATION, DESTINATION_LOCATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS, PASSENGER_ID)
+    VALUES(#{departure}, #{departureLocation}, #{destination}, #{destinationLocation}, #{createdTime}, #{departureTime}, #{tripType} , #{tripStatus}, #{passenger.id})
   </insert>
 
   <select id="findById" resultMap="TripResult">
     SELECT
-      T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
+      T.ID TRIP_ID, DEPARTURE, DEPARTURE_LOCATION, DESTINATION, DESTINATION_LOCATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
       P.ID PASSENGER_ID,
       U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE
     FROM TRIP T
@@ -47,7 +49,7 @@
 
   <select id="findByTripStatus" resultMap="TripResult">
     SELECT
-      T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
+      T.ID TRIP_ID, DEPARTURE, DEPARTURE_LOCATION, DESTINATION, DESTINATION_LOCATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
       P.ID PASSENGER_ID,
       U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE
     FROM TRIP T
@@ -68,7 +70,7 @@
 
   <select id="searchPublishedTripsByCondition" resultMap="TripResult">
     SELECT
-    T.ID TRIP_ID, DEPARTURE, DESTINATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
+    T.ID TRIP_ID, DEPARTURE, DEPARTURE_LOCATION, DESTINATION, DESTINATION_LOCATION, CREATED_TIME, DEPARTURE_TIME, TRIP_TYPE,TRIP_STATUS,
     P.ID PASSENGER_ID,
     U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE
     FROM TRIP T

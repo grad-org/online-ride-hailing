@@ -1,10 +1,13 @@
 package com.gd.orh.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gd.orh.entity.*;
 import com.google.common.base.Converter;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
@@ -16,7 +19,9 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
 
     private Long tripId;
     private String departure;
+    private Location departureLocation;
     private String destination;
+    private Location destinationLocation;
     private Date createdTime;
 
     private Long driverId;
@@ -46,6 +51,15 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
 
             Trip trip = new Trip();
             trip.setId(tripOrderDTO.getTripId());
+
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                trip.setDepartureLocation(objectMapper.writeValueAsString(tripOrderDTO.getDepartureLocation()));
+                trip.setDestinationLocation(objectMapper.writeValueAsString(tripOrderDTO.getDestinationLocation()));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+
             tripOrder.setTrip(trip);
 
             Driver driver = new Driver();
@@ -80,12 +94,38 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
                     .orElse(null)
             );
 
+
             tripOrderDTO.setDestination(Optional
                     .ofNullable(tripOrder)
                     .map(TripOrder::getTrip)
                     .map(Trip::getDestination)
                     .orElse(null)
             );
+
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                tripOrderDTO.setDepartureLocation(
+                    objectMapper.readValue(
+                        Optional.ofNullable(tripOrder)
+                                .map(TripOrder::getTrip)
+                                .map(Trip::getDepartureLocation)
+                                .orElse(null),
+                        Location.class)
+                );
+
+                tripOrderDTO.setDestinationLocation(
+                    objectMapper.readValue(
+                        Optional.ofNullable(tripOrder)
+                                .map(TripOrder::getTrip)
+                                .map(Trip::getDestinationLocation)
+                                .orElse(null),
+                        Location.class)
+                );
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             tripOrderDTO.setCreatedTime(Optional
                     .ofNullable(tripOrder)

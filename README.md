@@ -67,7 +67,7 @@
 >>age|
 >>userImage|图片格式的文件
 
-9. `/images/user/{id}.jpg` 显示用户头像的静态资源
+9. `/images/user/{userId}.jpg` 显示用户头像的静态资源
 >描述：
 >>用户头像，直接指定即可。  
 
@@ -122,7 +122,7 @@
 >>乘客发布他的行程，正在听单的车主将会接收到此行程信息。
 
 >用法：
->>1. 乘客：POST {departure,destination,departureTime,tripType,passengerId}
+>>1. 乘客：POST {departure,departureLocation:{lng,lat},destination,destinationLocation:{lng,lat},departureTime,tripType,passengerId}
 >>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(trip))`
 
 >>实时行程不用指定departureTime，即departureTime为null
@@ -223,11 +223,19 @@
 
 >用法：GET  
 
-23. `/api/driver/reviewDriver` 审核车主资料
+23. `/images/drivingLicense/{driverId}.jpg` 显示车主的驾驶证照片
+>描述：
+>>驾驶证照片，直接指定即可。  
+
+24. `/images/vehicleLicense/{driverId}.jpg` 显示车主的行驶证照片
+>描述：
+>>行驶证照片，直接指定即可。  
+
+25. `/api/driver/reviewDriver` 审核车主资料
 >描述：
 >>查询待审核的车主资料  
 
 >用法：POST {driverId, driverStatus}  
 >>参数|可选值
 >>------ | ------
->>driverStatus|APPROVED（审核通过）、UNAPPROVED（审核不通过）
+>>driverStatus|APPROVED（审核通过）、UNAPPROVED（审核不通过  

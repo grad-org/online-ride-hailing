@@ -4,11 +4,13 @@ import com.gd.orh.dto.DriverDTO;
 import com.gd.orh.dto.DrivingLicenseDTO;
 import com.gd.orh.dto.VehicleLicenseDTO;
 import com.gd.orh.entity.Driver;
+import com.gd.orh.entity.ResultCode;
 import com.gd.orh.userMgt.service.DriverService;
 import com.gd.orh.utils.FileUploadUtil;
 import com.gd.orh.utils.RestResultFactory;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +49,14 @@ public class DriverRestController {
 
         if (drivingLicenseImage != null && !drivingLicenseImage.isEmpty()) {
 
-            boolean isSucceed =
-                    FileUploadUtil.upload(
+            boolean isFail =
+                    !FileUploadUtil.upload(
                             drivingLicenseImage,
                             "static/images/drivingLicense/",
-                            driverDTO.getUserId() + ".jpg"
+                            driverDTO.getDriverId() + ".jpg"
                     );
 
-            if (!isSucceed) {
+            if (isFail) {
                 return ResponseEntity
                         .badRequest()
                         .body(RestResultFactory.getFailResult("Driving License Image saving failed!"));
@@ -70,14 +72,14 @@ public class DriverRestController {
 
         if (vehicleLicenseImage != null && !vehicleLicenseImage.isEmpty()) {
 
-            boolean isSucceed =
-                    FileUploadUtil.upload(
+            boolean isFail =
+                    !FileUploadUtil.upload(
                             vehicleLicenseImage,
                             "static/images/vehicleLicense/",
-                            driverDTO.getUserId() + ".jpg"
+                            driverDTO.getDriverId() + ".jpg"
                     );
 
-            if (!isSucceed) {
+            if (isFail) {
                 return ResponseEntity
                         .badRequest()
                         .body(RestResultFactory.getFailResult("Vehicle License Image saving failed!"));
@@ -121,5 +123,24 @@ public class DriverRestController {
         DriverDTO reviewedDriverDTO = new DriverDTO().convertFor(driver);
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(reviewedDriverDTO));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> get(@PathVariable("id") Long id) {
+        Driver driver = driverService.findById(id);
+        if (driver == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(RestResultFactory.getFreeResult(
+                            ResultCode.NOT_FOUND,
+                            "Not found driver with id: " + id + "!",
+                            null
+                    ));
+        }
+
+        DriverDTO driverDTO = new DriverDTO().convertFor(driver);
+
+        // Return driver.
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(driverDTO));
     }
 }

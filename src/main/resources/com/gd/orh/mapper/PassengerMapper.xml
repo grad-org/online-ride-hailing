@@ -15,7 +15,9 @@
   <resultMap id="TripResult" type="Trip">
     <id column="TRIP_ID" property="id"/>
     <result column="DEPARTURE" property="departure"/>
+    <result column="DESTINATION_LOCATION" property="departureLocation"/>
     <result column="DESTINATION" property="destination"/>
+    <result column="DESTINATION_LOCATION" property="destinationLocation"/>
     <result column="TRIP_STATUS" property="tripStatus"/>
     <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP"/>
     <result column="DEPARTURE_TIME" property="departureTime" jdbcType="TIMESTAMP"/>
@@ -36,7 +38,7 @@
     SELECT
       P.ID PASSENGER_ID,
       U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
-      T.ID TRIP_ID, DEPARTURE, DESTINATION, TRIP_STATUS, CREATED_TIME, DEPARTURE_TIME
+      T.ID TRIP_ID, DEPARTURE, DEPARTURE_LOCATION, DESTINATION, DESTINATION_LOCATION, TRIP_STATUS, CREATED_TIME, DEPARTURE_TIME
     FROM PASSENGER P
       LEFT OUTER JOIN USER U ON P.USER_ID=U.ID
       LEFT OUTER JOIN TRIP T ON P.ID=T.PASSENGER_ID

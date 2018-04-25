@@ -30,14 +30,14 @@ public class UserRestController {
         // 保存用户头像
         if (userImage != null && !userImage.isEmpty()) {
 
-            boolean isSucceed =
-                    FileUploadUtil.upload(
+            boolean isFail =
+                    !FileUploadUtil.upload(
                             userImage,
                             "static/images/user/",
                             id + ".jpg"
                     );
 
-            if (!isSucceed) {
+            if (isFail) {
                 return ResponseEntity
                         .badRequest()
                         .body(RestResultFactory.getFailResult("User Image saving failed!"));
