@@ -287,3 +287,27 @@
 >>根据乘客评价id返回乘客评价  
 
 >用法：GET  
+
+32. `/api/serviceRating/complainDriver` 投诉车主
+>描述：
+>>乘客投诉车主  
+
+>用法：POST {complaintContent,driverId,driverUserId}  
+
+33. `/api/serviceRating/complainPassenger` 投诉乘客
+>描述：
+>>车主投诉乘客  
+
+>用法：POST {complaintContent,passengerId,passengerUserId}  
+
+34. `/api/serviceRating/driverComplaint/{id}` 根据车主投诉id返回车主投诉
+>描述：
+>>根据车主投诉id返回车主投诉  
+
+>用法：GET  
+
+35. `/api/serviceRating/passengerComplaint/{id}` 根据乘客投诉id返回乘客投诉
+>描述：
+>>根据乘客投诉id返回乘客投诉  
+
+>用法：GET  
