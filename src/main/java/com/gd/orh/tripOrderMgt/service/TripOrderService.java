@@ -20,4 +20,10 @@ public interface TripOrderService {
     List<TripOrder> findAllByPassenger(Passenger passenger);
 
     List<TripOrder> findAllByDriver(Driver driver);
+
+    boolean isTripOrderBePaid(TripOrder tripOrder);
+
+    TripOrder payTripOrder(TripOrder tripOrder);
+
+    TripOrder completePayment(TripOrder tripOrder);
 }

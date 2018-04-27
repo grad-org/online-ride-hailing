@@ -102,7 +102,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(
                     HttpMethod.POST,
                     loginPath,
-                    registerPath
+                    registerPath,
+                    "api/payment/alipay/**"
             )
 
             // allow anonymous resource requests
