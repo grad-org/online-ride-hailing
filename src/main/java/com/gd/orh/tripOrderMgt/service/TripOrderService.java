@@ -21,7 +21,7 @@ public interface TripOrderService {
 
     List<TripOrder> findAllByDriver(Driver driver);
 
-    boolean isTripOrderBePaid(TripOrder tripOrder);
+    boolean isTripOrderCanBePaid(TripOrder tripOrder);
 
     TripOrder payTripOrder(TripOrder tripOrder);
 

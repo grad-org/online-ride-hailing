@@ -27,7 +27,7 @@
         <javaClientGenerator targetPackage="com.gd.orh.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="PASSENGER_RATING">
+        <table tableName="DRIVER_BALANCE">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->

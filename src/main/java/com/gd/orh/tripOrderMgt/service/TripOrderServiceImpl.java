@@ -100,8 +100,8 @@ public class TripOrderServiceImpl implements TripOrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isTripOrderBePaid(TripOrder tripOrder) {
-        return this.findById(tripOrder.getId()).getOrderStatus().ordinal() >= OrderStatus.PAID.ordinal();
+    public boolean isTripOrderCanBePaid(TripOrder tripOrder) {
+        return this.findById(tripOrder.getId()).getOrderStatus() == OrderStatus.PROCESSING_COMPLETED;
     }
 
     @Override

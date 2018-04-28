@@ -311,3 +311,25 @@
 >>根据乘客投诉id返回乘客投诉  
 
 >用法：GET  
+
+36. `/api/payment/alipay/pay` 乘客使用支付订单
+>描述：
+>>乘客使用支付宝支付订单。    
+>>如果tripOrderId为空，返回"Not Found"结果，  
+>>如果当前行程订单无法被支付（行程订单状态错误），返回"Bad Request"结果。  
+>>跳转到支付宝界面进行支付，支付完成后跳转（暂时跳转效果为返回行程订单JSON的页面）  
+
+>用法：POST {tripOrderId,totalAmount}  
+
+37. `/api/payment/alipay/withdraw` 车主从账户余额中提现资金
+>描述：
+>>车主从账户余额中提现资金，返回乘客资金JSON。  
+>>如果提取金额大于账户余额，返回"Bad Request"结果，  
+
+>用法：POST {driverId,amountOfWithdrawal}  
+
+34. `/api/driverBalance/search/findByDriverId/{driverId}` 根据车主id查询车主账户余额
+>描述：
+>>根据车主id查询车主账户余额  
+
+>用法：GET  
