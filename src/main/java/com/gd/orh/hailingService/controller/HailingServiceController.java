@@ -71,6 +71,18 @@ public class HailingServiceController {
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(publishedTripDTO));
     }
 
+    // 受理订单
+    @PostMapping("/trip/cancelTrip")
+    public ResponseEntity<?> cancelTrip(@RequestBody TripDTO tripDTO) {
+        Trip trip = tripDTO.convertTo();
+
+        Trip canceledTrip = tripService.cancelTrip(trip);
+
+        TripDTO canceledTripDTO = new TripDTO().convertFor(canceledTrip);
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(canceledTripDTO));
+    }
+
     // 车主上传车辆位置,广播给乘客
     @MessageMapping("/hailingService/car/uploadCarLocation")
     @SendTo("/topic/hailingService/car/uploadCarLocation")

@@ -59,4 +59,13 @@ public class TripServiceImpl implements TripService {
     public boolean isTripExisted(Long id) {
         return tripMapper.existsWithPrimaryKey(id);
     }
+
+    @Override
+    public Trip cancelTrip(Trip trip) {
+        trip.setTripStatus(TripStatus.CANCELED);
+
+        tripMapper.updateTripStatus(trip);
+
+        return findById(trip.getId());
+    }
 }

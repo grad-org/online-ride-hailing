@@ -16,4 +16,6 @@ public interface TripService {
     Trip findById(Long id);
 
     boolean isTripExisted(Long id);
+
+    Trip cancelTrip(Trip trip);
 }
