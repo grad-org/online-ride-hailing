@@ -11,8 +11,11 @@ public class CustomDateWebBindingInitializer implements WebBindingInitializer {
 
     @Override
     public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormatter, true));
+        binder.registerCustomEditor(
+            Date.class,
+            new CustomDateEditor(
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),true
+            )
+        );
     }
 }

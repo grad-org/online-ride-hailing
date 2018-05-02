@@ -1,9 +1,9 @@
 package com.gd.orh.config;
 
 import com.gd.orh.security.JwtTokenUtil;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -17,19 +17,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
-@Component
+@AllArgsConstructor
 public class WebSocketInterceptor extends ChannelInterceptorAdapter {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
     private UserDetailsService userDetailsService;
 
     @Override
@@ -38,31 +35,20 @@ public class WebSocketInterceptor extends ChannelInterceptorAdapter {
                 MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            logger.info("command is CONNECT");
-
             String token = accessor.getFirstNativeHeader("Auth-Token");
-            String username = null;
 
             if (!StringUtils.isEmpty(token)) {
-                logger.info("token is not empty");
-
                 Map sessionAttributes =
                         SimpMessageHeaderAccessor.getSessionAttributes(message.getHeaders());
 
                 sessionAttributes.put(
                     CsrfToken.class.getName(),
-                    new DefaultCsrfToken(
-                            "Auth-Token",
-                            "Auth-Token",
-                            token
-                    )
+                    new DefaultCsrfToken("Auth-Token","Auth-Token",token)
                 );
 
-                username = jwtTokenUtil.getUsernameFromToken(token);
+                String username = jwtTokenUtil.getUsernameFromToken(token);
 
                 if (username != null) {
-                    logger.info("username was not null, authorizing user");
-
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                     if (jwtTokenUtil.validateToken(token, userDetails)) {
