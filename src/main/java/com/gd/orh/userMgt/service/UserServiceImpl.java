@@ -8,11 +8,11 @@ import com.gd.orh.mapper.AuthorityMapper;
 import com.gd.orh.mapper.PassengerMapper;
 import com.gd.orh.mapper.UserMapper;
 import com.github.pagehelper.PageHelper;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
-        if (StringUtils.isNotEmpty(username)) {
+        if (!StringUtils.isEmpty(username)) {
             return userMapper.findByUsername(username);
         } else {
             return null;

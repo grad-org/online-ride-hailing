@@ -71,7 +71,7 @@ public class HailingServiceController {
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(publishedTripDTO));
     }
 
-    // 受理订单
+    // 取消行程
     @PostMapping("/trip/cancelTrip")
     public ResponseEntity<?> cancelTrip(@RequestBody TripDTO tripDTO) {
         Trip trip = tripDTO.convertTo();

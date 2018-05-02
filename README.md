@@ -125,7 +125,7 @@
 >>1. 乘客：POST {departure,departureLocation:{lng,lat},destination,destinationLocation:{lng,lat},departureTime,tripType,passengerId}
 >>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(trip))`
 
->>实时行程不用指定departureTime，即departureTime为null
+>>实时行程不指定departureTime
 
 >>参数|可选值
 >>------ | ------
@@ -152,7 +152,7 @@
 >>乘客受理订单后，将会通过该通道通知乘客。  
 
 >用法：
->>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passenggerUusername}", {}, JSON.stringify({...}))` **（暂时未提供！）**
+>>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passenggerUsername}", {}, JSON.stringify({...}))` **（暂时未提供！）**
 >>2. 乘客：`stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification",function(tripOrder))`
 
 * `/api/hailingService/tripOrder/pickupPassenger` 车主确认乘客上车

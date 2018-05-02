@@ -21,6 +21,7 @@ spring:
       FAIL_ON_EMPTY_BEANS: false
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
+    #default-property-inclusion: non_null
   # H2
   h2:
     console:

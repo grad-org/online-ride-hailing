@@ -47,7 +47,7 @@ public class TripOrderRestController {
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrderDTO));
     }
 
-    @GetMapping("/search/findAllByPassenger/{driverId}")
+    @GetMapping("/search/findAllByDriver/{driverId}")
     public ResponseEntity<?> findAllByDriver(
             @PathVariable("driverId") Long driverId,
             @RequestParam(value = "page", defaultValue = "1") Integer page,

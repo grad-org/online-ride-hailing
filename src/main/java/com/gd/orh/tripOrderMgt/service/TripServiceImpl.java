@@ -3,6 +3,7 @@ package com.gd.orh.tripOrderMgt.service;
 import com.gd.orh.entity.ListeningOrderCondition;
 import com.gd.orh.entity.Trip;
 import com.gd.orh.entity.TripStatus;
+import com.gd.orh.entity.TripType;
 import com.gd.orh.mapper.TripMapper;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,10 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public Trip publishTrip(Trip trip) {
+        if(trip.getTripType() == TripType.REAL_TIME) {
+            trip.setDepartureTime(new Date());
+        }
+
         trip.setCreatedTime(new Date());
         trip.setTripStatus(TripStatus.PUBLISHED);
 

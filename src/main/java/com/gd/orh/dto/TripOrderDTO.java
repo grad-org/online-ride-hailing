@@ -23,6 +23,7 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
     private String destination;
     private Location destinationLocation;
     private Date createdTime;
+    private Date departureTime;
 
     private Long driverId;
     private Long driverUserId;
@@ -131,6 +132,13 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
                     .ofNullable(tripOrder)
                     .map(TripOrder::getTrip)
                     .map(Trip::getCreatedTime)
+                    .orElse(null)
+            );
+
+            tripOrderDTO.setDepartureTime(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getTrip)
+                    .map(Trip::getDepartureTime)
                     .orElse(null)
             );
 

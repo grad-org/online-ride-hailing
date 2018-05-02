@@ -8,7 +8,7 @@
   <resultMap id="TripResult" type="Trip">
     <id column="TRIP_ID" property="id"/>
     <result column="DEPARTURE" property="departure"/>
-    <result column="DESTINATION_LOCATION" property="departureLocation"/>
+    <result column="DEPARTURE_LOCATION" property="departureLocation"/>
     <result column="DESTINATION" property="destination"/>
     <result column="DESTINATION_LOCATION" property="destinationLocation"/>
     <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP"/>
@@ -94,7 +94,7 @@
     WHERE
       P.ID=#{passengerId} AND T.PASSENGER_ID=P.ID AND T_O.TRIP_ID=T.ID
     ORDER BY
-      T.CREATED_TIME
+      T.DEPARTURE_TIME DESC
   </select>
 
   <select id="findAllByDriverId" resultMap="TripOrderResult">
@@ -114,7 +114,7 @@
     WHERE
       T_O.DRIVER_ID=#{driverId}
     ORDER BY
-      T_O.ACCEPTED_TIME
+      T_O.ACCEPTED_TIME DESC
   </select>
 
   <update id="updateCompletedTime">
