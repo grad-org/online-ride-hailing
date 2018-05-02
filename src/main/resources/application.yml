@@ -1,4 +1,6 @@
 debug: true
+server:
+  port: 8080
 
 # Spring configuration
 spring:
@@ -65,9 +67,9 @@ jwt:
       verify: api/auth/verify
 
 # Logging configuration
-logging:
-  level:
-    tk.mybatis: TRACE
-    com.gd.orh.mapper: DEBUG
-    org.springframework:
-      security: DEBUG
+#logging:
+#  level:
+#    tk.mybatis: TRACE
+#    com.gd.orh.mapper: DEBUG
+#    org.springframework:
+#      security: DEBUG

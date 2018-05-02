@@ -12,7 +12,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -62,29 +61,23 @@ public class WebSocketInterceptor extends ChannelInterceptorAdapter {
                 username = jwtTokenUtil.getUsernameFromToken(token);
 
                 if (username != null) {
+                    logger.info("username was not null, authorizing user");
 
-                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                    if (authentication == null) {
-                        logger.info("security context was null, so authorizing user");
+                    if (jwtTokenUtil.validateToken(token, userDetails)) {
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(
+                                        userDetails,
+                                        null,
+                                        userDetails.getAuthorities()
+                                );
 
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        logger.info("authorized user '{}', setting security context", username);
 
-                        if (jwtTokenUtil.validateToken(token, userDetails)) {
-                            authentication =
-                                    new UsernamePasswordAuthenticationToken(
-                                            userDetails,
-                                            null,
-                                            userDetails.getAuthorities()
-                                    );
-
-                            logger.info("authorized user '{}', setting security context", username);
-
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-                        }
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        accessor.setUser(authentication);
                     }
-
-                    accessor.setUser(authentication);
                 }
             }
         }

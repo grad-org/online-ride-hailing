@@ -103,7 +103,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     HttpMethod.POST,
                     loginPath,
                     registerPath,
-                    "api/payment/alipay/**"
+                    "/api/payment/alipay/**"
             )
 
             // allow anonymous resource requests
