@@ -9,4 +9,11 @@
     <result column="UNIT_PRICE_PER_MINUTE" property="unitPricePerMinute"/>
     <result column="SETUP_TIME" property="setupTime"/>
   </resultMap>
+
+  <select id="findRecentFareRule" resultMap="FareRuleResult">
+    SELECT ID FARE_RULE_ID, INITIAL_PRICE, INITIAL_MILEAGE, UNIT_PRICE_PER_KILOMETER, UNIT_PRICE_PER_MINUTE, SETUP_TIME
+    FROM FARE_RULE
+    ORDER BY SETUP_TIME DESC
+    LIMIT 1
+  </select>
 </mapper>
