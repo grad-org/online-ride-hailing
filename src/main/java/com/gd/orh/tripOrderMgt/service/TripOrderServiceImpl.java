@@ -53,6 +53,10 @@ public class TripOrderServiceImpl implements TripOrderService {
         tripOrder.setOrderStatus(OrderStatus.CLOSED);
         tripOrderMapper.updateOrderStatus(tripOrder);
 
+        Trip trip = tripOrder.getTrip();
+        trip.setTripStatus(TripStatus.CANCELED);
+        tripMapper.updateTripStatus(trip);
+
         return this.findById(tripOrder.getId());
     }
 
@@ -84,16 +88,16 @@ public class TripOrderServiceImpl implements TripOrderService {
     }
 
     @Override
-    public TripOrder completePayment(TripOrder tripOrder) {
-        tripOrder.setOrderStatus(OrderStatus.PAYMENT_COMPLETED);
+    public TripOrder payTripOrder(TripOrder tripOrder) {
+        tripOrder.setOrderStatus(OrderStatus.PAID);
         tripOrderMapper.updateOrderStatus(tripOrder);
 
         return this.findById(tripOrder.getId());
     }
 
     @Override
-    public TripOrder payTripOrder(TripOrder tripOrder) {
-        tripOrder.setOrderStatus(OrderStatus.PAID);
+    public TripOrder completePayment(TripOrder tripOrder) {
+        tripOrder.setOrderStatus(OrderStatus.PAYMENT_COMPLETED);
         tripOrderMapper.updateOrderStatus(tripOrder);
 
         return this.findById(tripOrder.getId());
