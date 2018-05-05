@@ -26,9 +26,9 @@ public class TripOrderRestController {
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrderDTO));
     }
 
-    @GetMapping("/search/findAllByPassenger/{passengerId}")
+    @GetMapping("/search/findAllByPassenger")
     public ResponseEntity<?> findAllByPassenger(
-            @PathVariable("passengerId") Long passengerId,
+            @RequestParam("passengerId") Long passengerId,
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "rows",defaultValue = "10") Integer rows) {
 
@@ -46,9 +46,9 @@ public class TripOrderRestController {
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(tripOrderDTOs));
     }
 
-    @GetMapping("/search/findAllByDriver/{driverId}")
+    @GetMapping("/search/findAllByDriver")
     public ResponseEntity<?> findAllByDriver(
-            @PathVariable("driverId") Long driverId,
+            @RequestParam("driverId") Long driverId,
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "rows",defaultValue = "10") Integer rows) {
 

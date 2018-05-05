@@ -18,7 +18,7 @@ public class DriverBalanceController {
     @Autowired
     private DriverBalanceService driverBalanceService;
 
-    @GetMapping("/search/findByDriverId/{driverId}")
+    @GetMapping("/search/driver/{driverId}")
     public ResponseEntity<?> findByDriverId(@PathVariable("driverId") Long driverId) {
         DriverBalance driverBalance = driverBalanceService.findByDriverId(driverId);
 

@@ -152,11 +152,11 @@
 >>如果当前行程无法被受理（行程状态错误），返回"Bad Request"结果。 
 >>返回行程订单  
 
-* `/api/hailingService/tripOrder/cancelTripOrderByPassenger` 乘客在车主受理前，取消订单
+* `/api/hailingService/tripOrder/cancelTripOrderByPassenger` 乘客在车主受理后，取消订单
 >描述：
 >>乘客在车主受理前，取消订单，  
 >>如果没有找到对应行程，返回"Not Found"结果，  
->>如果当前行程无法被取消（行程状态错误），返回"Bad Request"结果。 
+>>如果当前行程订单无法被取消（行程状态错误），返回"Bad Request"结果。 
 >>返回行程订单  
 
 >用法：POST {tripOrderId}
@@ -165,7 +165,7 @@
 >描述：
 >>车主在确认乘客上车前，取消订单，  
 >>如果没有找到对应行程，返回"Not Found"结果，  
->>如果当前行程无法被取消（行程状态错误），返回"Bad Request"结果。 
+>>如果当前行程订单无法被取消（行程状态错误），返回"Bad Request"结果。 
 >>返回行程订单  
 
 >用法：POST {tripOrderId}
@@ -202,17 +202,17 @@
 
 >用法：POST {tripOrderId,lengthOfMileage,lengthOfTime}  
 
-* `/api/tripOrder/search/findAllByPassenger/{passengerId}` 根据乘客id查询历史行程
+* `/api/tripOrder/search/findAllByPassenger` 根据乘客id查询历史行程
 >描述：
 >>根据乘客id查询历史行程  
 
->用法：GET [?page,row]  
+>用法：GET [?passengerId,page,row]  
 
-* `/api/tripOrder/search/findAllByDriverId/{driverId}` 根据车主id查询历史行程
+* `/api/tripOrder/search/findAllByDriver` 根据车主id查询历史行程
 >描述：
 >>根据车主id查询历史行程  
 
->用法：GET [?page,row]  
+>用法：GET [?driverId,page,row]  
 
 * `/api/tripOrder/{id}` 根据行程订单id查询行程明细
 >描述：
@@ -358,7 +358,7 @@
 
 >用法：POST {driverId,amountOfWithdrawal}  
 
-* `/api/driverBalance/search/findByDriverId/{driverId}` 根据车主id查询车主账户余额
+* `/api/driverBalance/search/driver/{driverId}` 根据车主id查询车主账户余额
 >描述：
 >>根据车主id查询车主账户余额  
 
