@@ -92,10 +92,13 @@ public class HailingServiceController {
     }
 
     // 车主上传车辆位置，单独发给乘客
-    @MessageMapping("/queue/hailingService/car/uploadCarLocation/{passengerUsername}")
+    @MessageMapping("/queue/hailingService/car/uploadCarLocation/{passengerId}")
     public void uploadLocation(
-            @DestinationVariable("passengerUsername") String passengerUsername,
+            @DestinationVariable("passengerId") Long passengerId,
             @Payload CarLocationDTO carLocationDTO) {
+
+        Passenger passenger = passengerService.findById(passengerId);
+        String passengerUsername = passenger.getUser().getUsername();
 
         simpMessagingTemplate.convertAndSendToUser(
             passengerUsername,
@@ -156,7 +159,7 @@ public class HailingServiceController {
 
     // 确认乘客上车
     @PostMapping("/tripOrder/pickUpPassenger")
-    public ResponseEntity<?> pickupPassenger(@RequestBody TripOrderDTO tripOrderDTO) {
+    public ResponseEntity<?> pickUpPassenger(@RequestBody TripOrderDTO tripOrderDTO) {
         TripOrder tripOrder = tripOrderDTO.convertTo();
 
         // 行程订单不存在

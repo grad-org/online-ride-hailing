@@ -102,12 +102,12 @@
 >>1. 车主：`stompClient.send("/api/hailingService/car/uploadCarLocation", {}, JSON.stringify({carId, lng, lat}))`
 >>2. 乘客：`stompClient.subscribe("/topic/hailingService/car/uploadCarLocation", function(carLocation))`
 
-* `/hailingService/car/uploadCarLocation/{passengerUsername}` 车主上传车辆位置并通知用户名为{passengerUsername}的乘客
+* `/hailingService/car/uploadCarLocation/{passengerId}` 车主上传车辆位置并通知用户名为{passengerId}的乘客
 >描述：
 >>在车主受理订单后，定时将车辆位置推送到此通道，乘客通过订阅此通道监控车辆行进轨迹。  
 
 >用法：
->>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerUsername}", {}, JSON.stringify({carId, lng, lat}))`
+>>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerId}", {}, JSON.stringify({carId, lng, lat}))`
 >>2. 乘客：`stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation', function(carLocation))`  
 
 * `/api/fare/predictFare` 预估车费
@@ -155,7 +155,7 @@
 >>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passenggerUsername}", {}, JSON.stringify({...}))` **（暂时未提供！）**
 >>2. 乘客：`stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification",function(tripOrder))`
 
-* `/api/hailingService/tripOrder/pickupPassenger` 车主确认乘客上车
+* `/api/hailingService/tripOrder/pickUpPassenger` 车主确认乘客上车
 >描述：
 >>车主确认乘客上车后，更新行程订单状态和行程状态。    
 >>如果行程订单没找到，返回"Not Found"结果，   
