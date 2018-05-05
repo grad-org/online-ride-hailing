@@ -50,7 +50,6 @@ public class TripRestController {
 
         TripDTO tripDTO = new TripDTO().convertFor(trip);
 
-        // Return user.
         return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(tripDTO));
     }
 }

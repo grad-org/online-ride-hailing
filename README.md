@@ -102,12 +102,12 @@
 >>1. 车主：`stompClient.send("/api/hailingService/car/uploadCarLocation", {}, JSON.stringify({carId, lng, lat}))`
 >>2. 乘客：`stompClient.subscribe("/topic/hailingService/car/uploadCarLocation", function(carLocation))`
 
-* `/hailingService/car/uploadCarLocation/{passengerId}` 车主上传车辆位置并通知用户名为{passengerId}的乘客
+* `/hailingService/car/uploadCarLocation/{passengerUsername}` 车主上传车辆位置并通知用户名为{passengerUsername}的乘客
 >描述：
 >>在车主受理订单后，定时将车辆位置推送到此通道，乘客通过订阅此通道监控车辆行进轨迹。  
 
 >用法：
->>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerId}", {}, JSON.stringify({carId, lng, lat}))`
+>>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerUsername}", {}, JSON.stringify({carId, lng, lat}))`
 >>2. 乘客：`stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation', function(carLocation))`  
 
 * `/api/fare/predictFare` 预估车费
@@ -145,15 +145,38 @@
 >>如果当前行程无法被受理（行程状态错误），返回"Bad Request"结果。 
 >>返回行程订单  
 
->用法：POST {tripId,driverId}
+* `/api/hailingService/tripOrder/acceptTripOrder` 车主受理订单，通知乘客
+>描述：
+>>车主受理订单，并通知对应的乘客，  
+>>如果没有找到对应行程，返回"Not Found"结果，  
+>>如果当前行程无法被受理（行程状态错误），返回"Bad Request"结果。 
+>>返回行程订单  
 
-* `/hailingService/tripOrder/acceptance-notification` 车主受理订单后触发受理通知
+* `/api/hailingService/tripOrder/cancelTripOrderByPassenger` 乘客在车主受理前，取消订单
+>描述：
+>>乘客在车主受理前，取消订单，  
+>>如果没有找到对应行程，返回"Not Found"结果，  
+>>如果当前行程无法被取消（行程状态错误），返回"Bad Request"结果。 
+>>返回行程订单  
+
+>用法：POST {tripOrderId}
+
+* `/api/hailingService/tripOrder/cancelTripOrderByDriver` 车主在确认乘客上车前，取消订单
+>描述：
+>>车主在确认乘客上车前，取消订单，  
+>>如果没有找到对应行程，返回"Not Found"结果，  
+>>如果当前行程无法被取消（行程状态错误），返回"Bad Request"结果。 
+>>返回行程订单  
+
+>用法：POST {tripOrderId}
+
+* `/hailingService/tripOrder/acceptance-notification` 车主受理订单后双方通过该通道进行通信
 >描述：  
->>乘客受理订单后，将会通过该通道通知乘客。  
+>>车主受理订单后双方通过该通道进行通信。  
 
 >用法：
->>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passenggerUsername}", {}, JSON.stringify({...}))` **（暂时未提供！）**
->>2. 乘客：`stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification",function(tripOrder))`
+>>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passengerUsername}", {}, JSON.stringify({...}))` **（暂时未提供！）**
+>>2. 乘客和车主：`stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification",function(tripOrder))`
 
 * `/api/hailingService/tripOrder/pickUpPassenger` 车主确认乘客上车
 >描述：

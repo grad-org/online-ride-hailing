@@ -1,17 +1,13 @@
 package com.gd.orh.hailingService.controller;
 
 import com.gd.orh.dto.CarLocationDTO;
-import com.gd.orh.dto.FareDTO;
 import com.gd.orh.dto.TripDTO;
 import com.gd.orh.dto.TripOrderDTO;
 import com.gd.orh.entity.*;
-import com.gd.orh.fareRuleMgt.service.FareRuleService;
-import com.gd.orh.hailingService.service.*;
 import com.gd.orh.tripOrderMgt.service.TripOrderService;
 import com.gd.orh.tripOrderMgt.service.TripService;
-import com.gd.orh.userMgt.service.DriverService;
-import com.gd.orh.userMgt.service.PassengerService;
 import com.gd.orh.utils.RestResultFactory;
+import com.gd.orh.utils.WebSocketResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,52 +16,43 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/hailingService")
 public class HailingServiceController {
 
     @Autowired
-    private PassengerService passengerService;
-
-    @Autowired
     private TripService tripService;
-
-    @Autowired
-    private DriverService driverService;
 
     @Autowired
     private TripOrderService tripOrderService;
 
     @Autowired
-    private FareService fareService;
-
-    @Autowired
-    private FareRuleService fareRuleService;
-
-    @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
+    // 车主上传车辆位置,广播给乘客
+    @MessageMapping("/hailingService/car/uploadCarLocation")
+    @SendTo("/topic/hailingService/car/uploadCarLocation")
+    public WebSocketResult broadcastLocation(CarLocationDTO carLocationDTO) {
+        return WebSocketResultFactory.getWebSocketResult("uploadCarLocation", carLocationDTO);
+    }
 
     // 发布行程,广播给正在听单的车主
     @PostMapping("/trip/publishTrip")
     public ResponseEntity<?> publishTrip(@RequestBody TripDTO tripDTO) {
         Trip trip = tripDTO.convertTo();
 
-        Passenger passenger = passengerService.findById(trip.getPassenger().getId());
+        Trip publishedTrip = tripService.publishTrip(trip);
 
-        trip.setPassenger(passenger);
-
-        trip = tripService.publishTrip(trip);
-
-        TripDTO publishedTripDTO = new TripDTO().convertFor(trip);
+        TripDTO publishedTripDTO = new TripDTO().convertFor(publishedTrip);
 
         simpMessagingTemplate.convertAndSend(
             "/topic/hailingService/trip/publishTrip",
-            publishedTripDTO
+            WebSocketResultFactory.getWebSocketResult("publishTrip", publishedTripDTO)
         );
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(publishedTripDTO));
@@ -76,35 +63,36 @@ public class HailingServiceController {
     public ResponseEntity<?> cancelTrip(@RequestBody TripDTO tripDTO) {
         Trip trip = tripDTO.convertTo();
 
+        // 行程不存在
+        if (!tripService.isTripExisted(trip.getId())) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(RestResultFactory.getFreeResult(
+                            ResultCode.NOT_FOUND,
+                            "The trip is not existed!",
+                            null
+                    ));
+        }
+
+        trip = tripService.findById(trip.getId());
+
+        // 当前行程状态不允许被取消
+        if (trip.getTripStatus() != TripStatus.PUBLISHED) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult("The trip could not be canceled!"));
+        }
+
         Trip canceledTrip = tripService.cancelTrip(trip);
 
         TripDTO canceledTripDTO = new TripDTO().convertFor(canceledTrip);
 
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult(canceledTripDTO));
-    }
-
-    // 车主上传车辆位置,广播给乘客
-    @MessageMapping("/hailingService/car/uploadCarLocation")
-    @SendTo("/topic/hailingService/car/uploadCarLocation")
-    public CarLocationDTO broadcastLocation(CarLocationDTO carLocationDTO) {
-
-        return carLocationDTO;
-    }
-
-    // 车主上传车辆位置，单独发给乘客
-    @MessageMapping("/queue/hailingService/car/uploadCarLocation/{passengerId}")
-    public void uploadLocation(
-            @DestinationVariable("passengerId") Long passengerId,
-            @Payload CarLocationDTO carLocationDTO) {
-
-        Passenger passenger = passengerService.findById(passengerId);
-        String passengerUsername = passenger.getUser().getUsername();
-
-        simpMessagingTemplate.convertAndSendToUser(
-            passengerUsername,
-            "/queue/hailingService/car/uploadCarLocation",
-            carLocationDTO
+        simpMessagingTemplate.convertAndSend(
+                "/topic/hailingService/trip/publishTrip",
+                WebSocketResultFactory.getWebSocketResult("cancelTrip", canceledTripDTO)
         );
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(canceledTripDTO));
     }
 
     // 受理订单
@@ -131,30 +119,113 @@ public class HailingServiceController {
                     .badRequest()
                     .body(RestResultFactory.getFailResult("The trip could not be accepted!"));
         }
-        tripOrder.setTrip(trip);
-
-        Driver driver = driverService.findById(tripOrder.getDriver().getId());
-        tripOrder.setDriver(driver);
-
-        Fare fare = new Fare();
-        FareRule fareRule = fareRuleService.findRecentFareRule();
-        fare.setFareRule(fareRule);
-
-        tripOrder.setFare(fare);
 
         // 车主受理订单
-        tripOrder = tripOrderService.acceptTripOrder(tripOrder);
+        TripOrder acceptedTripOrder = tripOrderService.acceptTripOrder(tripOrder);
 
-        TripOrderDTO acceptedTripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
+        TripOrderDTO acceptedTripOrderDTO = new TripOrderDTO().convertFor(acceptedTripOrder);
 
         // 通知乘客接单
         simpMessagingTemplate.convertAndSendToUser(
-            trip.getPassenger().getUser().getUsername(),
+            acceptedTripOrder.getTrip().getPassenger().getUser().getUsername(),
             "/queue/hailingService/tripOrder/acceptance-notification",
-            acceptedTripOrderDTO
+            WebSocketResultFactory.getWebSocketResult("acceptTripOrder", acceptedTripOrderDTO)
         );
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(acceptedTripOrderDTO));
+    }
+
+    // 车主上传车辆位置，单独发给乘客
+    @MessageMapping("/queue/hailingService/car/uploadCarLocation/{passengerUsername}")
+    public void uploadLocation(
+            @DestinationVariable("passengerUsername") String passengerUsername,
+            @Payload CarLocationDTO carLocationDTO) {
+
+        simpMessagingTemplate.convertAndSendToUser(
+                passengerUsername,
+                "/queue/hailingService/car/uploadCarLocation",
+                WebSocketResultFactory.getWebSocketResult("uploadCarLocation", carLocationDTO)
+        );
+    }
+
+    // 乘客取消订单
+    @PostMapping("/tripOrder/cancelTripOrderByPassenger")
+    public ResponseEntity<?> cancelTripOrderByPassenger(@RequestBody TripOrderDTO tripOrderDTO) {
+        TripOrder tripOrder = tripOrderDTO.convertTo();
+
+        // 行程订单不存在
+        if (!tripOrderService.isTripOrderExisted(tripOrder.getId())) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(RestResultFactory.getFreeResult(
+                            ResultCode.NOT_FOUND,
+                            "The trip order is not existed!",
+                            null
+                    ));
+        }
+
+        tripOrder = tripOrderService.findById(tripOrder.getId());
+
+        // 当前行程状态不允许车主取消订单
+        if (tripOrder.getOrderStatus() != OrderStatus.ACCEPTED) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult("The trip order could not be cancel from passenger!"));
+        }
+
+        // 取消行程订单
+        TripOrder canceledTripOrder = tripOrderService.cancelOrder(tripOrder);
+
+        TripOrderDTO canceledTripOrderDTO = new TripOrderDTO().convertFor(canceledTripOrder);
+
+        // 通知车主取消行程订单
+        simpMessagingTemplate.convertAndSendToUser(
+                canceledTripOrder.getDriver().getUser().getUsername(),
+                "/queue/hailingService/tripOrder/acceptance-notification",
+                WebSocketResultFactory.getWebSocketResult("cancelTripOrder", canceledTripOrderDTO)
+        );
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(canceledTripOrderDTO));
+    }
+
+    // 车主取消订单
+    @PostMapping("/tripOrder/cancelTripOrderByDriver")
+    public ResponseEntity<?> cancelTripOrderByDriver(@RequestBody TripOrderDTO tripOrderDTO) {
+        TripOrder tripOrder = tripOrderDTO.convertTo();
+
+        // 行程订单不存在
+        if (!tripOrderService.isTripOrderExisted(tripOrder.getId())) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(RestResultFactory.getFreeResult(
+                            ResultCode.NOT_FOUND,
+                            "The trip order is not existed!",
+                            null
+                    ));
+        }
+
+        tripOrder = tripOrderService.findById(tripOrder.getId());
+
+        // 当前行程状态不允许乘客取消订单
+        if (tripOrder.getOrderStatus() != OrderStatus.ACCEPTED) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(RestResultFactory.getFailResult("The trip order could not be cancel from driver!"));
+        }
+
+        // 取消行程订单
+        TripOrder canceledTripOrder = tripOrderService.cancelOrder(tripOrder);
+
+        TripOrderDTO canceledTripOrderDTO = new TripOrderDTO().convertFor(canceledTripOrder);
+
+        // 通知乘客取消行程订单
+        simpMessagingTemplate.convertAndSendToUser(
+                canceledTripOrder.getTrip().getPassenger().getUser().getUsername(),
+                "/queue/hailingService/tripOrder/acceptance-notification",
+                WebSocketResultFactory.getWebSocketResult("cancelTripOrder", canceledTripOrderDTO)
+        );
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(canceledTripOrderDTO));
     }
 
     // 确认乘客上车
@@ -182,41 +253,19 @@ public class HailingServiceController {
                     .body(RestResultFactory.getFailResult("The trip order could not be processed!"));
         }
 
-        Trip trip = tripService.findById(tripOrder.getTrip().getId());
-        tripOrder.setTrip(trip);
-
-        Driver driver = driverService.findById(tripOrder.getDriver().getId());
-        tripOrder.setDriver(driver);
-
         // 确认乘客上车
-        tripOrderService.confirmPickUp(tripOrder);
+        TripOrder pickedUpTripOrder = tripOrderService.confirmPickUp(tripOrder);
 
-        TripOrderDTO pickupTripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
+        TripOrderDTO pickedUpTripOrderDTO = new TripOrderDTO().convertFor(pickedUpTripOrder);
 
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult(pickupTripOrderDTO));
-    }
+        // 通知乘客已上车
+        simpMessagingTemplate.convertAndSendToUser(
+                pickedUpTripOrder.getTrip().getPassenger().getUser().getUsername(),
+                "/queue/hailingService/tripOrder/acceptance-notification",
+                WebSocketResultFactory.getWebSocketResult("pickUpPassenger", pickedUpTripOrderDTO)
+        );
 
-    // 预估车费
-    @GetMapping("/fare/predictFare")
-    public ResponseEntity<?> predictFare(@Valid FareDTO fareDTO, BindingResult result) {
-        if (result.hasErrors()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(RestResultFactory.getFailResult(
-                        "The giving mileage or time could not be empty and must be greater than 0!"
-                    ));
-        }
-
-        Fare fare = fareDTO.convertTo();
-
-        // 获取最新计费规则
-        FareRule recentFareRule = fareRuleService.findRecentFareRule();
-        fare.setFareRule(recentFareRule);
-
-        FareDTO predictFareDTO = new FareDTO().convertFor(fare);
-
-        // 返回预估车费
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult(predictFareDTO));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(pickedUpTripOrderDTO));
     }
 
     // 确认到达
@@ -243,22 +292,21 @@ public class HailingServiceController {
                     .badRequest()
                     .body(RestResultFactory.getFailResult("The trip order could not be confirmed!"));
         }
-
-        Trip trip = tripService.findById(tripOrder.getTrip().getId());
-        tripOrder.setTrip(trip);
-
-        Driver driver = driverService.findById(tripOrder.getDriver().getId());
-        tripOrder.setDriver(driver);
-
-        Fare fare = fareService.findById(tripOrder.getFare().getId());
-        fare.setLengthOfMileage(tripOrderDTO.getLengthOfMileage());
-        fare.setLengthOfTime(tripOrderDTO.getLengthOfTime());
-        tripOrder.setFare(fare);
+        
+        tripOrder.getFare().setLengthOfMileage(tripOrderDTO.getLengthOfMileage());
+        tripOrder.getFare().setLengthOfTime(tripOrderDTO.getLengthOfTime());
 
         // 确认到达
-        tripOrderService.confirmArrival(tripOrder);
+        TripOrder arrivalTripOrder = tripOrderService.confirmArrival(tripOrder);
 
-        TripOrderDTO arrivalTripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
+        TripOrderDTO arrivalTripOrderDTO = new TripOrderDTO().convertFor(arrivalTripOrder);
+
+        // 通知乘客已确认到达
+        simpMessagingTemplate.convertAndSendToUser(
+                arrivalTripOrder.getTrip().getPassenger().getUser().getUsername(),
+                "/queue/hailingService/tripOrder/acceptance-notification",
+                WebSocketResultFactory.getWebSocketResult("confirmArrival", arrivalTripOrderDTO)
+        );
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(arrivalTripOrderDTO));
     }

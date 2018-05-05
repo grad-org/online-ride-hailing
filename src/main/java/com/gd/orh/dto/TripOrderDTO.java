@@ -26,10 +26,16 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
     private Date departureTime;
 
     private Long passengerId;
+    private Long passengerUserId;
+    private String passengerUsername;
+    private String passengerNickname;
 
     private Long driverId;
     private Long driverUserId;
+    private String driverUsername;
     private String driverNickname;
+
+    private String driverName;
 
     private Long carId;
     private String plateNo;
@@ -62,6 +68,10 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
+
+            Passenger passenger = new Passenger();
+            passenger.setId(tripOrderDTO.getPassengerId());
+            trip.setPassenger(passenger);
 
             tripOrder.setTrip(trip);
 
@@ -151,6 +161,30 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
                     .map(Passenger::getId)
                     .orElse(null));
 
+            tripOrderDTO.setPassengerUserId(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getTrip)
+                    .map(Trip::getPassenger)
+                    .map(Passenger::getUser)
+                    .map(User::getId)
+                    .orElse(null));
+
+            tripOrderDTO.setPassengerNickname(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getTrip)
+                    .map(Trip::getPassenger)
+                    .map(Passenger::getUser)
+                    .map(User::getNickname)
+                    .orElse(null));
+
+            tripOrderDTO.setPassengerUsername(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getTrip)
+                    .map(Trip::getPassenger)
+                    .map(Passenger::getUser)
+                    .map(User::getUsername)
+                    .orElse(null));
+
             tripOrderDTO.setDriverId(Optional
                     .ofNullable(tripOrder)
                     .map(TripOrder::getDriver)
@@ -166,11 +200,27 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
                     .orElse(null)
             );
 
+            tripOrderDTO.setDriverUsername(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getDriver)
+                    .map(Driver::getUser)
+                    .map(User::getUsername)
+                    .orElse(null)
+            );
+
             tripOrderDTO.setDriverNickname(Optional
                     .ofNullable(tripOrder)
                     .map(TripOrder::getDriver)
                     .map(Driver::getUser)
                     .map(User::getNickname)
+                    .orElse(null)
+            );
+
+            tripOrderDTO.setDriverName(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getDriver)
+                    .map(Driver::getDrivingLicense)
+                    .map(DrivingLicense::getDriverName)
                     .orElse(null)
             );
 

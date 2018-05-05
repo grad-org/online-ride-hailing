@@ -1,7 +1,5 @@
 package com.gd.orh.tripOrderMgt.service;
 
-import com.gd.orh.entity.Driver;
-import com.gd.orh.entity.Passenger;
 import com.gd.orh.entity.TripOrder;
 
 import java.util.List;
@@ -17,13 +15,15 @@ public interface TripOrderService {
 
     TripOrder confirmArrival(TripOrder tripOrder);
 
-    List<TripOrder> findAllByPassenger(Passenger passenger);
+    List<TripOrder> findAllByPassenger(TripOrder tripOrder);
 
-    List<TripOrder> findAllByDriver(Driver driver);
+    List<TripOrder> findAllByDriver(TripOrder tripOrder);
 
     boolean isTripOrderCanBePaid(TripOrder tripOrder);
 
     TripOrder payTripOrder(TripOrder tripOrder);
 
     TripOrder completePayment(TripOrder tripOrder);
+
+    TripOrder cancelOrder(TripOrder tripOrder);
 }

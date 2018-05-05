@@ -2,6 +2,7 @@ package com.gd.orh.tripOrderMgt.service;
 
 import com.gd.orh.entity.*;
 import com.gd.orh.mapper.FareMapper;
+import com.gd.orh.mapper.FareRuleMapper;
 import com.gd.orh.mapper.TripMapper;
 import com.gd.orh.mapper.TripOrderMapper;
 import com.github.pagehelper.PageHelper;
@@ -25,32 +26,34 @@ public class TripOrderServiceImpl implements TripOrderService {
     @Autowired
     private FareMapper fareMapper;
 
+    @Autowired
+    private FareRuleMapper fareRuleMapper;
+
     @Override
     public TripOrder acceptTripOrder(TripOrder tripOrder) {
-        Fare fare = tripOrder.getFare();
+        FareRule fareRule = fareRuleMapper.findRecentFareRule();
+        Fare fare = new Fare();
+        fare.setFareRule(fareRule);
         fareMapper.insertFare(fare);
 
+        tripOrder.setFare(fare);
         tripOrder.setAcceptedTime(new Date());
         tripOrder.setOrderStatus(OrderStatus.ACCEPTED);
         tripOrderMapper.insertTripOrder(tripOrder);
 
         Trip trip = tripOrder.getTrip();
         trip.setTripStatus(TripStatus.ACCEPTED);
-
         tripMapper.updateTripStatus(trip);
-        return tripOrder;
+
+        return this.findById(tripOrder.getId());
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public boolean isTripOrderExisted(Long id) {
-        return tripOrderMapper.existsWithPrimaryKey(id);
-    }
+    public TripOrder cancelOrder(TripOrder tripOrder) {
+        tripOrder.setOrderStatus(OrderStatus.CLOSED);
+        tripOrderMapper.updateOrderStatus(tripOrder);
 
-    @Override
-    @Transactional(readOnly = true)
-    public TripOrder findById(Long id) {
-        return tripOrderMapper.findById(id);
+        return this.findById(tripOrder.getId());
     }
 
     @Override
@@ -61,7 +64,7 @@ public class TripOrderServiceImpl implements TripOrderService {
         tripOrder.getTrip().setTripStatus(TripStatus.WAS_PICK_UP);
         tripMapper.updateTripStatus(tripOrder.getTrip());
 
-        return tripOrder;
+        return this.findById(tripOrder.getId());
     }
 
     @Override
@@ -77,39 +80,7 @@ public class TripOrderServiceImpl implements TripOrderService {
         tripOrder.getTrip().setTripStatus(TripStatus.ARRIVED);
         tripMapper.updateTripStatus(tripOrder.getTrip());
 
-        return tripOrder;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<TripOrder> findAllByPassenger(Passenger passenger) {
-        if (passenger.getPage() != null && passenger.getRows() != null)
-            PageHelper.startPage(passenger.getPage(), passenger.getRows());
-
-        return tripOrderMapper.findAllByPassengerId(passenger.getId());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<TripOrder> findAllByDriver(Driver driver) {
-        if (driver.getPage() != null && driver.getRows() != null)
-            PageHelper.startPage(driver.getPage(), driver.getRows());
-
-        return tripOrderMapper.findAllByDriverId(driver.getId());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public boolean isTripOrderCanBePaid(TripOrder tripOrder) {
-        return this.findById(tripOrder.getId()).getOrderStatus() == OrderStatus.PROCESSING_COMPLETED;
-    }
-
-    @Override
-    public TripOrder payTripOrder(TripOrder tripOrder) {
-        tripOrder.setOrderStatus(OrderStatus.PAID);
-        tripOrderMapper.updateOrderStatus(tripOrder);
-
-        return tripOrderMapper.findById(tripOrder.getId());
+        return this.findById(tripOrder.getId());
     }
 
     @Override
@@ -117,6 +88,69 @@ public class TripOrderServiceImpl implements TripOrderService {
         tripOrder.setOrderStatus(OrderStatus.PAYMENT_COMPLETED);
         tripOrderMapper.updateOrderStatus(tripOrder);
 
-        return tripOrderMapper.findById(tripOrder.getId());
+        return this.findById(tripOrder.getId());
+    }
+
+    @Override
+    public TripOrder payTripOrder(TripOrder tripOrder) {
+        tripOrder.setOrderStatus(OrderStatus.PAID);
+        tripOrderMapper.updateOrderStatus(tripOrder);
+
+        return this.findById(tripOrder.getId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isTripOrderExisted(Long id) {
+        return tripOrderMapper.existsWithPrimaryKey(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TripOrder findById(Long id) {
+        TripOrder tripOrder = tripOrderMapper.findById(id);
+
+        Trip trip = tripMapper.findById(tripOrder.getTrip().getId());
+        tripOrder.setTrip(trip);
+
+        return tripOrder;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TripOrder> findAllByPassenger(TripOrder tripOrder) {
+        if (tripOrder.getPage() != null && tripOrder.getRows() != null)
+            PageHelper.startPage(tripOrder.getPage(), tripOrder.getRows());
+
+        List<TripOrder> tripOrders = tripOrderMapper.findAllByPassenger(tripOrder);
+
+        tripOrders.forEach(each -> {
+            Trip trip = tripMapper.findById(each.getTrip().getId());
+            each.setTrip(trip);
+        });
+
+        return tripOrders;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TripOrder> findAllByDriver(TripOrder tripOrder) {
+        if (tripOrder.getPage() != null && tripOrder.getRows() != null)
+            PageHelper.startPage(tripOrder.getPage(), tripOrder.getRows());
+
+        List<TripOrder> tripOrders = tripOrderMapper.findAllByDriver(tripOrder);
+
+        tripOrders.forEach(each -> {
+            Trip trip = tripMapper.findById(each.getTrip().getId());
+            each.setTrip(trip);
+        });
+
+        return tripOrders;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isTripOrderCanBePaid(TripOrder tripOrder) {
+        return this.findById(tripOrder.getId()).getOrderStatus() == OrderStatus.PROCESSING_COMPLETED;
     }
 }

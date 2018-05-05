@@ -30,7 +30,8 @@ public class TripServiceImpl implements TripService {
         trip.setTripStatus(TripStatus.PUBLISHED);
 
         tripMapper.insertTrip(trip);
-        return trip;
+
+        return this.findById(trip.getId());
     }
 
     @Override
@@ -71,6 +72,6 @@ public class TripServiceImpl implements TripService {
 
         tripMapper.updateTripStatus(trip);
 
-        return findById(trip.getId());
+        return this.findById(trip.getId());
     }
 }
