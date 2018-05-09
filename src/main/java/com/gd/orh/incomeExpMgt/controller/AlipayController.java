@@ -341,15 +341,14 @@ public class AlipayController {
 
         AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
         AlipayFundTransToaccountTransferModel model = new AlipayFundTransToaccountTransferModel();
+
         //商户转账唯一订单号
+        String now = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         model.setOutBizNo(StringUtils.collectionToDelimitedString(
-                Arrays.asList(
-                        "orh",
-                        "driver",
-                        driverBalance.getDriverId(),"deposit",
-                        new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())),
-                "_")
-        );
+            Arrays.asList("orh", "driver", driverBalance.getDriverId(), "deposit", now),
+            "_"
+        ));
+
         //收款方账户类型。
         //1、ALIPAY_USERID：pid ,以2088开头的16位纯数字组成。
         //2、ALIPAY_LOGONID：支付宝登录号(邮箱或手机号)
