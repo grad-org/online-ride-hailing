@@ -68,7 +68,7 @@ public class AlipayController {
         TripOrder tripOrder = new TripOrder();
         tripOrder.setId(paymentDTO.getTripOrderId());
 
-        if (tripOrderService.isTripOrderCanBePaid(tripOrder)) {
+        if (!tripOrderService.isTripOrderCanBePaid(tripOrder)) {
             return ResponseEntity
                     .badRequest()
                     .body(RestResultFactory.getFailResult(
