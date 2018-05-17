@@ -54,8 +54,8 @@ public class AlipayController {
     @Autowired
     private DriverBalanceService driverBalanceService;
 
-    @PostMapping("/pay")
-    public ResponseEntity<?> pay(@Valid @RequestBody PaymentDTO paymentDTO, BindingResult result) {
+    @GetMapping("/pay")
+    public ResponseEntity<?> pay(@Valid PaymentDTO paymentDTO, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(RestResultFactory.getFreeResult(
