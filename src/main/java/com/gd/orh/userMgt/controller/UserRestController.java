@@ -4,15 +4,15 @@ import com.gd.orh.dto.UserDTO;
 import com.gd.orh.entity.ResultCode;
 import com.gd.orh.entity.User;
 import com.gd.orh.userMgt.service.UserService;
-import com.gd.orh.utils.FileUploadUtil;
+import com.gd.orh.utils.ImageUploadUtil;
 import com.gd.orh.utils.RestResultFactory;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -23,24 +23,34 @@ public class UserRestController {
     private UserService userService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") Long id, UserDTO userDTO) {
+    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody UserDTO userDTO) {
 
-        MultipartFile userImage = userDTO.getUserImage();
+        String userImage = userDTO.getUserImage();
 
         // 保存用户头像
-        if (userImage != null && !userImage.isEmpty()) {
+        if (ImageUploadUtil.isImageNotEmpty(userImage)) {
 
-            boolean isFail =
-                    !FileUploadUtil.upload(
-                            userImage,
-                            "static/images/user/",
-                            id + ".jpg"
-                    );
+            String imageContent = ImageUploadUtil.getImageContent(userImage);
 
-            if (isFail) {
+            if (imageContent == null) {
                 return ResponseEntity
                         .badRequest()
-                        .body(RestResultFactory.getFailResult("User Image saving failed!"));
+                        .body(RestResultFactory.getFailResult("The upload file is not a image!"));
+            }
+
+            InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
+
+            boolean isUploadFailed = !ImageUploadUtil
+                    .uploadImageToRootPath(
+                            "images/user/",
+                            id + ".jpg",
+                            in,
+                            "jpg");
+
+            if (isUploadFailed) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(RestResultFactory.getFailResult("Upload user's image failed!"));
             }
         }
 
@@ -50,9 +60,9 @@ public class UserRestController {
         User user = userDTO.convertTo();
 
         // Update user.
-        user = userService.update(user);
+        User updatedUser = userService.update(user);
 
-        UserDTO updatedUserDTO = new UserDTO().convertFor(user);
+        UserDTO updatedUserDTO = new UserDTO().convertFor(updatedUser);
 
         // Return updated user.
         return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(updatedUserDTO));

@@ -26,7 +26,7 @@
     <association property="driver" resultMap="DriverResult"/>
     <collection property="authorities" resultMap="AuthorityResult"/>
   </resultMap>
-  
+
   <select id="findById" resultMap="UserResult">
     SELECT
       U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
@@ -64,4 +64,10 @@
     LEFT OUTER JOIN DRIVER D ON U.ID=D.USER_ID
     LEFT OUTER JOIN USER_AUTHORITY UA ON U.ID=UA.USER_ID LEFT OUTER JOIN AUTHORITY A ON UA.AUTHORITY_ID=A.ID
   </select>
+
+  <update id="updateUser">
+    UPDATE USER
+    SET NICKNAME=#{nickname}, GENDER=#{gender}, AGE=#{age}
+    WHERE ID=#{id};
+  </update>
 </mapper>

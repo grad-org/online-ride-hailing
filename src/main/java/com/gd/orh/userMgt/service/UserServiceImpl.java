@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
         persistedUser.setAge(user.getAge());
 
         // update the user and return it.
-        userMapper.updateByPrimaryKey(persistedUser);
+        userMapper.updateUser(persistedUser);
 
         return persistedUser;
     }

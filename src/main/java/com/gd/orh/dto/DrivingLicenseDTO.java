@@ -1,11 +1,10 @@
 package com.gd.orh.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gd.orh.entity.DrivingLicense;
 import com.google.common.base.Converter;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -19,8 +18,8 @@ public class DrivingLicenseDTO extends BaseDTO<DrivingLicenseDTO, DrivingLicense
 
     private Date issueDate; // 初次领取驾驶证日期
 
-    @JsonIgnore
-    private MultipartFile drivingLicenseImage; // 驾驶证照片
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String drivingLicenseImage; // 驾驶证照片
 
     private static class DrivingLicenseDTOConverter extends Converter<DrivingLicenseDTO, DrivingLicense> {
 

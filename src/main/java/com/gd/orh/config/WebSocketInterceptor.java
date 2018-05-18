@@ -37,26 +37,35 @@ public class WebSocketInterceptor extends ChannelInterceptorAdapter {
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String token = accessor.getFirstNativeHeader("Auth-Token");
 
+            logger.info("Get 'Auth-Token': {}", token);
+
             if (!StringUtils.isEmpty(token)) {
+
+                logger.info("'Auth-Token' is noe Empty");
+
                 Map sessionAttributes =
                         SimpMessageHeaderAccessor.getSessionAttributes(message.getHeaders());
 
                 sessionAttributes.put(
                     CsrfToken.class.getName(),
-                    new DefaultCsrfToken("Auth-Token","Auth-Token",token)
+                    new DefaultCsrfToken("Auth-Token", "Auth-Token", token)
                 );
 
                 String username = jwtTokenUtil.getUsernameFromToken(token);
 
+                logger.info("Get 'username': {}", username);
+
                 if (username != null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
+                    logger.info("Get 'userDetails': {}", userDetails);
+
                     if (jwtTokenUtil.validateToken(token, userDetails)) {
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(
-                                        userDetails,
-                                        null,
-                                        userDetails.getAuthorities()
+                        UsernamePasswordAuthenticationToken authentication
+                                = new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
                                 );
 
                         logger.info("authorized user '{}', setting security context", username);

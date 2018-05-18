@@ -59,13 +59,13 @@
 >>修改用户id为{id}的用户信息，
 >>如果存在图片但上传图片失败，返回"Bad Request"结果。  
 
->用法：POST 'enctype'='multipart/form-data'的表单
->>key|value
->>------ | ------ 
->>nickname|
->>gender|
->>age|
->>userImage|图片格式的文件
+>用法：POST {nickname,gender,age,userImage}
+>>属性|说明
+>>------ | ------
+>>nickname|昵称
+>>gender|性别
+>>age|年龄
+>>userImage|用户头像
 
 * `/images/user/{userId}.jpg` 显示用户头像的静态资源
 >描述：
@@ -229,23 +229,23 @@
 * `/api/driver/certifyDriver` 认证车主
 >描述：
 >>认证车主信息，包括驾驶证、行驶证、车辆信息
->>如果存在图片但上传图片失败，返回"Bad Request"结果。  
+>>如果存在图片但上传图片失败，返回"Bad Request"结果。
 
->用法：POST 'enctype'='multipart/form-data'的表单
->>key|value
->>------ | ------ 
+>用法：POST {...}
+>>属性|说明
+>>------ | ------
 >>userId|
->>drivingLicenseDTO.driverName|司机姓名
->>drivingLicenseDTO.identification|身份证号
->>drivingLicenseDTO.issueDate|初次领取驾驶证日期
->>drivingLicenseDTO.drivingLicenseImage|驾驶证照片
->>vehicleLicenseDTO.owner|车辆所有人
->>vehicleLicenseDTO.registerDate|车辆注册日期
->>vehicleLicenseDTO.vehicleLicenseImage|行驶证照片
->>carDTO.PlateNo|车牌号
->>carDTO.brand|品牌
->>carDTO.series|系列
->>carDTO.color|颜色
+>>drivingLicense.driverName|司机姓名
+>>drivingLicense.identification|身份证号
+>>drivingLicense.issueDate|初次领取驾驶证日期
+>>drivingLicense.drivingLicenseImage|驾驶证照片
+>>vehicleLicense.owner|车辆所有人
+>>vehicleLicense.registerDate|车辆注册日期
+>>vehicleLicense.vehicleLicenseImage|行驶证照片
+>>car.PlateNo|车牌号
+>>car.brand|品牌
+>>car.series|系列
+>>car.color|颜色
 
 * `/api/driver/search/findPendingReviewDriver` 查询待审核的车主资料
 >描述：
@@ -279,20 +279,20 @@
 * `/api/driver/updateVehicleLicense/{driverId}` 修改行驶证资料，待管理员审核
 >描述：
 >>行驶证资料包括行驶证、车辆信息
->>如果存在图片但上传图片失败，返回"Bad Request"结果。  
+>>如果存在图片但上传图片失败，返回"Bad Request"结果。
 
->用法：POST 'enctype'='multipart/form-data'的表单
+>用法：POST {...}
 >>key|value
 >>------ | ------ 
->>vehicleLicenseDTO.vehicleLicenseId|
->>carDTO.carId|
->>vehicleLicenseDTO.owner|车辆所有人
->>vehicleLicenseDTO.registerDate|车辆注册日期
->>vehicleLicenseDTO.vehicleLicenseImage|行驶证照片
->>carDTO.PlateNo|车牌号
->>carDTO.brand|品牌
->>carDTO.series|系列
->>carDTO.color|颜色
+>>vehicleLicense.vehicleLicenseId|
+>>car.carId|
+>>vehicleLicense.owner|车辆所有人
+>>vehicleLicense.registerDate|车辆注册日期
+>>vehicleLicense.vehicleLicenseImage|行驶证照片
+>>car.PlateNo|车牌号
+>>car.brand|品牌
+>>car.series|系列
+>>car.color|颜色
 
 * `/api/serviceRating/rateDriver` 评价车主
 >描述：

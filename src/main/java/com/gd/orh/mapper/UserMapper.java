@@ -11,4 +11,6 @@ public interface UserMapper extends MyMapper<User> {
     User findByUsername(String username);
 
     List<User> findAll();
+
+    void updateUser(User user);
 }

@@ -2,6 +2,10 @@ debug: true
 server:
   port: 8080
 
+# Upload path
+upload.path.linux: /root/static/
+upload.path.windows: E:/static/
+
 # Spring configuration
 spring:
   # Data Source
@@ -9,6 +13,7 @@ spring:
     url: jdbc:mysql://localhost:3306/online_ride_hailing_db?useUnicode=true&characterEncoding=UTF-8
     type: com.alibaba.druid.pool.DruidDataSource
     username: root
+    #password: GDOU@2018dev
     password: root
     driver-class-name: com.mysql.jdbc.Driver
     druid:
@@ -34,7 +39,7 @@ spring:
 #        web-allow-others: true
   # static resource path
   resources:
-    static-locations: classpath:static/,file:static/
+    static-locations: classpath:static/,file:static/,file:${upload.path.linux},file:${upload.path.windows}
 
 #Mybatis
 mybatis:

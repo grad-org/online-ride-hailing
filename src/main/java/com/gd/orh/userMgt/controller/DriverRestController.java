@@ -6,7 +6,7 @@ import com.gd.orh.dto.VehicleLicenseDTO;
 import com.gd.orh.entity.Driver;
 import com.gd.orh.entity.ResultCode;
 import com.gd.orh.userMgt.service.DriverService;
-import com.gd.orh.utils.FileUploadUtil;
+import com.gd.orh.utils.ImageUploadUtil;
 import com.gd.orh.utils.RestResultFactory;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ public class DriverRestController {
 
     // 认证车主
     @PostMapping("/certifyDriver")
-    public ResponseEntity<?> authenticateDriver(@Valid DriverDTO driverDTO, BindingResult result) {
+    public ResponseEntity<?> authenticateDriver(@Valid @RequestBody DriverDTO driverDTO, BindingResult result) {
 
         // 验证逻辑
         if (result.hasErrors()) {
@@ -41,48 +41,68 @@ public class DriverRestController {
         }
 
         // 保存驾驶证照片
-        MultipartFile drivingLicenseImage = Optional
+        String drivingLicenseImage = Optional
                 .ofNullable(driverDTO)
-                .map(DriverDTO::getDrivingLicenseDTO)
+                .map(DriverDTO::getDrivingLicense)
                 .map(DrivingLicenseDTO::getDrivingLicenseImage)
                 .orElse(null);
 
-        if (drivingLicenseImage != null && !drivingLicenseImage.isEmpty()) {
+        if (ImageUploadUtil.isImageNotEmpty(drivingLicenseImage)) {
 
-            boolean isFail =
-                    !FileUploadUtil.upload(
-                            drivingLicenseImage,
-                            "static/images/drivingLicense/",
-                            driverDTO.getDriverId() + ".jpg"
-                    );
+            String imageContent = ImageUploadUtil.getImageContent(drivingLicenseImage);
 
-            if (isFail) {
+            if (imageContent == null) {
                 return ResponseEntity
                         .badRequest()
-                        .body(RestResultFactory.getFailResult("Driving License Image saving failed!"));
+                        .body(RestResultFactory.getFailResult("The upload file is not a image!"));
+            }
+
+            InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
+
+            boolean isUploadFailed = !ImageUploadUtil
+                    .uploadImageToRootPath(
+                            "images/drivingLicense/",
+                            driverDTO.getDriverId() + ".jpg",
+                            in,
+                            "jpg");
+
+            if (isUploadFailed) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(RestResultFactory.getFailResult("Upload Driving License Image failed!"));
             }
         }
 
         // 保存行驶证照片
-        MultipartFile vehicleLicenseImage = Optional
+        String vehicleLicenseImage = Optional
                 .ofNullable(driverDTO)
-                .map(DriverDTO::getVehicleLicenseDTO)
+                .map(DriverDTO::getVehicleLicense)
                 .map(VehicleLicenseDTO::getVehicleLicenseImage)
                 .orElse(null);
 
-        if (vehicleLicenseImage != null && !vehicleLicenseImage.isEmpty()) {
+        if (ImageUploadUtil.isImageNotEmpty(vehicleLicenseImage)) {
 
-            boolean isFail =
-                    !FileUploadUtil.upload(
-                            vehicleLicenseImage,
-                            "static/images/vehicleLicense/",
-                            driverDTO.getDriverId() + ".jpg"
-                    );
+            String imageContent = ImageUploadUtil.getImageContent(vehicleLicenseImage);
 
-            if (isFail) {
+            if (imageContent == null) {
                 return ResponseEntity
                         .badRequest()
-                        .body(RestResultFactory.getFailResult("Vehicle License Image saving failed!"));
+                        .body(RestResultFactory.getFailResult("The upload file is not a image!"));
+            }
+
+            InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
+
+            boolean isUploadFailed = !ImageUploadUtil
+                    .uploadImageToRootPath(
+                            "images/vehicleLicense/",
+                            driverDTO.getDriverId() + ".jpg",
+                            in,
+                            "jpg");
+
+            if (isUploadFailed) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(RestResultFactory.getFailResult("Upload Vehicle License Image failed!"));
             }
         }
 
@@ -114,7 +134,7 @@ public class DriverRestController {
 
     // 审核车主资料
     @PostMapping("/reviewDriver")
-    public ResponseEntity<?> reviewDriver(DriverDTO driverDTO) {
+    public ResponseEntity<?> reviewDriver(@RequestBody DriverDTO driverDTO) {
 
         Driver driver = driverDTO.convertTo();
 
@@ -161,25 +181,35 @@ public class DriverRestController {
         }
 
         // 保存行驶证照片
-        MultipartFile vehicleLicenseImage = Optional
+        String vehicleLicenseImage = Optional
                 .ofNullable(driverDTO)
-                .map(DriverDTO::getVehicleLicenseDTO)
+                .map(DriverDTO::getVehicleLicense)
                 .map(VehicleLicenseDTO::getVehicleLicenseImage)
                 .orElse(null);
 
-        if (vehicleLicenseImage != null && !vehicleLicenseImage.isEmpty()) {
+        if (ImageUploadUtil.isImageNotEmpty(vehicleLicenseImage)) {
 
-            boolean isFail =
-                    !FileUploadUtil.upload(
-                            vehicleLicenseImage,
-                            "static/images/vehicleLicense/",
-                            driverDTO.getDriverId() + ".jpg"
-                    );
+            String imageContent = ImageUploadUtil.getImageContent(vehicleLicenseImage);
 
-            if (isFail) {
+            if (imageContent == null) {
                 return ResponseEntity
                         .badRequest()
-                        .body(RestResultFactory.getFailResult("Vehicle License Image saving failed!"));
+                        .body(RestResultFactory.getFailResult("The upload file is not a image!"));
+            }
+
+            InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
+
+            boolean isUploadFailed = !ImageUploadUtil
+                    .uploadImageToRootPath(
+                            "images/vehicleLicense/",
+                            driverId + ".jpg",
+                            in,
+                            "jpg");
+
+            if (isUploadFailed) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(RestResultFactory.getFailResult("Upload Vehicle License Image failed!"));
             }
         }
 

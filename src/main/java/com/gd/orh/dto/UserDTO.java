@@ -1,6 +1,5 @@
 package com.gd.orh.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gd.orh.entity.Driver;
 import com.gd.orh.entity.Passenger;
@@ -8,7 +7,6 @@ import com.gd.orh.entity.User;
 import com.google.common.base.Converter;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Optional;
@@ -25,8 +23,8 @@ public class UserDTO extends BaseDTO<UserDTO, User> {
     private String gender;
     private Integer age;
 
-    @JsonIgnore
-    private MultipartFile userImage;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String userImage;
 
     private Long passengerId;
 

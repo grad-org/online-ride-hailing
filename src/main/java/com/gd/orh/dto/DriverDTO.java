@@ -16,11 +16,11 @@ public class DriverDTO extends BaseDTO<DriverDTO, Driver> {
 
     private Long userId;
 
-    private DrivingLicenseDTO drivingLicenseDTO;
+    private DrivingLicenseDTO drivingLicense;
 
-    private VehicleLicenseDTO vehicleLicenseDTO;
+    private VehicleLicenseDTO vehicleLicense;
 
-    private CarDTO carDTO;
+    private CarDTO car;
 
     private static class DriverDTOConverter extends Converter<DriverDTO, Driver> {
         @Override
@@ -36,21 +36,21 @@ public class DriverDTO extends BaseDTO<DriverDTO, Driver> {
 
             DrivingLicense drivingLicense = Optional
                     .ofNullable(driverDTO)
-                    .map(DriverDTO::getDrivingLicenseDTO)
+                    .map(DriverDTO::getDrivingLicense)
                     .map(DrivingLicenseDTO::convertTo)
                     .orElse(null);
             driver.setDrivingLicense(drivingLicense);
 
             VehicleLicense vehicleLicense = Optional
                     .ofNullable(driverDTO)
-                    .map(DriverDTO::getVehicleLicenseDTO)
+                    .map(DriverDTO::getVehicleLicense)
                     .map(VehicleLicenseDTO::convertTo)
                     .orElse(null);
             driver.setVehicleLicense(vehicleLicense);
 
             Car car = Optional
                     .ofNullable(driverDTO)
-                    .map(DriverDTO::getCarDTO)
+                    .map(DriverDTO::getCar)
                     .map(CarDTO::convertTo)
                     .orElse(null);
             if (vehicleLicense != null) vehicleLicense.setCar(car);
@@ -72,13 +72,13 @@ public class DriverDTO extends BaseDTO<DriverDTO, Driver> {
                     .orElse(null));
 
             if (driver.getDrivingLicense() != null)
-                driverDTO.setDrivingLicenseDTO(new DrivingLicenseDTO().convertFor(driver.getDrivingLicense()));
+                driverDTO.setDrivingLicense(new DrivingLicenseDTO().convertFor(driver.getDrivingLicense()));
 
             if (driver.getVehicleLicense() != null) {
-                driverDTO.setVehicleLicenseDTO(new VehicleLicenseDTO().convertFor(driver.getVehicleLicense()));
+                driverDTO.setVehicleLicense(new VehicleLicenseDTO().convertFor(driver.getVehicleLicense()));
 
                 if (driver.getVehicleLicense().getCar() != null) {
-                    driverDTO.setCarDTO(new CarDTO().convertFor(driver.getVehicleLicense().getCar()));
+                    driverDTO.setCar(new CarDTO().convertFor(driver.getVehicleLicense().getCar()));
                 }
             }
 
