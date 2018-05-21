@@ -231,21 +231,21 @@
 >>认证车主信息，包括驾驶证、行驶证、车辆信息
 >>如果存在图片但上传图片失败，返回"Bad Request"结果。
 
->用法：POST {...}
+>用法：POST {userId, drivingLicense: {driverName,identification,issueDate,drivingLicenseImage}, vehicleLicense: {owner,registerDate,vehicleLicenseImage}, car: {plateNo,brand,series,color}}
 >>属性|说明
 >>------ | ------
 >>userId|
->>drivingLicense.driverName|司机姓名
->>drivingLicense.identification|身份证号
->>drivingLicense.issueDate|初次领取驾驶证日期
->>drivingLicense.drivingLicenseImage|驾驶证照片
->>vehicleLicense.owner|车辆所有人
->>vehicleLicense.registerDate|车辆注册日期
->>vehicleLicense.vehicleLicenseImage|行驶证照片
->>car.PlateNo|车牌号
->>car.brand|品牌
->>car.series|系列
->>car.color|颜色
+>>driverName|司机姓名
+>>identification|身份证号
+>>issueDate|初次领取驾驶证日期
+>>drivingLicenseImage|驾驶证照片
+>>owner|车辆所有人
+>>registerDate|车辆注册日期
+>>vehicleLicenseImage|行驶证照片
+>>plateNo|车牌号
+>>brand|品牌
+>>series|系列
+>>color|颜色
 
 * `/api/driver/search/findPendingReviewDriver` 查询待审核的车主资料
 >描述：
@@ -281,18 +281,18 @@
 >>行驶证资料包括行驶证、车辆信息
 >>如果存在图片但上传图片失败，返回"Bad Request"结果。
 
->用法：POST {...}
+>用法：POST {vehicleLicense: {vehicleLicenseId,owner,registerDate,vehicleLicenseImage}, car: {carId,plateNo,brand,series,color}}
 >>key|value
 >>------ | ------ 
->>vehicleLicense.vehicleLicenseId|
->>car.carId|
->>vehicleLicense.owner|车辆所有人
->>vehicleLicense.registerDate|车辆注册日期
->>vehicleLicense.vehicleLicenseImage|行驶证照片
->>car.PlateNo|车牌号
->>car.brand|品牌
->>car.series|系列
->>car.color|颜色
+>>vehicleLicenseId|
+>>owner|车辆所有人
+>>registerDate|车辆注册日期
+>>vehicleLicenseImage|行驶证照片
+>>carId|
+>>plateNo|车牌号
+>>brand|品牌
+>>series|系列
+>>color|颜色
 
 * `/api/serviceRating/rateDriver` 评价车主
 >描述：
