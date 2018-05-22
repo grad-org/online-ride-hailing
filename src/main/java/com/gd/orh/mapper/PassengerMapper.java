@@ -1,9 +1,8 @@
 package com.gd.orh.mapper;
 
 import com.gd.orh.entity.Passenger;
-import com.gd.orh.utils.MyMapper;
 
-public interface PassengerMapper extends MyMapper<Passenger> {
+public interface PassengerMapper {
     Passenger findById(Long id);
 
     void insertPassenger(Passenger passenger);

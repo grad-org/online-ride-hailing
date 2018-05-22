@@ -1,11 +1,10 @@
 package com.gd.orh.mapper;
 
 import com.gd.orh.entity.TripOrder;
-import com.gd.orh.utils.MyMapper;
 
 import java.util.List;
 
-public interface TripOrderMapper extends MyMapper<TripOrder> {
+public interface TripOrderMapper {
     void insertTripOrder(TripOrder tripOrder);
 
     TripOrder findById(Long id);

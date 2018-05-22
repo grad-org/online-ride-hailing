@@ -1,8 +1,7 @@
 package com.gd.orh.mapper;
 
 import com.gd.orh.entity.DrivingLicense;
-import com.gd.orh.utils.MyMapper;
 
-public interface DrivingLicenseMapper extends MyMapper<DrivingLicense> {
+public interface DrivingLicenseMapper {
     void insertDrivingLicense(DrivingLicense drivingLicense);
 }

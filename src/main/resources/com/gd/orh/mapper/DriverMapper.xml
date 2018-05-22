@@ -75,7 +75,8 @@
   </select>
 
   <insert id="insertDriver" parameterType="driver" useGeneratedKeys="true" keyProperty="id">
-    insert into DRIVER (DRIVER_STATUS, USER_ID) values (#{driverStatus}, #{user.id})
+    INSERT INTO DRIVER (DRIVER_STATUS, USER_ID)
+    VALUES (#{driverStatus}, #{user.id})
   </insert>
 
   <select id="findAllByDriverStatus" resultMap="DriverResult">

@@ -1,11 +1,10 @@
 package com.gd.orh.mapper;
 
 import com.gd.orh.entity.User;
-import com.gd.orh.utils.MyMapper;
 
 import java.util.List;
 
-public interface UserMapper extends MyMapper<User> {
+public interface UserMapper {
     User findById(Long id);
 
     User findByUsername(String username);
@@ -13,4 +12,6 @@ public interface UserMapper extends MyMapper<User> {
     List<User> findAll();
 
     void updateUser(User user);
+
+    void insertUser(User user);
 }

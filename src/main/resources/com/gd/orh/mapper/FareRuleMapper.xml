@@ -16,4 +16,13 @@
     ORDER BY SETUP_TIME DESC
     LIMIT 1
   </select>
+  <select id="findById" resultMap="FareRuleResult">
+    SELECT ID FARE_RULE_ID, INITIAL_PRICE, INITIAL_MILEAGE, UNIT_PRICE_PER_KILOMETER, UNIT_PRICE_PER_MINUTE, SETUP_TIME
+    FROM FARE_RULE
+    WHERE ID=#{id}
+  </select>
+  <insert id="insertFareRule" parameterType="FareRule" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO FARE_RULE (INITIAL_PRICE, INITIAL_MILEAGE, UNIT_PRICE_PER_KILOMETER, UNIT_PRICE_PER_MINUTE, SETUP_TIME)
+    VALUES (#{initialPrice},#{initialMileage},#{unitPricePerKilometer},#{unitPricePerMinute},#{setupTime});
+  </insert>
 </mapper>

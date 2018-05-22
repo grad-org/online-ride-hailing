@@ -1,21 +1,14 @@
 package com.gd.orh.hailingService.controller;
 
-import com.gd.orh.dto.CarLocationDTO;
 import com.gd.orh.dto.TripDTO;
 import com.gd.orh.dto.TripOrderDTO;
 import com.gd.orh.entity.*;
 import com.gd.orh.tripOrderMgt.service.TripOrderService;
 import com.gd.orh.tripOrderMgt.service.TripService;
 import com.gd.orh.utils.RestResultFactory;
-import com.gd.orh.utils.WebSocketResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,16 +24,6 @@ public class HailingServiceController {
     @Autowired
     private TripOrderService tripOrderService;
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-
-    // 车主上传车辆位置,广播给乘客
-    @MessageMapping("/hailingService/car/uploadCarLocation")
-    @SendTo("/topic/hailingService/car/uploadCarLocation")
-    public WebSocketResult broadcastLocation(CarLocationDTO carLocationDTO) {
-        return WebSocketResultFactory.getWebSocketResult("uploadCarLocation", carLocationDTO);
-    }
-
     // 发布行程,广播给正在听单的车主
     @PostMapping("/trip/publishTrip")
     public ResponseEntity<?> publishTrip(@RequestBody TripDTO tripDTO) {
@@ -49,11 +32,6 @@ public class HailingServiceController {
         Trip publishedTrip = tripService.publishTrip(trip);
 
         TripDTO publishedTripDTO = new TripDTO().convertFor(publishedTrip);
-
-        simpMessagingTemplate.convertAndSend(
-            "/topic/hailingService/trip/publishTrip",
-            WebSocketResultFactory.getWebSocketResult("publishTrip", publishedTripDTO)
-        );
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(publishedTripDTO));
     }
@@ -86,11 +64,6 @@ public class HailingServiceController {
         Trip canceledTrip = tripService.cancelTrip(trip);
 
         TripDTO canceledTripDTO = new TripDTO().convertFor(canceledTrip);
-
-        simpMessagingTemplate.convertAndSend(
-                "/topic/hailingService/trip/publishTrip",
-                WebSocketResultFactory.getWebSocketResult("cancelTrip", canceledTripDTO)
-        );
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(canceledTripDTO));
     }
@@ -125,27 +98,7 @@ public class HailingServiceController {
 
         TripOrderDTO acceptedTripOrderDTO = new TripOrderDTO().convertFor(acceptedTripOrder);
 
-        // 通知乘客接单
-        simpMessagingTemplate.convertAndSendToUser(
-            acceptedTripOrder.getTrip().getPassenger().getUser().getUsername(),
-            "/queue/hailingService/tripOrder/acceptance-notification",
-            WebSocketResultFactory.getWebSocketResult("acceptTripOrder", acceptedTripOrderDTO)
-        );
-
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(acceptedTripOrderDTO));
-    }
-
-    // 车主上传车辆位置，单独发给乘客
-    @MessageMapping("/queue/hailingService/car/uploadCarLocation/{passengerUsername}")
-    public void uploadLocation(
-            @DestinationVariable("passengerUsername") String passengerUsername,
-            @Payload CarLocationDTO carLocationDTO) {
-
-        simpMessagingTemplate.convertAndSendToUser(
-                passengerUsername,
-                "/queue/hailingService/car/uploadCarLocation",
-                WebSocketResultFactory.getWebSocketResult("uploadCarLocation", carLocationDTO)
-        );
     }
 
     // 乘客取消订单
@@ -177,13 +130,6 @@ public class HailingServiceController {
         TripOrder canceledTripOrder = tripOrderService.cancelOrder(tripOrder);
 
         TripOrderDTO canceledTripOrderDTO = new TripOrderDTO().convertFor(canceledTripOrder);
-
-        // 通知车主取消行程订单
-        simpMessagingTemplate.convertAndSendToUser(
-                canceledTripOrder.getDriver().getUser().getUsername(),
-                "/queue/hailingService/tripOrder/acceptance-notification",
-                WebSocketResultFactory.getWebSocketResult("cancelTripOrder", canceledTripOrderDTO)
-        );
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(canceledTripOrderDTO));
     }
@@ -218,13 +164,6 @@ public class HailingServiceController {
 
         TripOrderDTO canceledTripOrderDTO = new TripOrderDTO().convertFor(canceledTripOrder);
 
-        // 通知乘客取消行程订单
-        simpMessagingTemplate.convertAndSendToUser(
-                canceledTripOrder.getTrip().getPassenger().getUser().getUsername(),
-                "/queue/hailingService/tripOrder/acceptance-notification",
-                WebSocketResultFactory.getWebSocketResult("cancelTripOrder", canceledTripOrderDTO)
-        );
-
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(canceledTripOrderDTO));
     }
 
@@ -257,13 +196,6 @@ public class HailingServiceController {
         TripOrder pickedUpTripOrder = tripOrderService.confirmPickUp(tripOrder);
 
         TripOrderDTO pickedUpTripOrderDTO = new TripOrderDTO().convertFor(pickedUpTripOrder);
-
-        // 通知乘客已上车
-        simpMessagingTemplate.convertAndSendToUser(
-                pickedUpTripOrder.getTrip().getPassenger().getUser().getUsername(),
-                "/queue/hailingService/tripOrder/acceptance-notification",
-                WebSocketResultFactory.getWebSocketResult("pickUpPassenger", pickedUpTripOrderDTO)
-        );
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(pickedUpTripOrderDTO));
     }
@@ -300,13 +232,6 @@ public class HailingServiceController {
         TripOrder arrivalTripOrder = tripOrderService.confirmArrival(tripOrder);
 
         TripOrderDTO arrivalTripOrderDTO = new TripOrderDTO().convertFor(arrivalTripOrder);
-
-        // 通知乘客已确认到达
-        simpMessagingTemplate.convertAndSendToUser(
-                arrivalTripOrder.getTrip().getPassenger().getUser().getUsername(),
-                "/queue/hailingService/tripOrder/acceptance-notification",
-                WebSocketResultFactory.getWebSocketResult("confirmArrival", arrivalTripOrderDTO)
-        );
 
         return ResponseEntity.ok(RestResultFactory.getSuccessResult(arrivalTripOrderDTO));
     }

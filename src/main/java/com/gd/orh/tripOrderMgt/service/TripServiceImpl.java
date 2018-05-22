@@ -63,7 +63,7 @@ public class TripServiceImpl implements TripService {
     @Override
     @Transactional(readOnly = true)
     public boolean isTripExisted(Long id) {
-        return tripMapper.existsWithPrimaryKey(id);
+        return this.findById(id) != null;
     }
 
     @Override

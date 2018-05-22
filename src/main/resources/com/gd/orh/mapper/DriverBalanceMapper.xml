@@ -7,4 +7,16 @@
     <result column="BALANCE" property="balance"/>
     <result column="DRIVER_ID" property="driverId"/>
   </resultMap>
+
+  <select id="findByDriverId" resultMap="DriverBalanceResult">
+    SELECT ID, ALIPAY_ACCOUNT, BALANCE, DRIVER_ID
+    FROM DRIVER_BALANCE
+    WHERE DRIVER_ID=#{driverId}
+  </select>
+
+  <update id="updateBalance">
+    UPDATE DRIVER_BALANCE
+    SET BALANCE=#{balance}
+    WHERE ID=#{id}
+  </update>
 </mapper>

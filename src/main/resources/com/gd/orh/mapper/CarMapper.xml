@@ -20,4 +20,10 @@
     INSERT INTO CAR (PLATE_NO, BRAND, SERIES, COLOR, VEHICLE_LICENSE_ID)
     VALUES (#{plateNo},#{brand},#{series},#{color},#{vehicleLicense.id})
   </insert>
+
+  <update id="updateCar">
+    UPDATE CAR
+    SET PLATE_NO=#{plateNo},BRAND=#{brand},SERIES=#{series},COLOR=#{color}
+    WHERE ID=#{id}
+  </update>
 </mapper>

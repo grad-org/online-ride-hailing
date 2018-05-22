@@ -27,6 +27,11 @@
     <collection property="authorities" resultMap="AuthorityResult"/>
   </resultMap>
 
+  <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO USER (USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE)
+    VALUES (#{username},#{password},#{nickname},#{gender},#{age},#{enabled},#{lastPasswordResetDate})
+  </insert>
+
   <select id="findById" resultMap="UserResult">
     SELECT
       U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,

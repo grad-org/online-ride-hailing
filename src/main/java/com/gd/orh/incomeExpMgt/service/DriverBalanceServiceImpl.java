@@ -6,7 +6,6 @@ import com.gd.orh.mapper.DriverBalanceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
 
@@ -20,11 +19,7 @@ public class DriverBalanceServiceImpl implements DriverBalanceService {
     @Override
     @Transactional(readOnly = true)
     public DriverBalance findByDriverId(Long driverId) {
-        Example example = new Example(DriverBalance.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("driverId", driverId);
-
-        return driverBalanceMapper.selectOneByExample(example);
+        return driverBalanceMapper.findByDriverId(driverId);
     }
 
     @Override
@@ -33,7 +28,7 @@ public class DriverBalanceServiceImpl implements DriverBalanceService {
 
         driverBalance.setBalance(driverBalance.getBalance().add(amount));
 
-        driverBalanceMapper.updateByPrimaryKey(driverBalance);
+        driverBalanceMapper.updateBalance(driverBalance);
     }
 
     @Override
@@ -42,14 +37,14 @@ public class DriverBalanceServiceImpl implements DriverBalanceService {
 
         driverBalance.setBalance(driverBalance.getBalance().subtract(amount));
 
-        driverBalanceMapper.updateByPrimaryKey(driverBalance);
+        driverBalanceMapper.updateBalance(driverBalance);
     }
 
     @Override
     public DriverBalance withdraw(DriverBalance driverBalance, BigDecimal amount) {
         driverBalance.setBalance(driverBalance.getBalance().subtract(amount));
 
-        driverBalanceMapper.updateByPrimaryKey(driverBalance);
+        driverBalanceMapper.updateBalance(driverBalance);
 
         return driverBalance;
     }

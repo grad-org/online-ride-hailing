@@ -93,23 +93,6 @@
 
 >用法：GET /api/trip/{id}  
 
-* `/hailingService/car/uploadCarLocation` 车主上传车辆位置并广播给所有乘客
->描述：  
->>乘客通过订阅此通道来接收广播  
->>在车主开始听单后，定时将车辆位置推送到此通道。  
-
->用法：
->>1. 车主：`stompClient.send("/api/hailingService/car/uploadCarLocation", {}, JSON.stringify({carId, lng, lat}))`
->>2. 乘客：`stompClient.subscribe("/topic/hailingService/car/uploadCarLocation", function(carLocation))`
-
-* `/hailingService/car/uploadCarLocation/{passengerUsername}` 车主上传车辆位置并通知用户名为{passengerUsername}的乘客
->描述：
->>在车主受理订单后，定时将车辆位置推送到此通道，乘客通过订阅此通道监控车辆行进轨迹。  
-
->用法：
->>1. 车主：`stompClient.send("/api/queue/hailingService/car/uploadCarLocation/{passengerUsername}", {}, JSON.stringify({carId, lng, lat}))`
->>2. 乘客：`stompClient.subscribe('/user/queue/hailingService/car/uploadCarLocation', function(carLocation))`  
-
 * `/api/fare/predictFare` 预估车费
 >描述：
 >>给定预估里程数和预估时长数，返回预估车费结果，  
@@ -122,8 +105,7 @@
 >>乘客发布他的行程，正在听单的车主将会接收到此行程信息。
 
 >用法：
->>1. 乘客：POST {departure,departureLocation:{lng,lat},destination,destinationLocation:{lng,lat},departureTime,tripType,passengerId}
->>2. 车主：`stompClient.subscribe("/topic/hailingService/trip/publishTrip", function(trip))`
+>>1. POST {departure,departureLocation:{lng,lat},destination,destinationLocation:{lng,lat},departureTime,tripType,passengerId}
 
 >>实时行程不指定departureTime
 
@@ -169,14 +151,6 @@
 >>返回行程订单  
 
 >用法：POST {tripOrderId}
-
-* `/hailingService/tripOrder/acceptance-notification` 车主受理订单后双方通过该通道进行通信
->描述：  
->>车主受理订单后双方通过该通道进行通信。  
-
->用法：
->>1. 车主：`stompClient.send("/queue/hailingService/tripOrder/acceptance-notification/{passengerUsername}", {}, JSON.stringify({...}))` **（暂时未提供！）**
->>2. 乘客和车主：`stompClient.subscribe("/user/queue/hailingService/tripOrder/acceptance-notification",function(tripOrder))`
 
 * `/api/hailingService/tripOrder/pickUpPassenger` 车主确认乘客上车
 >描述：

@@ -106,7 +106,7 @@ public class TripOrderServiceImpl implements TripOrderService {
     @Override
     @Transactional(readOnly = true)
     public boolean isTripOrderExisted(Long id) {
-        return tripOrderMapper.existsWithPrimaryKey(id);
+        return this.findById(id) != null;
     }
 
     @Override

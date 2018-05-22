@@ -19,8 +19,8 @@
   </resultMap>
 
   <insert id="insertPassengerComplaint" parameterType="PassengerComplaint" useGeneratedKeys="true" keyProperty="id">
-    insert into PASSENGER_COMPLAINT (COMPLAINT_CONTENT, PASSENGER_ID, TRIP_ORDER_ID)
-    values (#{complaintContent},#{passenger.id},#{tripOrderId})
+    INSERT INTO PASSENGER_COMPLAINT (COMPLAINT_CONTENT, PASSENGER_ID, TRIP_ORDER_ID)
+    VALUES (#{complaintContent},#{passenger.id},#{tripOrderId})
   </insert>
 
   <select id="findById" resultMap="PassengerComplaintResult">

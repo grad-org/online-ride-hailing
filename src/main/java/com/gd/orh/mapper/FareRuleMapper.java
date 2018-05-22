@@ -1,9 +1,12 @@
 package com.gd.orh.mapper;
 
 import com.gd.orh.entity.FareRule;
-import com.gd.orh.utils.MyMapper;
 
-public interface FareRuleMapper extends MyMapper<FareRule> {
+public interface FareRuleMapper {
 
     FareRule findRecentFareRule();
+
+    FareRule findById(Long id);
+
+    void insertFareRule(FareRule fareRule);
 }

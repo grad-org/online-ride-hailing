@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +27,6 @@ public class User extends BaseEntity {
     @JsonIgnore
     private Boolean enabled;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @JsonIgnore
     private Date lastPasswordResetDate;
 

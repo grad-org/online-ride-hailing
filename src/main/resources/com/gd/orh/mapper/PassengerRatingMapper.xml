@@ -19,8 +19,8 @@
   </resultMap>
 
   <insert id="insertPassengerRating" parameterType="PassengerRating" useGeneratedKeys="true" keyProperty="id">
-    insert into PASSENGER_RATING (RATING_SCORE, PASSENGER_ID, TRIP_ORDER_ID)
-    values (#{ratingScore},#{passenger.id},#{tripOrderId})
+    INSERT INTO PASSENGER_RATING (RATING_SCORE, PASSENGER_ID, TRIP_ORDER_ID)
+    VALUES (#{ratingScore},#{passenger.id},#{tripOrderId})
   </insert>
 
   <select id="findById" resultMap="PassengerRatingResult">

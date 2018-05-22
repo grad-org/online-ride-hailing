@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(rawPassword));
 
         // Save the user and return it.
-        userMapper.insertUseGeneratedKeys(user);
+        userMapper.insertUser(user);
 
         return user;
     }

@@ -96,11 +96,11 @@ public class DriverServiceImpl implements DriverService {
 
         VehicleLicense vehicleLicense = driver.getVehicleLicense();
         vehicleLicense.setId(vehicleLicenseId);
-        vehicleLicenseMapper.updateByPrimaryKey(vehicleLicense);
+        vehicleLicenseMapper.updateVehicleLicense(vehicleLicense);
 
         Car car = vehicleLicense.getCar();
         car.setId(carId);
-        carMapper.updateByPrimaryKey(car);
+        carMapper.updateCar(car);
 
         authorityMapper.deleteUserAuthority(persistedDriver.getUser().getId(), AuthorityName.ROLE_DRIVER.getId());
 

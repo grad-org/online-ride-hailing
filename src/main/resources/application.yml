@@ -6,7 +6,6 @@ server:
 upload.path.linux: /root/static/
 upload.path.windows: E:/static/
 
-
 wss.server:
   # socket监听端口
   port: 8081
@@ -20,7 +19,6 @@ spring:
     url: jdbc:mysql://localhost:3306/online_ride_hailing_db?useUnicode=true&characterEncoding=UTF-8
     type: com.alibaba.druid.pool.DruidDataSource
     username: root
-    #password: GDOU@2018dev
     password: root
     driver-class-name: com.mysql.jdbc.Driver
     druid:
@@ -36,31 +34,24 @@ spring:
       FAIL_ON_EMPTY_BEANS: false
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
-    #default-property-inclusion: non_null
-  # H2
-#  h2:
-#    console:
-#      enabled: true
-#      path: /console
-#      settings:
-#        web-allow-others: true
+    # default-property-inclusion: non_null
   # static resource path
   resources:
-    static-locations: classpath:static/,file:static/,file:${upload.path.linux},file:${upload.path.windows}
+    static-locations: classpath:static/,file:${upload.path.linux},file:${upload.path.windows}
+  # H2
+  # h2:
+  #   console:
+  #     enabled: true
+  #     path: /console
+  #     settings:
+  #       web-allow-others: true
 
-#Mybatis
+# Mybatis
 mybatis:
   type-aliases-package: com.gd.orh.entity
   mapper-locations: classpath:com/gd/orh/mapper/*.xml
 
-#Mapper
-mapper:
-  mappers:
-    - com.gd.orh.utils.MyMapper
-  not-empty: false
-  identity: MYSQL
-
-#Pagehelper
+# PageHelper
 pagehelper:
   helper-dialect: mysql
   reasonable: true
@@ -80,9 +71,8 @@ jwt:
       verify: api/auth/verify
 
 # Logging configuration
-#logging:
-#  level:
-#    tk.mybatis: TRACE
-#    com.gd.orh.mapper: DEBUG
-#    org.springframework:
-#      security: DEBUG
+# logging:
+#   level:
+#     com.gd.orh.mapper: DEBUG
+#     org.springframework:
+#       security: DEBUG
