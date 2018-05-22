@@ -8,4 +8,8 @@
       (#{id}, #{authority.id})
     </foreach>
   </insert>
+  <delete id="deleteUserAuthority">
+    DELETE FROM USER_AUTHORITY
+    WHERE USER_ID=#{userId} AND AUTHORITY_ID=#{authorityId}
+  </delete>
 </mapper>

@@ -29,7 +29,7 @@ public class DriverRestController {
 
     // 认证车主
     @PostMapping("/certifyDriver")
-    public ResponseEntity<?> authenticateDriver(@Valid @RequestBody DriverDTO driverDTO, BindingResult result) {
+    public ResponseEntity<?> certifyDriver(@Valid @RequestBody DriverDTO driverDTO, BindingResult result) {
 
         // 验证逻辑
         if (result.hasErrors()) {
@@ -59,12 +59,13 @@ public class DriverRestController {
 
             InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
 
-            boolean isUploadFailed = !ImageUploadUtil
-                    .uploadImageToRootPath(
+            boolean isUploadFailed
+                        = !ImageUploadUtil.uploadImageToRootPath(
                             "images/drivingLicense/",
                             driverDTO.getDriverId() + ".jpg",
                             in,
-                            "jpg");
+                            "jpg"
+                        );
 
             if (isUploadFailed) {
                 return ResponseEntity
@@ -92,12 +93,13 @@ public class DriverRestController {
 
             InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
 
-            boolean isUploadFailed = !ImageUploadUtil
-                    .uploadImageToRootPath(
+            boolean isUploadFailed
+                        = !ImageUploadUtil.uploadImageToRootPath(
                             "images/vehicleLicense/",
                             driverDTO.getDriverId() + ".jpg",
                             in,
-                            "jpg");
+                            "jpg"
+                        );
 
             if (isUploadFailed) {
                 return ResponseEntity
@@ -168,7 +170,7 @@ public class DriverRestController {
     @PostMapping("/updateVehicleLicense/{driverId}")
     public ResponseEntity<?> updateVehicleLicense(
             @PathVariable("driverId") Long driverId,
-            @Valid DriverDTO driverDTO,
+            @Valid @RequestBody DriverDTO driverDTO,
             BindingResult result) {
 
         // 验证逻辑
@@ -199,12 +201,13 @@ public class DriverRestController {
 
             InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
 
-            boolean isUploadFailed = !ImageUploadUtil
-                    .uploadImageToRootPath(
+            boolean isUploadFailed
+                        = !ImageUploadUtil.uploadImageToRootPath(
                             "images/vehicleLicense/",
                             driverId + ".jpg",
                             in,
-                            "jpg");
+                            "jpg"
+                        );
 
             if (isUploadFailed) {
                 return ResponseEntity

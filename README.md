@@ -281,14 +281,12 @@
 >>行驶证资料包括行驶证、车辆信息
 >>如果存在图片但上传图片失败，返回"Bad Request"结果。
 
->用法：POST {vehicleLicense: {vehicleLicenseId,owner,registerDate,vehicleLicenseImage}, car: {carId,plateNo,brand,series,color}}
+>用法：POST {vehicleLicense: {owner,registerDate,vehicleLicenseImage}, car: {plateNo,brand,series,color}}
 >>key|value
 >>------ | ------ 
->>vehicleLicenseId|
 >>owner|车辆所有人
 >>registerDate|车辆注册日期
 >>vehicleLicenseImage|行驶证照片
->>carId|
 >>plateNo|车牌号
 >>brand|品牌
 >>series|系列

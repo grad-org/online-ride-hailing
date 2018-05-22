@@ -9,7 +9,7 @@
 
   <resultMap id="CarResult" type="Car">
     <id column="CAR_ID" property="id"/>
-    <result column="PLATE_NO" property="PlateNo"/>
+    <result column="PLATE_NO" property="plateNo"/>
     <result column="BRAND" property="brand"/>
     <result column="SERIES" property="series"/>
     <result column="COLOR" property="color"/>

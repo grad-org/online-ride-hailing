@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 public class CarDTO extends BaseDTO<CarDTO, Car> {
     private Long carId;
 
-    private String PlateNo; // 车牌号
+    private String plateNo; // 车牌号
 
     private String brand; // 品牌
 

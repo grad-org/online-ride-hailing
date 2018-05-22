@@ -6,4 +6,6 @@ import com.gd.orh.utils.MyMapper;
 
 public interface AuthorityMapper extends MyMapper<Authority> {
     void insertUserAuthority(User user);
+
+    void deleteUserAuthority(Long userId, Long authorityId);
 }

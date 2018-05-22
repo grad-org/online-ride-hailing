@@ -6,6 +6,13 @@ server:
 upload.path.linux: /root/static/
 upload.path.windows: E:/static/
 
+
+wss.server:
+  # socket监听端口
+  port: 8081
+  # socket主机
+  host: localhost
+
 # Spring configuration
 spring:
   # Data Source

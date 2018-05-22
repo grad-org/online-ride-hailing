@@ -1,0 +1,111 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script>
+        // 乘客在行车过程中的需要监听的事件
+        var events = [
+            'acceptTrip',
+            'receiveCarLocation',
+            'cancelOrder',
+            'pickUpPassenger',
+            'confirmArrival'
+        ];
+
+        var token = '';
+        var socket = io.connect('http://localhost:8081?token=' + token);
+
+        // 断开连接
+        // socket.disconnect();
+
+        // 连接之后进入广播车辆位置房间
+        socket.on('connect', function () {
+            socket.join('broadcastCarLocation');
+        });
+
+        // 监听断开连接
+        socket.on('disconnect', function () {
+            // 离开广播车辆位置房间
+            socket.leave('broadcastCarLocation');
+        });
+
+        // 监听广播车辆位置
+        socket.on('broadcastCarLocation', function (carLocation) {
+            // ...
+        });
+
+        // 发布行程（POST获取响应之后加入下面代码）
+        // response => {...}
+        var trip = result.data;
+        // 提交发布行程
+        socket.emit('publishTrip', trip);
+        // 离开广播车辆位置房间
+        socket.leave('broadcastCarLocation');
+        // 监听受理行程
+        socket.on('acceptTrip', function (tripOrder) {
+            // 监听车辆位置
+            socket.on('receiveCarLocation', function (carLocation) {
+                // ...
+            });
+
+            // 监听车主取消订单
+            socket.on('cancelOrder', function (tripOrder) {
+                // ...
+            });
+
+            // 监听车主确认乘客上车
+            socket.on('pickUpPassenger', function (tripOrder) {
+                // ...
+            });
+
+            // 监听车主确认到达
+            socket.on('confirmArrival', function (tripOrder) {
+                // 取消监听整个行车过程
+                $.each(events, function (index, val) {
+                    socket.off(val);
+                });
+                // 重新进入广播车辆位置房间
+                socket.join('broadcastCarLocation');
+
+                // ...
+            });
+        });
+
+        // ...
+
+        // 取消行程
+        // response => {...}
+        var trip = result.data;
+        // 提交取消行程
+        socket.emit('cancelTrip', trip);
+        // 取消监听整个行车过程
+        $.each(events, function (index, val) {
+            socket.off(val);
+        });
+        // 重新进入广播车辆位置房间
+        socket.join('broadcastCarLocation');
+
+        // ...
+
+        // 取消订单（POST获取响应之后加入下面代码）
+        // response => {...}
+        var tripOrder = result.data;
+        var driverUsername = tripOrder.driverUsername;
+        // 提交取消订单
+        socket.emit('cancelOrder', {"targetUsername": driverUsername,"data": tripOrder});
+        // 取消监听整个行车过程
+        $.each(events, function (index, val) {
+            socket.off(val);
+        });
+        // 重新进入广播车辆位置房间
+        socket.join('broadcastCarLocation');
+
+        // ...
+    </script>
+</head>
+<body>
+</body>
+</html>

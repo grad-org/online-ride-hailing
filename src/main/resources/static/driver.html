@@ -1,0 +1,153 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script>
+        // 车主在行车过程中的需要监听的事件
+        var events = [
+            'acceptTrip',
+            'receiveCarLocation',
+            'cancelOrder',
+            'pickUpPassenger',
+            'confirmArrival'
+        ];
+
+        var token = '';
+        var socket = io.connect('http://localhost:8081?token=' + token);
+
+        // 断开连接
+        // socket.disconnect();
+
+        // 连接之后
+        socket.on('connect', function () {
+            // 进入广播行程房间
+            socket.join('broadcastTrip');
+
+            // 定时将车辆位置广播给乘客 setInterval => {...}
+            var carLocation;
+            socket.emit('broadcastCarLocation', carLocation);
+        });
+
+        // 监听断开连接
+        socket.on('disconnect', function () {
+            // 离开广播行程房间
+            socket.leave('broadcastTrip');
+
+            // 取消定时广播车辆位置 clearInterval()
+            // ...
+        });
+
+        // 监听发布行程
+        socket.on('publishTrip', function (trip) {
+            // ...
+        });
+
+        // 监听取消行程
+        socket.on('cancelTrip', function (trip) {
+            // ...
+        });
+
+        // 受理订单（POST获取响应之后加入下面代码）
+        // response => {...}
+        var tripOrder = result.data;
+        // 提交受理订单
+        socket.emit('acceptTrip', tripOrder);
+        // 取消监听发布行程
+        socket.off('publishTrip');
+        // 取消监听取消行程
+        socket.off('cancelTrip');
+        // 退出广播行程房间
+        socket.leave('broadcastTrip');
+        // 取消定时广播车辆位置给乘客 clearInterval()
+        // ...
+        // 监听乘客取消订单
+        socket.on('cancelOrder', function (tripOrder) {
+            // 重新进入广播行程房间
+            socket.join('broadcastTrip');
+            // 取消定时发送车辆位置给指定乘客 clearInterval()
+            // ...
+            // 监听发布行程
+            socket.on('publishTrip', function (trip) {
+                // ...
+            });
+            // 监听取消行程
+            socket.on('cancelTrip', function (trip) {
+                // ...
+            });
+            // 重新定时将车辆位置广播给乘客 setInterval => {...}
+            var carLocation;
+            socket.emit('broadcastCarLocation', carLocation);
+
+            // 取消监听乘客取消订单
+            socket.off('cancelOrder');
+            // ...
+        });
+        // 定时将车辆位置发送给指定乘客 setInterval => {...}
+        var passengerUsername = tripOrder.passengerUsername;
+        var carLocation;
+        socket.emit('uploadCarLocation', {"targetUsername": passengerUsername, "data": carLocation});
+        // ...
+
+        // 取消订单（POST获取响应之后加入下面代码）
+        // response => {...}
+        var tripOrder = result.data;
+        var passengerUsername = tripOrder.passengerUsername;
+        // 提交取消订单
+        socket.emit('cancelOrder', {"targetUsername": passengerUsername,"data": tripOrder});
+        // 重新进入广播行程房间
+        socket.join('broadcastTrip');
+        // 取消定时发送车辆位置给指定乘客 clearInterval()
+        // ...
+        // 监听发布行程
+        socket.on('publishTrip', function (trip) {
+            // ...
+        });
+        // 监听取消行程
+        socket.on('cancelTrip', function (trip) {
+            // ...
+        });
+        // 重新定时将车辆位置广播给乘客 setInterval => {...}
+        var carLocation;
+        socket.emit('broadcastCarLocation', carLocation);
+
+        // 取消监听乘客取消订单
+        socket.off('cancelOrder');
+        // ...
+
+        // 确认乘客上车（POST获取响应之后加入下面代码）
+        // response => {...}
+        var tripOrder = result.data;
+        socket.emit('pickUpPassenger', tripOrder);
+        // ...
+
+        // 确认乘客到达（POST获取响应之后加入下面代码）
+        // response => {...}
+        var tripOrder = result.data;
+        socket.emit('confirmArrival', tripOrder);
+        // 重新进入广播行程房间
+        socket.join('broadcastTrip');
+        // 取消定时发送车辆位置给指定乘客 clearInterval()
+        // ...
+        // 监听发布行程
+        socket.on('publishTrip', function (trip) {
+            // ...
+        });
+        // 监听取消行程
+        socket.on('cancelTrip', function (trip) {
+            // ...
+        });
+        // 重新定时将车辆位置广播给乘客 setInterval => {...}
+        var carLocation;
+        socket.emit('broadcastCarLocation', carLocation);
+
+        // 取消监听乘客取消订单
+        socket.off('cancelOrder');
+        // ...
+    </script>
+</head>
+<body>
+</body>
+</html>

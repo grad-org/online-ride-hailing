@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Car extends BaseEntity {
 
-    private String PlateNo; // 车牌号
+    private String plateNo; // 车牌号
 
     private String brand; // 品牌
 
