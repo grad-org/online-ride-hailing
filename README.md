@@ -221,6 +221,12 @@
 >>series|系列
 >>color|颜色
 
+* `/api/driverBalance/bindAlipayAccount` 认证车主
+>描述：
+>>绑定支付宝账户
+
+>用法：POST {driverBalanceId, alipayAccount}
+
 * `/api/driver/search/findPendingReviewDriver` 查询待审核的车主资料
 >描述：
 >>查询待审核的车主资料  
@@ -314,7 +320,7 @@
 
 >用法：GET  
 
-* `/api/payment/alipay/pay` 乘客使用支付订单
+* `/api/payment/alipay/pay` 乘客使用支付宝订单
 >描述：
 >>乘客使用支付宝支付订单。    
 >>如果tripOrderId为空，返回"Not Found"结果，  
@@ -323,15 +329,15 @@
 
 >用法：POST {tripOrderId,totalAmount}  
 
-* `/api/payment/alipay/withdraw` 车主从账户余额中提现资金
+* `/api/payment/alipay/withdraw` 车主从账户余额中提现资金到支付宝账户
 >描述：
 >>车主从账户余额中提现资金，返回乘客资金JSON。  
 >>如果提取金额大于账户余额，返回"Bad Request"结果，  
 
->用法：POST {driverId,amountOfWithdrawal}  
+>用法：POST {driverBalanceId,amountOfWithdrawal}  
 
-* `/api/driverBalance/search/driver/{driverId}` 根据车主id查询车主账户余额
+* `/api/driverBalance/{Id}` 根据车主账户id查询车主账户余额
 >描述：
->>根据车主id查询车主账户余额  
+>>根据车主账户id查询车主账户余额  
 
->用法：GET
+>用法：GET  
