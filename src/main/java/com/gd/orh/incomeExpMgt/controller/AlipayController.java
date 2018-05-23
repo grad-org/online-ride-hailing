@@ -54,8 +54,8 @@ public class AlipayController {
     @Autowired
     private DriverBalanceService driverBalanceService;
 
-    @GetMapping("/pay")
-    public ResponseEntity<?> pay(@Valid PaymentDTO paymentDTO, BindingResult result) {
+    @PostMapping("/pay")
+    public ResponseEntity<?> pay(@Valid @RequestBody PaymentDTO paymentDTO, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(RestResultFactory.getFreeResult(
@@ -278,10 +278,10 @@ public class AlipayController {
                 //——请根据您的业务逻辑来编写程序（以上代码仅作参考）
                 // out.clear();
                 // return "success"; // 请不要修改或删除
-                TripOrder tripOrder = new TripOrder();
-                tripOrder.setId(Long.parseLong(out_trade_no));
 
-                tripOrderService.completePayment(tripOrder);
+                TripOrder tripOrder = tripOrderService.findById(Long.parseLong(out_trade_no));
+                tripOrder = tripOrderService.completePayment(tripOrder);
+
                 driverBalanceService.deposit(tripOrder.getDriver(), new BigDecimal(total_amount));
 
                 HttpHeaders httpHeaders = new HttpHeaders();

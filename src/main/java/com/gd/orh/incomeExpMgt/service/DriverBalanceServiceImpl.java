@@ -24,7 +24,7 @@ public class DriverBalanceServiceImpl implements DriverBalanceService {
 
     @Override
     public void deposit(Driver driver, BigDecimal amount) {
-        DriverBalance driverBalance = findByDriverId(driver.getId());
+        DriverBalance driverBalance = this.findByDriverId(driver.getId());
 
         driverBalance.setBalance(driverBalance.getBalance().add(amount));
 
