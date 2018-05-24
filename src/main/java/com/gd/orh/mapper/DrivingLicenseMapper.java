@@ -4,4 +4,6 @@ import com.gd.orh.entity.DrivingLicense;
 
 public interface DrivingLicenseMapper {
     void insertDrivingLicense(DrivingLicense drivingLicense);
+
+    void updateDrivingLicense(DrivingLicense drivingLicense);
 }

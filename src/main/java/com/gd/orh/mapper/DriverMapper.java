@@ -12,4 +12,6 @@ public interface DriverMapper {
     List<Driver> findAllByDriverStatus(Driver driver);
 
     void updateDriverStatus(Driver driver);
+
+    void updateDriver(Driver driver);
 }

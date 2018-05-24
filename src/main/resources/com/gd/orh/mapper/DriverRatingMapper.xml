@@ -20,15 +20,15 @@
 
 
   <insert id="insertDriverRating" parameterType="DriverRating" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO DRIVER_RATING (RATING_SCORE, DRIVER_ID, TRIP_ORDER_ID)
+    INSERT INTO DRIVER_RATING (RATING_SCORE,DRIVER_ID,TRIP_ORDER_ID)
     VALUES (#{ratingScore},#{driver.id},#{tripOrderId})
   </insert>
 
   <select id="findById" resultMap="DriverRatingResult">
     SELECT
-      DR.ID DRIVER_RATING_ID, RATING_SCORE, TRIP_ORDER_ID,
+      DR.ID DRIVER_RATING_ID,RATING_SCORE,TRIP_ORDER_ID,
       D.ID DRIVER_ID,
-      U.ID USER_ID, NICKNAME
+      U.ID USER_ID,NICKNAME
     FROM DRIVER_RATING DR
       LEFT OUTER JOIN DRIVER D ON DR.DRIVER_ID=D.ID
       LEFT JOIN USER U ON D.USER_ID=U.ID

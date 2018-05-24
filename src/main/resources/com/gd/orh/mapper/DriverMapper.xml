@@ -46,61 +46,78 @@
     <association property="car" resultMap="CarResult"/>
   </resultMap>
 
+  <resultMap id="DriverBalanceResult" type="DriverBalance">
+    <id column="DRIVER_BALANCE_ID" property="id"/>
+    <result column="ALIPAY_ACCOUNT" property="alipayAccount"/>
+    <result column="BALANCE" property="balance"/>
+    <result column="DRIVER_ID" property="driverId"/>
+  </resultMap>
+
   <resultMap id="DriverResult" type="Driver">
     <id column="DRIVER_ID" property="id"/>
     <result column="DRIVER_STATUS" property="driverStatus"/>
     <association property="user" resultMap="UserResult"/>
     <association property="drivingLicense" resultMap="DrivingLicenseResult"/>
     <association property="vehicleLicense" resultMap="VehicleLicenseResult"/>
+    <association property="driverBalance" resultMap="DriverBalanceResult"/>
     <collection property="tripOrders" resultMap="TripOrderResult"/>
   </resultMap>
 
   <select id="findById" resultMap="DriverResult">
     SELECT
       D.ID DRIVER_ID,DRIVER_STATUS,
-      U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
-      T_O.ID TRIP_ORDER_ID, ACCEPTED_TIME, COMPLETED_TIME, ORDER_STATUS,
+      DB.ID DRIVER_BALANCE_ID,BALANCE,ALIPAY_ACCOUNT,
+      U.ID USER_ID,USERNAME,PASSWORD,NICKNAME,GENDER,AGE,ENABLED,LAST_PASSWORD_RESET_DATE,
+      T_O.ID TRIP_ORDER_ID,ACCEPTED_TIME,COMPLETED_TIME,ORDER_STATUS,
       T.ID TRIP_ID,
-      DL.ID DRIVING_LICENSE_ID, DRIVER_NAME, IDENTIFICATION, ISSUE_DATE,
-      DL.ID VEHICLE_LICENSE_ID, OWNER, REGISTER_DATE, ISSUE_DATE,
-      C.ID CAR_ID,PLATE_NO, BRAND, SERIES, COLOR
+      DL.ID DRIVING_LICENSE_ID,DRIVER_NAME,IDENTIFICATION,ISSUE_DATE,
+      DL.ID VEHICLE_LICENSE_ID,OWNER,REGISTER_DATE,ISSUE_DATE,
+      C.ID CAR_ID,PLATE_NO,BRAND,SERIES,COLOR
     FROM DRIVER D
-    LEFT OUTER JOIN USER U ON U.ID=D.USER_ID
-    LEFT OUTER JOIN TRIP_ORDER T_O ON D.ID=T_O.DRIVER_ID
-    LEFT OUTER JOIN TRIP T ON T.ID=T_O.TRIP_ID
-    LEFT OUTER JOIN DRIVING_LICENSE DL ON D.ID=DL.DRIVER_ID
-    LEFT OUTER JOIN VEHICLE_LICENSE VL ON D.ID=VL.DRIVER_ID
-    LEFT OUTER JOIN CAR C ON VL.ID=C.VEHICLE_LICENSE_ID
-    WHERE D.ID = #{id}
-  </select>
-
-  <insert id="insertDriver" parameterType="driver" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO DRIVER (DRIVER_STATUS, USER_ID)
-    VALUES (#{driverStatus}, #{user.id})
-  </insert>
-
-  <select id="findAllByDriverStatus" resultMap="DriverResult">
-    SELECT
-      D.ID DRIVER_ID,DRIVER_STATUS,
-      U.ID USER_ID, USERNAME, PASSWORD, NICKNAME, GENDER, AGE, ENABLED, LAST_PASSWORD_RESET_DATE,
-      T_O.ID TRIP_ORDER_ID, ACCEPTED_TIME, COMPLETED_TIME, ORDER_STATUS,
-      T.ID TRIP_ID,
-      DL.ID DRIVING_LICENSE_ID, DRIVER_NAME, IDENTIFICATION, ISSUE_DATE,
-      DL.ID VEHICLE_LICENSE_ID, OWNER, REGISTER_DATE, ISSUE_DATE,
-      C.ID CAR_ID,PLATE_NO, BRAND, SERIES, COLOR
-    FROM DRIVER D
+      LEFT OUTER JOIN DRIVER_BALANCE DB ON DB.DRIVER_ID=D.ID
       LEFT OUTER JOIN USER U ON U.ID=D.USER_ID
       LEFT OUTER JOIN TRIP_ORDER T_O ON D.ID=T_O.DRIVER_ID
       LEFT OUTER JOIN TRIP T ON T.ID=T_O.TRIP_ID
       LEFT OUTER JOIN DRIVING_LICENSE DL ON D.ID=DL.DRIVER_ID
       LEFT OUTER JOIN VEHICLE_LICENSE VL ON D.ID=VL.DRIVER_ID
       LEFT OUTER JOIN CAR C ON VL.ID=C.VEHICLE_LICENSE_ID
-    WHERE D.DRIVER_STATUS = #{driverStatus}
+    WHERE D.ID=#{id}
+  </select>
+
+  <insert id="insertDriver" parameterType="driver" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO DRIVER (DRIVER_STATUS,USER_ID)
+    VALUES (#{driverStatus},#{user.id})
+  </insert>
+
+  <select id="findAllByDriverStatus" resultMap="DriverResult">
+    SELECT
+      D.ID DRIVER_ID,DRIVER_STATUS,
+      DB.ID DRIVER_BALANCE_ID,BALANCE,ALIPAY_ACCOUNT,
+      U.ID USER_ID,USERNAME,PASSWORD,NICKNAME,GENDER,AGE,ENABLED,LAST_PASSWORD_RESET_DATE,
+      T_O.ID TRIP_ORDER_ID,ACCEPTED_TIME,COMPLETED_TIME,ORDER_STATUS,
+      T.ID TRIP_ID,
+      DL.ID DRIVING_LICENSE_ID,DRIVER_NAME,IDENTIFICATION,ISSUE_DATE,
+      DL.ID VEHICLE_LICENSE_ID,OWNER,REGISTER_DATE,ISSUE_DATE,
+      C.ID CAR_ID,PLATE_NO,BRAND,SERIES,COLOR
+    FROM DRIVER D
+      LEFT OUTER JOIN DRIVER_BALANCE DB ON DB.DRIVER_ID=D.ID
+      LEFT OUTER JOIN USER U ON U.ID=D.USER_ID
+      LEFT OUTER JOIN TRIP_ORDER T_O ON D.ID=T_O.DRIVER_ID
+      LEFT OUTER JOIN TRIP T ON T.ID=T_O.TRIP_ID
+      LEFT OUTER JOIN DRIVING_LICENSE DL ON D.ID=DL.DRIVER_ID
+      LEFT OUTER JOIN VEHICLE_LICENSE VL ON D.ID=VL.DRIVER_ID
+      LEFT OUTER JOIN CAR C ON VL.ID=C.VEHICLE_LICENSE_ID
+    WHERE D.DRIVER_STATUS=#{driverStatus}
   </select>
 
   <update id="updateDriverStatus">
     UPDATE DRIVER D
-    SET DRIVER_STATUS = #{driverStatus}
+    SET DRIVER_STATUS=#{driverStatus}
+    WHERE D.ID=#{id}
+  </update>
+  <update id="updateDriver">
+    UPDATE DRIVER D
+    SET DRIVER_STATUS=#{driverStatus}
     WHERE D.ID=#{id}
   </update>
 </mapper>

@@ -1,6 +1,5 @@
 package com.gd.orh.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gd.orh.entity.DriverBalance;
 import com.google.common.base.Converter;
 import lombok.Data;
@@ -12,7 +11,6 @@ import java.math.BigDecimal;
 public class DriverBalanceDTO extends BaseDTO<DriverBalanceDTO, DriverBalance> {
     private Long driverBalanceId;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String alipayAccount;
 
     private BigDecimal balance;

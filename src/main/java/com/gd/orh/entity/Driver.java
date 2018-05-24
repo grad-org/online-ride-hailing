@@ -15,4 +15,6 @@ public class Driver extends BaseEntity {
     private DrivingLicense drivingLicense; // 驾驶证
 
     private VehicleLicense vehicleLicense; // 行驶证
+
+    private DriverBalance driverBalance; // 车主余额
 }

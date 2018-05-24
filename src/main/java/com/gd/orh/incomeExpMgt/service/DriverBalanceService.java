@@ -1,16 +1,17 @@
 package com.gd.orh.incomeExpMgt.service;
 
-import com.gd.orh.entity.Driver;
 import com.gd.orh.entity.DriverBalance;
 
 import java.math.BigDecimal;
 
 public interface DriverBalanceService {
-    DriverBalance findByDriverId(Long driverId);
+    DriverBalance insertDriverBalance(DriverBalance driverBalance);
 
-    void deposit(Driver driver, BigDecimal amount);
+    DriverBalance findById(Long id);
 
-    void withdraw(Driver driver, BigDecimal amount);
+    DriverBalance bindAlipayAccount(DriverBalance driverBalance);
+
+    DriverBalance deposit(DriverBalance driverBalance, BigDecimal amount);
 
     DriverBalance withdraw(DriverBalance driverBalance, BigDecimal amount);
 }

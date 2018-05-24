@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gd.orh.mapper.AuthorityMapper">
   <insert id="insertUserAuthority" parameterType="User">
-    INSERT INTO USER_AUTHORITY(USER_ID, AUTHORITY_ID)
+    INSERT INTO USER_AUTHORITY(USER_ID,AUTHORITY_ID)
     VALUES
     <foreach collection="authorities" item="authority" separator=",">
-      (#{id}, #{authority.id})
+      (#{id},#{authority.id})
     </foreach>
   </insert>
   <delete id="deleteUserAuthority">

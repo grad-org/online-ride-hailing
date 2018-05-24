@@ -20,15 +20,15 @@
 
 
   <insert id="insertDriverComplaint" parameterType="DriverComplaint" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO DRIVER_COMPLAINT (COMPLAINT_CONTENT, DRIVER_ID, TRIP_ORDER_ID)
+    INSERT INTO DRIVER_COMPLAINT (COMPLAINT_CONTENT,DRIVER_ID,TRIP_ORDER_ID)
     VALUES (#{complaintContent},#{driver.id},#{tripOrderId})
   </insert>
 
   <select id="findById" resultMap="DriverComplaintResult">
     SELECT
-      DC.ID DRIVER_COMPLAINT_ID, COMPLAINT_CONTENT, TRIP_ORDER_ID,
+      DC.ID DRIVER_COMPLAINT_ID,COMPLAINT_CONTENT,TRIP_ORDER_ID,
       D.ID DRIVER_ID,
-      U.ID USER_ID, NICKNAME
+      U.ID USER_ID,NICKNAME
     FROM DRIVER_COMPLAINT DC
       LEFT OUTER JOIN DRIVER D ON DC.DRIVER_ID=D.ID
       LEFT JOIN USER U ON D.USER_ID=U.ID

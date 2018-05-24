@@ -27,6 +27,9 @@ public class DriverServiceImpl implements DriverService {
     private CarMapper carMapper;
 
     @Autowired
+    private DriverBalanceMapper driverBalanceMapper;
+
+    @Autowired
     private AuthorityMapper authorityMapper;
 
     @Override
@@ -35,23 +38,49 @@ public class DriverServiceImpl implements DriverService {
             return driverMapper.findById(id);
     }
 
+    @Override
     public Driver save(Driver driver) {
         driver.setDriverStatus(DriverStatus.PENDING_REVIEW);
-        driverMapper.insertDriver(driver);
 
-        DrivingLicense drivingLicense = driver.getDrivingLicense();
-        drivingLicense.setDriver(driver);
-        drivingLicenseMapper.insertDrivingLicense(drivingLicense);
+        if (driver.getId() == null) {
+            driverMapper.insertDriver(driver);
 
-        VehicleLicense vehicleLicense = driver.getVehicleLicense();
-        vehicleLicense.setDriver(driver);
-        vehicleLicenseMapper.insertVehicleLicense(vehicleLicense);
+            DrivingLicense drivingLicense = driver.getDrivingLicense();
+            drivingLicense.setDriver(driver);
+            drivingLicenseMapper.insertDrivingLicense(drivingLicense);
 
-        Car car = vehicleLicense.getCar();
-        car.setVehicleLicense(vehicleLicense);
-        carMapper.insertCar(car);
+            VehicleLicense vehicleLicense = driver.getVehicleLicense();
+            vehicleLicense.setDriver(driver);
+            vehicleLicenseMapper.insertVehicleLicense(vehicleLicense);
 
-        return driver;
+            Car car = vehicleLicense.getCar();
+            car.setVehicleLicense(vehicleLicense);
+            carMapper.insertCar(car);
+
+            DriverBalance driverBalance = new DriverBalance();
+            driverBalance.setDriverId(driver.getId());
+            driverBalanceMapper.insertDriverBalance(driverBalance);
+
+            driver.setDriverBalance(driverBalance);
+        } else {
+            Driver persistedDriver = this.findById(driver.getId());
+
+            driverMapper.updateDriver(driver);
+
+            DrivingLicense drivingLicense = driver.getDrivingLicense();
+            drivingLicense.setId(persistedDriver.getDrivingLicense().getId());
+            drivingLicenseMapper.updateDrivingLicense(drivingLicense);
+
+            VehicleLicense vehicleLicense = driver.getVehicleLicense();
+            vehicleLicense.setId(persistedDriver.getVehicleLicense().getId());
+            vehicleLicenseMapper.updateVehicleLicense(vehicleLicense);
+
+            Car car = vehicleLicense.getCar();
+            car.setId(persistedDriver.getVehicleLicense().getCar().getId());
+            carMapper.updateCar(car);
+        }
+
+        return this.findById(driver.getId());
     }
 
     @Transactional(readOnly = true)

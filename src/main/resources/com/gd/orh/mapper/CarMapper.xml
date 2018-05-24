@@ -17,7 +17,7 @@
   </resultMap>
 
   <insert id="insertCar" parameterType="car" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO CAR (PLATE_NO, BRAND, SERIES, COLOR, VEHICLE_LICENSE_ID)
+    INSERT INTO CAR (PLATE_NO,BRAND,SERIES,COLOR,VEHICLE_LICENSE_ID)
     VALUES (#{plateNo},#{brand},#{series},#{color},#{vehicleLicense.id})
   </insert>
 

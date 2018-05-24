@@ -6,6 +6,6 @@ import java.math.BigDecimal;
 
 @Data
 public class WithdrawalDTO {
-    private Long driverId;
+    private Long driverBalanceId;
     private BigDecimal amountOfWithdrawal;
 }

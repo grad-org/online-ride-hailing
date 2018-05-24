@@ -3,7 +3,11 @@ package com.gd.orh.mapper;
 import com.gd.orh.entity.DriverBalance;
 
 public interface DriverBalanceMapper {
-    DriverBalance findByDriverId(Long driverId);
+    void insertDriverBalance(DriverBalance driverBalance);
 
     void updateBalance(DriverBalance driverBalance);
+
+    DriverBalance findById(Long id);
+
+    void updateAlipayAccount(DriverBalance driverBalance);
 }

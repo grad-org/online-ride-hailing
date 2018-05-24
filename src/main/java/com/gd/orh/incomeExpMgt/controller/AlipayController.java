@@ -14,10 +14,12 @@ import com.gd.orh.dto.DriverBalanceDTO;
 import com.gd.orh.dto.PaymentDTO;
 import com.gd.orh.dto.TripOrderDTO;
 import com.gd.orh.dto.WithdrawalDTO;
+import com.gd.orh.entity.Driver;
 import com.gd.orh.entity.DriverBalance;
 import com.gd.orh.entity.ResultCode;
 import com.gd.orh.entity.TripOrder;
 import com.gd.orh.incomeExpMgt.service.DriverBalanceService;
+import com.gd.orh.mapper.DriverMapper;
 import com.gd.orh.tripOrderMgt.service.TripOrderService;
 import com.gd.orh.utils.RestResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,9 @@ public class AlipayController {
 
     @Autowired
     private DriverBalanceService driverBalanceService;
+
+    @Autowired
+    private DriverMapper driverMapper;
 
     @PostMapping("/pay")
     public ResponseEntity<?> pay(@Valid @RequestBody PaymentDTO paymentDTO, BindingResult result) {
@@ -282,7 +287,9 @@ public class AlipayController {
                 TripOrder tripOrder = tripOrderService.findById(Long.parseLong(out_trade_no));
                 tripOrder = tripOrderService.completePayment(tripOrder);
 
-                driverBalanceService.deposit(tripOrder.getDriver(), new BigDecimal(total_amount));
+                Driver driver = driverMapper.findById(tripOrder.getDriver().getId());
+
+                driverBalanceService.deposit(driver.getDriverBalance(), new BigDecimal(total_amount));
 
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.setContentType(new MediaType(
@@ -315,7 +322,7 @@ public class AlipayController {
 
     @PostMapping("/withdraw")
     public ResponseEntity<?> withdraw(@RequestBody WithdrawalDTO withdrawalDTO) {
-        DriverBalance driverBalance = driverBalanceService.findByDriverId(withdrawalDTO.getDriverId());
+        DriverBalance driverBalance = driverBalanceService.findById(withdrawalDTO.getDriverBalanceId());
         BigDecimal amount = withdrawalDTO.getAmountOfWithdrawal();
 
         // 提取金额大于账户余额

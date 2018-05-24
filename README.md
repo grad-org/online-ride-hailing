@@ -205,10 +205,11 @@
 >>认证车主信息，包括驾驶证、行驶证、车辆信息
 >>如果存在图片但上传图片失败，返回"Bad Request"结果。
 
->用法：POST {userId, drivingLicense: {driverName,identification,issueDate,drivingLicenseImage}, vehicleLicense: {owner,registerDate,vehicleLicenseImage}, car: {plateNo,brand,series,color}}
+>用法：POST {[userId/driverId], drivingLicense: {driverName,identification,issueDate,drivingLicenseImage}, vehicleLicense: {owner,registerDate,vehicleLicenseImage}, car: {plateNo,brand,series,color}}
 >>属性|说明
 >>------ | ------
->>userId|
+>>userId|用户id，只有在车主第一次认证时必须携带，其他情况不携带（有userId就没有driverId）
+>>driverId|车主id，只有在车主每次审核不通过后重新认证必须携带，其他情况不携带（有driverId就没有userId）
 >>driverName|司机姓名
 >>identification|身份证号
 >>issueDate|初次领取驾驶证日期

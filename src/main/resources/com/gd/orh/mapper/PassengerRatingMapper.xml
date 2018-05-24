@@ -19,15 +19,15 @@
   </resultMap>
 
   <insert id="insertPassengerRating" parameterType="PassengerRating" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO PASSENGER_RATING (RATING_SCORE, PASSENGER_ID, TRIP_ORDER_ID)
+    INSERT INTO PASSENGER_RATING (RATING_SCORE,PASSENGER_ID,TRIP_ORDER_ID)
     VALUES (#{ratingScore},#{passenger.id},#{tripOrderId})
   </insert>
 
   <select id="findById" resultMap="PassengerRatingResult">
     SELECT
-      PR.ID PASSENGER_RATING_ID, RATING_SCORE, TRIP_ORDER_ID,
+      PR.ID PASSENGER_RATING_ID,RATING_SCORE,TRIP_ORDER_ID,
       P.ID PASSENGER_ID,
-      U.ID USER_ID, NICKNAME
+      U.ID USER_ID,NICKNAME
     FROM PASSENGER_RATING PR
       LEFT OUTER JOIN PASSENGER P ON PR.PASSENGER_ID=P.ID
       LEFT JOIN USER U ON P.USER_ID=U.ID

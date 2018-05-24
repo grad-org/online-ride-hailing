@@ -19,15 +19,15 @@
   </resultMap>
 
   <insert id="insertPassengerComplaint" parameterType="PassengerComplaint" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO PASSENGER_COMPLAINT (COMPLAINT_CONTENT, PASSENGER_ID, TRIP_ORDER_ID)
+    INSERT INTO PASSENGER_COMPLAINT (COMPLAINT_CONTENT,PASSENGER_ID,TRIP_ORDER_ID)
     VALUES (#{complaintContent},#{passenger.id},#{tripOrderId})
   </insert>
 
   <select id="findById" resultMap="PassengerComplaintResult">
     SELECT
-      PC.ID PASSENGER_RATING_ID, COMPLAINT_CONTENT, TRIP_ORDER_ID,
+      PC.ID PASSENGER_RATING_ID,COMPLAINT_CONTENT,TRIP_ORDER_ID,
       P.ID PASSENGER_ID,
-      U.ID USER_ID, NICKNAME
+      U.ID USER_ID,NICKNAME
     FROM PASSENGER_COMPLAINT PC
       LEFT OUTER JOIN PASSENGER P ON PC.PASSENGER_ID=P.ID
       LEFT JOIN USER U ON P.USER_ID=U.ID

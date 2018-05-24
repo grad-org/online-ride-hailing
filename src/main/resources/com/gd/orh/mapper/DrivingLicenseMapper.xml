@@ -15,7 +15,12 @@
   </resultMap>
 
   <insert id="insertDrivingLicense" parameterType="drivingLicense" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO DRIVING_LICENSE (DRIVER_NAME, IDENTIFICATION, ISSUE_DATE, DRIVER_ID)
+    INSERT INTO DRIVING_LICENSE (DRIVER_NAME,IDENTIFICATION,ISSUE_DATE,DRIVER_ID)
     VALUES (#{driverName},#{identification},#{issueDate},#{driver.id})
   </insert>
+  <update id="updateDrivingLicense">
+    UPDATE DRIVING_LICENSE DL
+    SET DRIVER_NAME=#{driverName},IDENTIFICATION=#{identification},ISSUE_DATE=#{issueDate}
+    WHERE DL.ID=#{id}
+  </update>
 </mapper>

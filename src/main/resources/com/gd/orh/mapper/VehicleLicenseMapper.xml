@@ -23,7 +23,7 @@
   </resultMap>
 
   <insert id="insertVehicleLicense" parameterType="vehicleLicense" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO VEHICLE_LICENSE (OWNER, REGISTER_DATE, DRIVER_ID)
+    INSERT INTO VEHICLE_LICENSE (OWNER,REGISTER_DATE,DRIVER_ID)
     VALUES (#{owner},#{registerDate},#{driver.id})
   </insert>
   <update id="updateVehicleLicense">

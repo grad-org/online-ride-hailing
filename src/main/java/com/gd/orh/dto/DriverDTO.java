@@ -22,6 +22,8 @@ public class DriverDTO extends BaseDTO<DriverDTO, Driver> {
 
     private CarDTO car;
 
+    private DriverBalanceDTO driverBalance;
+
     private static class DriverDTOConverter extends Converter<DriverDTO, Driver> {
         @Override
         protected Driver doForward(DriverDTO driverDTO) {
@@ -55,6 +57,13 @@ public class DriverDTO extends BaseDTO<DriverDTO, Driver> {
                     .orElse(null);
             if (vehicleLicense != null) vehicleLicense.setCar(car);
 
+            DriverBalance driverBalance = Optional
+                    .ofNullable(driverDTO)
+                    .map(DriverDTO::getDriverBalance)
+                    .map(DriverBalanceDTO::convertTo)
+                    .orElse(null);
+            driver.setDriverBalance(driverBalance);
+
             return driver;
         }
 
@@ -81,6 +90,9 @@ public class DriverDTO extends BaseDTO<DriverDTO, Driver> {
                     driverDTO.setCar(new CarDTO().convertFor(driver.getVehicleLicense().getCar()));
                 }
             }
+
+            if (driver.getDriverBalance() != null)
+                driverDTO.setDriverBalance(new DriverBalanceDTO().convertFor(driver.getDriverBalance()));
 
             return driverDTO;
         }
