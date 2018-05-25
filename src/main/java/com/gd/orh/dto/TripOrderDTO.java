@@ -15,6 +15,7 @@ import java.util.Optional;
 @Data
 public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
     private Long tripOrderId;
+    private String outTradeNo;
     private OrderStatus orderStatus;
 
     private Long tripId;
@@ -48,6 +49,13 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
     private BigDecimal MileageCost;
     private BigDecimal TimeCost;
     private BigDecimal TotalCost;
+
+    private Boolean isPassengerRated;
+    private String passengerRatingScore;
+    private String passengerRatingContent;
+    private Boolean isDriverRated;
+    private String driverRatingScore;
+    private String driverRatingContent;
 
     private static class TripOrderDTOConverter extends Converter<TripOrderDTO, TripOrder> {
 
@@ -297,6 +305,42 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
                     .ofNullable(tripOrder)
                     .map(TripOrder::getFare)
                     .map(Fare::getTotalCost)
+                    .orElse(null));
+
+            tripOrderDTO.setIsPassengerRated(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getServiceRating)
+                    .map(ServiceRating::getIsPassengerRated)
+                    .orElse(null));
+
+            tripOrderDTO.setPassengerRatingScore(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getServiceRating)
+                    .map(ServiceRating::getPassengerRatingScore)
+                    .orElse(null));
+
+            tripOrderDTO.setPassengerRatingContent(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getServiceRating)
+                    .map(ServiceRating::getPassengerRatingContent)
+                    .orElse(null));
+
+            tripOrderDTO.setIsDriverRated(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getServiceRating)
+                    .map(ServiceRating::getIsDriverRated)
+                    .orElse(null));
+
+            tripOrderDTO.setDriverRatingScore(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getServiceRating)
+                    .map(ServiceRating::getDriverRatingScore)
+                    .orElse(null));
+
+            tripOrderDTO.setDriverRatingContent(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getServiceRating)
+                    .map(ServiceRating::getDriverRatingContent)
                     .orElse(null));
 
             return tripOrderDTO;

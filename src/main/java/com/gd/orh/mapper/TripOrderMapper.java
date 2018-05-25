@@ -16,4 +16,6 @@ public interface TripOrderMapper {
     List<TripOrder> findAllByPassenger(TripOrder tripOrder);
 
     List<TripOrder> findAllByDriver(TripOrder tripOrder);
+
+    TripOrder findByOutTradeNo(String outTradeNo);
 }

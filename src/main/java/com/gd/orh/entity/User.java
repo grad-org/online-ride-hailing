@@ -1,7 +1,5 @@
 package com.gd.orh.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -15,7 +13,6 @@ public class User extends BaseEntity {
     private String username;
 
     @NotEmpty
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String nickname;
@@ -24,13 +21,10 @@ public class User extends BaseEntity {
 
     private Integer age;
 
-    @JsonIgnore
     private Boolean enabled;
 
-    @JsonIgnore
     private Date lastPasswordResetDate;
 
-    @JsonIgnore
     private List<Authority> authorities;
 
     private Passenger passenger;

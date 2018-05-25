@@ -1,24 +1,13 @@
 package com.gd.orh.serviceRating.service;
 
-import com.gd.orh.entity.DriverComplaint;
-import com.gd.orh.entity.DriverRating;
-import com.gd.orh.entity.PassengerComplaint;
-import com.gd.orh.entity.PassengerRating;
+import com.gd.orh.entity.ServiceRating;
 
 public interface ServiceRatingService {
-    DriverRating rateDriver(DriverRating driverRating);
+    ServiceRating save(ServiceRating serviceRating);
 
-    PassengerRating ratePassenger(PassengerRating passengerRating);
+    ServiceRating findById(Long id);
 
-    DriverRating findDriverRatingById(Long id);
+    ServiceRating rateDriver(ServiceRating serviceRating);
 
-    PassengerRating findPassengerRatingById(Long id);
-
-    DriverComplaint complainDriver(DriverComplaint driverComplaint);
-
-    PassengerComplaint complainPassenger(PassengerComplaint passengerComplaint);
-
-    DriverComplaint findDriverComplaintById(Long id);
-
-    PassengerComplaint findPassengerComplaintById(Long id);
+    ServiceRating ratePassenger(ServiceRating serviceRating);
 }

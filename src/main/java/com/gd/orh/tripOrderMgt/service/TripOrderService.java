@@ -26,4 +26,6 @@ public interface TripOrderService {
     TripOrder completePayment(TripOrder tripOrder);
 
     TripOrder cancelOrder(TripOrder tripOrder);
+
+    TripOrder findByOutTradeNo(String out_trade_no);
 }

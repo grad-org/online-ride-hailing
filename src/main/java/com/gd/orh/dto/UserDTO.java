@@ -5,10 +5,12 @@ import com.gd.orh.entity.Driver;
 import com.gd.orh.entity.Passenger;
 import com.gd.orh.entity.User;
 import com.google.common.base.Converter;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 import java.util.Optional;
 
 @Data
@@ -22,6 +24,7 @@ public class UserDTO extends BaseDTO<UserDTO, User> {
     private String nickname;
     private String gender;
     private Integer age;
+    private List<String> authorities;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String userImage;
@@ -71,6 +74,12 @@ public class UserDTO extends BaseDTO<UserDTO, User> {
                     .map(User::getPassenger)
                     .map(Passenger::getId)
                     .orElse(null));
+
+            List<String> authorityList = Lists.newArrayList();
+            user.getAuthorities().forEach((each)->{
+                authorityList.add(each.getName().name());
+            });
+            userDTO.setAuthorities(authorityList);
 
             return userDTO;
         }

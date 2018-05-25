@@ -70,8 +70,7 @@ public class AlipayController {
                     ));
         }
 
-        TripOrder tripOrder = new TripOrder();
-        tripOrder.setId(paymentDTO.getTripOrderId());
+        TripOrder tripOrder = tripOrderService.findById(paymentDTO.getTripOrderId());
 
         if (!tripOrderService.isTripOrderCanBePaid(tripOrder)) {
             return ResponseEntity
@@ -83,9 +82,9 @@ public class AlipayController {
         }
 
         // 商户订单号，商户网站订单系统中唯一订单号，必填
-        String out_trade_no = paymentDTO.getTripOrderId().toString();
+        String out_trade_no = tripOrder.getOutTradeNo();
         // 订单名称，必填
-        String subject = "行程订单" + paymentDTO.getTripOrderId().toString();
+        String subject = "行程订单商户订单号-" + out_trade_no;
         // 付款金额，必填
         String total_amount = paymentDTO.getTotalAmount().toString();
         // 商品描述，可空
@@ -185,8 +184,8 @@ public class AlipayController {
                     );
 
             if (verify_result) { // 验证成功
-                TripOrder tripOrder = new TripOrder();
-                tripOrder.setId(Long.parseLong(out_trade_no));
+                TripOrder tripOrder = tripOrderService.findByOutTradeNo(out_trade_no);
+
                 tripOrder = tripOrderService.payTripOrder(tripOrder);
 
                 TripOrderDTO tripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
@@ -284,7 +283,8 @@ public class AlipayController {
                 // out.clear();
                 // return "success"; // 请不要修改或删除
 
-                TripOrder tripOrder = tripOrderService.findById(Long.parseLong(out_trade_no));
+                TripOrder tripOrder = tripOrderService.findByOutTradeNo(out_trade_no);
+
                 tripOrder = tripOrderService.completePayment(tripOrder);
 
                 Driver driver = driverMapper.findById(tripOrder.getDriver().getId());

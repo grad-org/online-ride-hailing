@@ -1,10 +1,8 @@
 package com.gd.orh.tripOrderMgt.service;
 
 import com.gd.orh.entity.*;
-import com.gd.orh.mapper.FareMapper;
-import com.gd.orh.mapper.FareRuleMapper;
-import com.gd.orh.mapper.TripMapper;
-import com.gd.orh.mapper.TripOrderMapper;
+import com.gd.orh.mapper.*;
+import com.gd.orh.utils.UUIDUtil;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +27,9 @@ public class TripOrderServiceImpl implements TripOrderService {
     @Autowired
     private FareRuleMapper fareRuleMapper;
 
+    @Autowired
+    private ServiceRatingMapper serviceRatingMapper;
+
     @Override
     public TripOrder acceptTripOrder(TripOrder tripOrder) {
         FareRule fareRule = fareRuleMapper.findRecentFareRule();
@@ -36,6 +37,7 @@ public class TripOrderServiceImpl implements TripOrderService {
         fare.setFareRule(fareRule);
         fareMapper.insertFare(fare);
 
+        tripOrder.setOutTradeNo(UUIDUtil.getUUID());
         tripOrder.setFare(fare);
         tripOrder.setAcceptedTime(new Date());
         tripOrder.setOrderStatus(OrderStatus.ACCEPTED);
@@ -60,6 +62,17 @@ public class TripOrderServiceImpl implements TripOrderService {
         return this.findById(tripOrder.getId());
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public TripOrder findByOutTradeNo(String outTradeNo) {
+        TripOrder tripOrder = tripOrderMapper.findByOutTradeNo(outTradeNo);
+
+        Trip trip = tripMapper.findById(tripOrder.getTrip().getId());
+        tripOrder.setTrip(trip);
+
+        return tripOrder;
+    }
+
     @Override
     public TripOrder confirmPickUp(TripOrder tripOrder) {
         tripOrder.setOrderStatus(OrderStatus.PROCESSING);
@@ -81,8 +94,15 @@ public class TripOrderServiceImpl implements TripOrderService {
 
         fareMapper.updateFare(tripOrder.getFare());
 
-        tripOrder.getTrip().setTripStatus(TripStatus.ARRIVED);
+        Trip trip = tripOrder.getTrip();
+        trip.setTripStatus(TripStatus.ARRIVED);
         tripMapper.updateTripStatus(tripOrder.getTrip());
+
+        ServiceRating serviceRating = new ServiceRating();
+        serviceRating.setPassengerId(trip.getPassenger().getId());
+        serviceRating.setDriverId(tripOrder.getDriver().getId());
+        serviceRating.setTripOrderId(tripOrder.getId());
+        serviceRatingMapper.insertServiceRating(serviceRating);
 
         return this.findById(tripOrder.getId());
     }
