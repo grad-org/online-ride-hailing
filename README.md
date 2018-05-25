@@ -277,49 +277,13 @@
 >描述：
 >>乘客评价车主  
 
->用法：POST {ratingScore,driverId,driverUserId}  
+>用法：POST {serviceRatingId,driverRatingScore,driverRatingContent}  
 
 * `/api/serviceRating/ratePassenger` 评价乘客
 >描述：
 >>车主评价乘客  
 
->用法：POST {ratingScore,passengerId,passengerUserId}  
-
-* `/api/serviceRating/driverRating/{id}` 根据车主评价id返回车主评价
->描述：
->>根据车主评价id返回车主评价  
-
->用法：GET  
-
-* `/api/serviceRating/passengerRating/{id}` 根据乘客评价id返回乘客评价
->描述：
->>根据乘客评价id返回乘客评价  
-
->用法：GET  
-
-* `/api/serviceRating/complainDriver` 投诉车主
->描述：
->>乘客投诉车主  
-
->用法：POST {complaintContent,driverId,driverUserId}  
-
-* `/api/serviceRating/complainPassenger` 投诉乘客
->描述：
->>车主投诉乘客  
-
->用法：POST {complaintContent,passengerId,passengerUserId}  
-
-* `/api/serviceRating/driverComplaint/{id}` 根据车主投诉id返回车主投诉
->描述：
->>根据车主投诉id返回车主投诉  
-
->用法：GET  
-
-* `/api/serviceRating/passengerComplaint/{id}` 根据乘客投诉id返回乘客投诉
->描述：
->>根据乘客投诉id返回乘客投诉  
-
->用法：GET  
+>用法：POST {serviceRatingId,passengerRatingScore,passengerRatingContent}  
 
 * `/api/payment/alipay/pay` 乘客使用支付宝订单
 >描述：
