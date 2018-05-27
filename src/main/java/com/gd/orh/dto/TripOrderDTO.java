@@ -51,10 +51,10 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
     private BigDecimal TotalCost;
 
     private Boolean isPassengerRated;
-    private String passengerRatingScore;
+    private BigDecimal passengerRatingScore;
     private String passengerRatingContent;
     private Boolean isDriverRated;
-    private String driverRatingScore;
+    private BigDecimal driverRatingScore;
     private String driverRatingContent;
 
     private static class TripOrderDTOConverter extends Converter<TripOrderDTO, TripOrder> {

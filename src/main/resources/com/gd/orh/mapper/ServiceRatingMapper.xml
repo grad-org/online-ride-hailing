@@ -27,13 +27,13 @@
 
   <update id="updatePassengerRating">
     UPDATE SERVICE_RATING
-    SET IS_PASSENGER_RATIED=TRUE,PASSENGER_RATING_SCORE=#{passengerRatingScore},PASSENGER_RATING_CONTENT=#{passengerRatingContent}
+    SET IS_PASSENGER_RATIED=#{isPassengerRated},PASSENGER_RATING_SCORE=#{passengerRatingScore},PASSENGER_RATING_CONTENT=#{passengerRatingContent}
     WHERE ID=#{id};
   </update>
 
   <update id="updateDriverRating">
     UPDATE SERVICE_RATING
-    SET IS_DRIVER_RATIED=TRUE,DRIVER_RATING_SCORE=#{driverRatingScore},DRIVER_RATING_CONTENT=#{driverRatingContent}
+    SET IS_DRIVER_RATIED=#{isDriverRated},DRIVER_RATING_SCORE=#{driverRatingScore},DRIVER_RATING_CONTENT=#{driverRatingContent}
     WHERE ID=#{id};
   </update>
 </mapper>

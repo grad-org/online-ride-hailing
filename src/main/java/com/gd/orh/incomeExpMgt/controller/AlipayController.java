@@ -142,7 +142,7 @@ public class AlipayController {
     }
 
     @GetMapping("/return")
-    public ResponseEntity<?> syncReturn(HttpServletRequest request) throws UnsupportedEncodingException {
+    public String syncReturn(HttpServletRequest request) throws UnsupportedEncodingException {
         // 获取支付宝GET过来反馈信息
         Map<String, String> params = new HashMap<String, String>();
         Map<String, String[]> requestParams = request.getParameterMap();
@@ -172,6 +172,8 @@ public class AlipayController {
                         "UTF-8"
                 );
 
+        TripOrder tripOrder = tripOrderService.findByOutTradeNo(out_trade_no);
+
         try {
             // 获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以上仅供参考)
             // 计算得出通知验证结果
@@ -184,24 +186,16 @@ public class AlipayController {
                     );
 
             if (verify_result) { // 验证成功
-                TripOrder tripOrder = tripOrderService.findByOutTradeNo(out_trade_no);
-
                 tripOrder = tripOrderService.payTripOrder(tripOrder);
 
                 TripOrderDTO tripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
 
-                return ResponseEntity
-                        .ok()
-                        .body(RestResultFactory.getSuccessResult("Verify succeed!", tripOrderDTO));
+                return "redirect:http://localhost/pay?result=success&tripOrderId=" + tripOrder.getId();
             } else {
-                return ResponseEntity
-                        .badRequest()
-                        .body(RestResultFactory.getFailResult("Verify fail!"));
+                return "redirect:http://localhost/pay?result=failure&tripOrderId=" + tripOrder.getId();
             }
         } catch (AlipayApiException e) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(RestResultFactory.getFailResult(e.getMessage()));
+            return "redirect:http://localhost/pay?result=exception&tripOrderId=" + tripOrder.getId();
         }
     }
 
@@ -300,7 +294,7 @@ public class AlipayController {
                 return new ResponseEntity("success", httpHeaders, HttpStatus.OK);
 
                 //////////////////////////////////////////////////////////////////////////////////////////
-            } else {//验证失败
+            } else { // 验证失败
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.setContentType(new MediaType(
                         MediaType.TEXT_PLAIN,

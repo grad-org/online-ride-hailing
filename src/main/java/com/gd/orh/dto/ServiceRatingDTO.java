@@ -1,10 +1,11 @@
 package com.gd.orh.dto;
 
-import com.gd.orh.entity.*;
+import com.gd.orh.entity.ServiceRating;
 import com.google.common.base.Converter;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Data
@@ -12,11 +13,11 @@ public class ServiceRatingDTO extends BaseDTO<ServiceRatingDTO, ServiceRating> {
     private Long serviceRatingId;
 
     private Boolean isPassengerRated;
-    private String passengerRatingScore;
+    private BigDecimal passengerRatingScore;
     private String passengerRatingContent;
 
     private Boolean isDriverRated;
-    private String driverRatingScore;
+    private BigDecimal driverRatingScore;
     private String driverRatingContent;
 
     private Long passengerId;
