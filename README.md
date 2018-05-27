@@ -167,6 +167,18 @@
 
 >用法：GET  
 
+* `/api/fareRule` 设定计费规则
+>描述：
+>>设定计费规则 
+
+>用法：POST {initialPrice,initialMileage,unitPricePerKilometer,unitPricePerMinute}
+>>属性|说明
+>>------ | ------
+>>initialPrice|起步价
+>>initialMileage|起步里程
+>>unitPricePerKilometer|每公里价
+>>unitPricePerMinute|每分钟价
+
 * `/api/hailingService/tripOrder/confirmArrival` 车主确认到达
 >描述：
 >>车主确认乘客到达后，结束计算行程费用，更新行程订单状态和行程状态，并插入车费明细记录。    
