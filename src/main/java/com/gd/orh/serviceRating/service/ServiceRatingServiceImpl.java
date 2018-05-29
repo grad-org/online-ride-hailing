@@ -28,7 +28,7 @@ public class ServiceRatingServiceImpl implements ServiceRatingService {
     @Override
     public ServiceRating rateDriver(ServiceRating serviceRating) {
         serviceRating.setIsDriverRated(true);
-        serviceRatingMapper.updatePassengerRating(serviceRating);
+        serviceRatingMapper.updateDriverRating(serviceRating);
 
         return this.findById(serviceRating.getId());
     }

@@ -41,7 +41,7 @@ public class ServiceRatingController {
     public ResponseEntity<?> ratePassenger(@RequestBody ServiceRatingDTO serviceRatingDTO) {
         ServiceRating serviceRating = serviceRatingDTO.convertTo();
 
-        ServiceRating ratedServiceRating = serviceRatingService.rateDriver(serviceRating);
+        ServiceRating ratedServiceRating = serviceRatingService.ratePassenger(serviceRating);
 
         ServiceRatingDTO ratedServiceRatingDTO = new ServiceRatingDTO().convertFor(ratedServiceRating);
 
