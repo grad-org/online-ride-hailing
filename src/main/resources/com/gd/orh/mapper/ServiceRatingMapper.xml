@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gd.orh.mapper.ServiceRatingMapper" >
   <resultMap id="ServiceRatingResult" type="ServiceRating">
-    <id column="PASSENGER_RATING_ID" property="id"/>
+    <id column="SERVICE_RATING_ID" property="id"/>
     <result column="IS_PASSENGER_RATED" property="isPassengerRated"/>
     <result column="PASSENGER_RATING_SCORE" property="passengerRatingScore"/>
     <result column="PASSENGER_RATING_CONTENT" property="passengerRatingContent"/>
@@ -15,25 +15,25 @@
   </resultMap>
 
   <insert id="insertServiceRating" parameterType="ServiceRating" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO SERVICE_RATING (IS_PASSENGER_RATIED,IS_DRIVER_RATIED,TRIP_ORDER_ID,PASSENGER_ID,DRIVER_ID)
+    INSERT INTO SERVICE_RATING (IS_PASSENGER_RATED,IS_DRIVER_RATED,TRIP_ORDER_ID,PASSENGER_ID,DRIVER_ID)
     VALUES (FALSE,FALSE,#{tripOrderId},#{passengerId},#{driverId})
   </insert>
 
   <select id="findById" resultMap="ServiceRatingResult">
-    SELECT ID SERVICE_RATING_ID,IS_PASSENGER_RATIED,PASSENGER_RATING_SCORE,PASSENGER_RATING_CONTENT,IS_DRIVER_RATIED,DRIVER_RATING_SCORE,DRIVER_RATING_CONTENT,TRIP_ORDER_ID,PASSENGER_ID,DRIVER_ID
+    SELECT ID SERVICE_RATING_ID,IS_PASSENGER_RATED,PASSENGER_RATING_SCORE,PASSENGER_RATING_CONTENT,IS_DRIVER_RATED,DRIVER_RATING_SCORE,DRIVER_RATING_CONTENT,TRIP_ORDER_ID,PASSENGER_ID,DRIVER_ID
     FROM SERVICE_RATING SR
     WHERE ID=#{id}
   </select>
 
   <update id="updatePassengerRating">
     UPDATE SERVICE_RATING
-    SET IS_PASSENGER_RATIED=#{isPassengerRated},PASSENGER_RATING_SCORE=#{passengerRatingScore},PASSENGER_RATING_CONTENT=#{passengerRatingContent}
+    SET IS_PASSENGER_RATED=#{isPassengerRated},PASSENGER_RATING_SCORE=#{passengerRatingScore},PASSENGER_RATING_CONTENT=#{passengerRatingContent}
     WHERE ID=#{id};
   </update>
 
   <update id="updateDriverRating">
     UPDATE SERVICE_RATING
-    SET IS_DRIVER_RATIED=#{isDriverRated},DRIVER_RATING_SCORE=#{driverRatingScore},DRIVER_RATING_CONTENT=#{driverRatingContent}
+    SET IS_DRIVER_RATED=#{isDriverRated},DRIVER_RATING_SCORE=#{driverRatingScore},DRIVER_RATING_CONTENT=#{driverRatingContent}
     WHERE ID=#{id};
   </update>
 </mapper>

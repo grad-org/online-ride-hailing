@@ -190,12 +190,15 @@ public class AlipayController {
 
                 TripOrderDTO tripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
 
-                return "redirect:http://localhost/pay?result=success&tripOrderId=" + tripOrder.getId();
+//                return "redirect:http://172.20.10.3:8080/pay?result=success&tripOrderId=" + tripOrder.getId();
+                return "redirect:http://172.20.10.3:8080/trip/history";
             } else {
-                return "redirect:http://localhost/pay?result=failure&tripOrderId=" + tripOrder.getId();
+//                return "redirect:http://172.20.10.3:8080/pay?result=failure&tripOrderId=" + tripOrder.getId();
+                return "redirect:http://172.20.10.3:8080/trip/history";
             }
         } catch (AlipayApiException e) {
-            return "redirect:http://localhost/pay?result=exception&tripOrderId=" + tripOrder.getId();
+//            return "redirect:http://172.20.10.3:8080/pay?result=exception&tripOrderId=" + tripOrder.getId();
+            return "redirect:http://172.20.10.3:8080/trip/history";
         }
     }
 

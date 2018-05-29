@@ -6,10 +6,7 @@ import com.gd.orh.serviceRating.service.ServiceRatingService;
 import com.gd.orh.utils.RestResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/serviceRating")
@@ -17,6 +14,15 @@ public class ServiceRatingController {
 
     @Autowired
     private ServiceRatingService serviceRatingService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
+        ServiceRating serviceRating = serviceRatingService.findById(id);
+
+        ServiceRatingDTO serviceRatingDTO = new ServiceRatingDTO().convertFor(serviceRating);
+
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult(serviceRatingDTO));
+    }
 
     // 评价车主
     @PostMapping("/rateDriver")

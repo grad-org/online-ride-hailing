@@ -50,6 +50,7 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
     private BigDecimal TimeCost;
     private BigDecimal TotalCost;
 
+    private Long serviceRatingId;
     private Boolean isPassengerRated;
     private BigDecimal passengerRatingScore;
     private String passengerRatingContent;
@@ -305,6 +306,12 @@ public class TripOrderDTO extends BaseDTO<TripOrderDTO, TripOrder> {
                     .ofNullable(tripOrder)
                     .map(TripOrder::getFare)
                     .map(Fare::getTotalCost)
+                    .orElse(null));
+
+            tripOrderDTO.setServiceRatingId(Optional
+                    .ofNullable(tripOrder)
+                    .map(TripOrder::getServiceRating)
+                    .map(ServiceRating::getId)
                     .orElse(null));
 
             tripOrderDTO.setIsPassengerRated(Optional
