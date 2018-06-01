@@ -12,7 +12,6 @@ import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
 import com.gd.orh.config.AlipayConfig;
 import com.gd.orh.dto.DriverBalanceDTO;
 import com.gd.orh.dto.PaymentDTO;
-import com.gd.orh.dto.TripOrderDTO;
 import com.gd.orh.dto.WithdrawalDTO;
 import com.gd.orh.entity.Driver;
 import com.gd.orh.entity.DriverBalance;
@@ -188,17 +187,14 @@ public class AlipayController {
             if (verify_result) { // 验证成功
                 tripOrder = tripOrderService.payTripOrder(tripOrder);
 
-                TripOrderDTO tripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
+                // TripOrderDTO tripOrderDTO = new TripOrderDTO().convertFor(tripOrder);
 
-//                return "redirect:http://172.20.10.3:8080/pay?result=success&tripOrderId=" + tripOrder.getId();
-                return "redirect:http://172.20.10.3:8080/trip/history";
+                return "redirect:http://192.168.43.151:8080/trip/history";
             } else {
-//                return "redirect:http://172.20.10.3:8080/pay?result=failure&tripOrderId=" + tripOrder.getId();
-                return "redirect:http://172.20.10.3:8080/trip/history";
+                return "redirect:http://192.168.43.151:8080/trip/history";
             }
         } catch (AlipayApiException e) {
-//            return "redirect:http://172.20.10.3:8080/pay?result=exception&tripOrderId=" + tripOrder.getId();
-            return "redirect:http://172.20.10.3:8080/trip/history";
+            return "redirect:http://192.168.43.151:8080/trip/history";
         }
     }
 

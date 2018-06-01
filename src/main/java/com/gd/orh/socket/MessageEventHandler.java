@@ -142,7 +142,7 @@ public class MessageEventHandler {
 
         if (clientInfo != null && clientInfo.isOnline()) {
             UUID target = new UUID(clientInfo.getMostSignificantBits(), clientInfo.getLeastSignificantBits());
-            LOGGER.info("User {''} will receive a acceptance notification.", passengerUsername);
+            LOGGER.info("User '{}' will receive a acceptance notification.", passengerUsername);
 
             client.leaveRoom(BROADCAST_TRIP_ROOM);
 
@@ -163,7 +163,7 @@ public class MessageEventHandler {
 
         if (clientInfo != null && clientInfo.isOnline()) {
             UUID target = new UUID(clientInfo.getMostSignificantBits(), clientInfo.getLeastSignificantBits());
-            LOGGER.info("User {''} will receive a car location.", passengerUsername);
+            LOGGER.info("User '{}' will receive a car location.", passengerUsername);
 
             // 向目标会话发送信息
             server.getClient(target).sendEvent("receiveCarLocation", messageInfo.getData());
@@ -179,7 +179,7 @@ public class MessageEventHandler {
 
         if (clientInfo != null && clientInfo.isOnline()) {
             UUID target = new UUID(clientInfo.getMostSignificantBits(), clientInfo.getLeastSignificantBits());
-            LOGGER.info("User {''} will receive a cancel notification.", targetUsername);
+            LOGGER.info("User '{}' will receive a cancel notification.", targetUsername);
 
             String role = client.getHandshakeData().getSingleUrlParam("role");
             SocketIOClient targetClient = server.getClient(target);
@@ -205,7 +205,7 @@ public class MessageEventHandler {
 
         if (clientInfo != null && clientInfo.isOnline()) {
             UUID target = new UUID(clientInfo.getMostSignificantBits(), clientInfo.getLeastSignificantBits());
-            LOGGER.info("User {''} will receive a pick up notification.", passengerUsername);
+            LOGGER.info("User '{}' will receive a pick up notification.", passengerUsername);
 
             // 向目标会话发送信息
             server.getClient(target).sendEvent("pickUpPassenger", tripOrderDTO);
@@ -221,7 +221,7 @@ public class MessageEventHandler {
 
         if (clientInfo != null && clientInfo.isOnline()) {
             UUID target = new UUID(clientInfo.getMostSignificantBits(), clientInfo.getLeastSignificantBits());
-            LOGGER.info("User {''} will receive a arrival notification.", passengerUsername);
+            LOGGER.info("User '{}' will receive a arrival notification.", passengerUsername);
 
             client.joinRoom(BROADCAST_TRIP_ROOM);
 

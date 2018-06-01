@@ -40,6 +40,10 @@ public class DriverRestController {
                     ));
         }
 
+        Driver driver = driverDTO.convertTo();
+
+        Driver persistedDriver = driverService.save(driver);
+
         // 保存驾驶证照片
         String drivingLicenseImage = Optional
                 .ofNullable(driverDTO)
@@ -60,12 +64,12 @@ public class DriverRestController {
             InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
 
             boolean isUploadFailed
-                        = !ImageUploadUtil.uploadImageToRootPath(
-                            "images/drivingLicense/",
-                            driverDTO.getDriverId() + ".jpg",
-                            in,
-                            "jpg"
-                        );
+                    = !ImageUploadUtil.uploadImageToRootPath(
+                        "images/drivingLicense/",
+                        persistedDriver.getId() + ".jpg",
+                        in,
+                        "jpg"
+                    );
 
             if (isUploadFailed) {
                 return ResponseEntity
@@ -94,12 +98,12 @@ public class DriverRestController {
             InputStream in = ImageUploadUtil.getInputStreamFromImageContent(imageContent);
 
             boolean isUploadFailed
-                        = !ImageUploadUtil.uploadImageToRootPath(
-                            "images/vehicleLicense/",
-                            driverDTO.getDriverId() + ".jpg",
-                            in,
-                            "jpg"
-                        );
+                    = !ImageUploadUtil.uploadImageToRootPath(
+                        "images/vehicleLicense/",
+                        persistedDriver.getId() + ".jpg",
+                        in,
+                        "jpg"
+                    );
 
             if (isUploadFailed) {
                 return ResponseEntity
@@ -108,13 +112,9 @@ public class DriverRestController {
             }
         }
 
-        Driver driver = driverDTO.convertTo();
+        DriverDTO persistedDriverDTO = new DriverDTO().convertFor(persistedDriver);
 
-        driver = driverService.save(driver);
-
-        DriverDTO authenticatedDriverDTO = new DriverDTO().convertFor(driver);
-
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(authenticatedDriverDTO));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(persistedDriverDTO));
     }
 
     @GetMapping("/search/findPendingReviewDriver")
@@ -219,10 +219,10 @@ public class DriverRestController {
         driverDTO.setDriverId(driverId);
         Driver driver = driverDTO.convertTo();
 
-        driver = driverService.updateVehicleLicense(driver);
+        Driver updatedDriver = driverService.updateVehicleLicense(driver);
 
-        DriverDTO authenticatedDriverDTO = new DriverDTO().convertFor(driver);
+        DriverDTO updatedDriverDTO = new DriverDTO().convertFor(updatedDriver);
 
-        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(authenticatedDriverDTO));
+        return ResponseEntity.ok(RestResultFactory.getSuccessResult().setData(updatedDriverDTO));
     }
 }
